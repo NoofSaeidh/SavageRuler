@@ -3,6 +3,7 @@ using Abp.Zero.EntityFrameworkCore;
 using SavageRuler.Authorization.Roles;
 using SavageRuler.Authorization.Users;
 using SavageRuler.MultiTenancy;
+using SavageRuler.Rules.Powers;
 
 namespace SavageRuler.EntityFrameworkCore
 {
@@ -14,5 +15,7 @@ namespace SavageRuler.EntityFrameworkCore
             : base(options)
         {
         }
+
+        public virtual DbSet<Power> Powers { get; set; }
     }
 }

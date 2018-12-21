@@ -29,5 +29,8 @@
     <Compile Update="Migrations\20181221181516_Initial_Migration.Designer.cs">
       <DependentUpon>20181221181516_Initial_Migration.cs</DependentUpon>
     </Compile>
+    <Compile Update="Migrations\20181221195257_Add_Powers.Designer.cs">
+      <DependentUpon>20181221195257_Add_Powers.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
 </Project>

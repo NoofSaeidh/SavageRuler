@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SavageRuler.EntityFrameworkCore;
 
 namespace SavageRuler.Migrations
 {
     [DbContext(typeof(SavageRulerDbContext))]
-    partial class SavageRulerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181221195257_Add_Powers")]
+    partial class Add_Powers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
