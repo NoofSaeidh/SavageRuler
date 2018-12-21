@@ -20,6 +20,7 @@ namespace SavageRuler.EntityFrameworkCore
         {
             if (!SkipDbContextRegistration)
             {
+                Configuration.UnitOfWork.IsTransactional = false;
                 Configuration.Modules.AbpEfCore().AddDbContext<SavageRulerDbContext>(options =>
                 {
                     if (options.ExistingConnection != null)

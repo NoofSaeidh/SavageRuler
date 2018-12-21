@@ -7,12 +7,12 @@ namespace SavageRuler.EntityFrameworkCore
     {
         public static void Configure(DbContextOptionsBuilder<SavageRulerDbContext> builder, string connectionString)
         {
-            builder.UseSqlServer(connectionString);
+            builder.UseSqlite(connectionString);
         }
 
         public static void Configure(DbContextOptionsBuilder<SavageRulerDbContext> builder, DbConnection connection)
         {
-            builder.UseSqlServer(connection);
+            builder.UseSqlite(connection);
         }
     }
 }
