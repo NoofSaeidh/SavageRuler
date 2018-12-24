@@ -10,7 +10,6 @@ namespace SavageRuler.Rules.Powers
     {
         public static class Books
         {
-            public const string DeadLandsOld = "DL_o";
             public const string DeadLands = "DL";
             public const string SavageWorlds = "SW";
         }
