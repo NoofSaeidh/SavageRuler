@@ -8,6 +8,7 @@ interface WeatherForecast {
     summary: string;
 }
 
+// @ts-ignore
 @Component
 export default class FetchDataComponent extends Vue {
     forecasts: WeatherForecast[] = [];
