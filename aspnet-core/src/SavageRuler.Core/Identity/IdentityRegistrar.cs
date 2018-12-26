@@ -14,7 +14,8 @@ namespace SavageRuler.Identity
         {
             services.AddLogging();
 
-            return services.AddAbpIdentity<Tenant, User, Role>()
+            return services
+                .AddAbpIdentity<Tenant, User, Role>()
                 .AddAbpTenantManager<TenantManager>()
                 .AddAbpUserManager<UserManager>()
                 .AddAbpRoleManager<RoleManager>()

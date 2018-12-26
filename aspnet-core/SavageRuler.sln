@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28407.52
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2050
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{AFAA0841-BD93-466F-B8F4-FB4EEC86F1FC}"
 EndProject
@@ -24,6 +24,11 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SavageRuler.Web.Mvc", "src\SavageRuler.Web.Mvc\SavageRuler.Web.Mvc.csproj", "{45F1D8D3-C3F6-450B-B51B-EF81B489E59F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SavageRuler.Web.Client", "src\SavageRuler.Web.Client\SavageRuler.Web.Client.csproj", "{18521A12-FC0B-4DA4-BE1A-CB53D52F7203}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "items", "items", "{D99AB1A1-6DA4-4A38-933F-E6972D8EE8B7}"
+	ProjectSection(SolutionItems) = preProject
+		items\savage-ruler.db = items\savage-ruler.db
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
