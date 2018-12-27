@@ -1,35 +1,39 @@
-# ASP.NET Boilerplate VueJS Template
+# savage-ruler
 
-The Vue.js integration for ABP Boilerplate framework. This template is built on Vue+iview+Typescript.
-
-![](_screenshots/roles.png)
-
-## Getting Started
-
-### Installing
-
-
-```sh
-cd vue
-yarn install 
+## Project setup
+```
+yarn install
 ```
 
-And then start
-
+### Compiles and hot-reloads for development
 ```
-yarn serve
-```
-
-## Deployment
-
-```sh
-yarn build
+yarn run serve
 ```
 
-## Built With
+### Compiles and minifies for production
+```
+yarn run build
+```
 
-* [Vue](https://vuejs.org/) - The Progressive JavaScript Framework
-* [Typescript](https://www.typescriptlang.org/) - Used for static typing
-* [Vuex](https://vuex.vuejs.org/) - Vuex is a state management pattern + library for Vue.js applications. 
-* [iView](https://www.iviewui.com/) - A High quality and rich functions, friendly APIs, free and flexible UI Toolkit based on Vue.js.
+### Run your tests
+```
+yarn run test
+```
 
+### Lints and fixes files
+```
+yarn run lint
+```
+
+### Run your end-to-end tests
+```
+yarn run test:e2e
+```
+
+### Run your unit tests
+```
+yarn run test:unit
+```
+
+### Customize configuration
+See [Configuration Reference](https://cli.vuejs.org/config/).

@@ -29,7 +29,8 @@ module.exports = {
                     from:'src/lib/abp.js',
                     to:'dist'
                 }])
-            ]
+            ],
+            devtool: 'source-map'
         }
       }
     }
