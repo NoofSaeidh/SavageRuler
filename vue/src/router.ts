@@ -4,7 +4,8 @@ import Router from 'vue-router';
 Vue.use(Router);
 
 function loadView(view: string) {
-  return () => import(/* webpackChunkName: "view-[request]" */ `@/views/${view}.vue`);
+  return () =>
+    import(/* webpackChunkName: "view-[request]" */ `@/views/${view}.vue`);
 }
 
 export default new Router({
@@ -22,9 +23,9 @@ export default new Router({
       component: loadView('About'),
     },
     {
-      path: '/powers',
-      name: 'powers',
-      component: loadView('rules/Powers'),
+      path: '/power',
+      name: 'power',
+      component: loadView('rules/Power'),
     },
   ],
 });
