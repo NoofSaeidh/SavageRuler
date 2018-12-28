@@ -21,5 +21,10 @@ export default new Router({
       name: 'about',
       component: loadView('About'),
     },
+    {
+      path: '/powers',
+      name: 'powers',
+      component: loadView('rules/Powers'),
+    },
   ],
 });
