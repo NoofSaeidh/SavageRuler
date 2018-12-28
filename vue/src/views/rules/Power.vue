@@ -1,10 +1,9 @@
 <template>
   <div>
-    <b-table striped hover :items="data"></b-table>
+    <b-table striped hover :items="items" :fields="fields"></b-table>
     <button type="button" class="btn btn-light" @click="fetchData()">Fetch</button>
-    <br/>
+    <br>
     <span>{{error}}</span>
-    <span>{{data}}</span>
   </div>
 </template>
 
@@ -16,14 +15,32 @@ import { ServerList, ServerReponseList } from '../../types/abp';
 import { AppConsts } from '../../global/app-consts';
 import { Power } from '../../types/rules-interfaces';
 
+const mappedFields = [
+  {
+    key: 'name',
+    sortable: true,
+    label: 'Название',
+  },
+  {
+    key: 'text',
+    sortable: false,
+    label: 'Текст',
+  },
+  {
+    book: 'book',
+    sortable: true,
+    label: 'Книга',
+  }
+]
+
 @Component({})
 export default class Powers extends Vue {
-  public data: Power[];
-  public debug: any;
+  public items: Power[];
+  public fields = mappedFields;
   public error: any;
   constructor() {
     super();
-    this.data = [
+    this.items = [
       {
         name: 'Test1',
         text: 'some text',
@@ -33,7 +50,6 @@ export default class Powers extends Vue {
         text: 'some other text',
       },
     ];
-    this.debug = 'test';
   }
 
 
@@ -42,7 +58,7 @@ export default class Powers extends Vue {
       .request<ServerReponseList<Power>>({
         url: AppConsts.appUri + '/Power/GetAll',
       })
-      .then(response => (this.data = response.data.result.items))
+      .then(response => (this.items = response.data.result.items))
       .catch(error => (this.error = error));
   }
 }
