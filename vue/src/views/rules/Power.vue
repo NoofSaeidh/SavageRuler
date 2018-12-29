@@ -11,9 +11,9 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import Axios from 'axios';
-import { ServerList, ServerReponseList } from '../../types/abp';
+import { ServerList, ServerReponseList } from '../../types/server';
 import { AppConsts } from '../../global/app-consts';
-import { Power } from '../../types/rules-interfaces';
+import { Power } from '../../types/power';
 
 const mappedFields = [
   {
@@ -30,8 +30,8 @@ const mappedFields = [
     book: 'book',
     sortable: true,
     label: 'Книга',
-  }
-]
+  },
+];
 
 @Component({})
 export default class Powers extends Vue {
