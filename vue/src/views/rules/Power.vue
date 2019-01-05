@@ -1,19 +1,23 @@
 <template>
   <div>
-    <b-table striped hover :items="items" :fields="fields"></b-table>
     <button type="button" class="btn btn-light" @click="fetchData()">Fetch</button>
     <br>
-    <span>{{error}}</span>
+    <span>{{tmp}}</span>
+    <br>
+    <b-table striped hover :items="items" :fields="fields"></b-table>
+    <br>
+    <!-- <span>{{error}}</span> -->
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import Axios from 'axios';
-import { ServerList, ServerReponseList } from '../../types/server';
+import { ServerList, ServerReponseList, ServerReponse } from '../../types/server';
 import { AppConsts } from '../../global/app-consts';
 import { Power } from '../../types/power';
+import ajax, { Ajax } from '@/helpers/ajax';
+import BaseVue from '@/base-vue';
 
 const mappedFields = [
   {
@@ -37,7 +41,7 @@ const mappedFields = [
 export default class Powers extends Vue {
   public items: Power[];
   public fields = mappedFields;
-  public error: any;
+  public tmp: any = null;
   constructor() {
     super();
     this.items = [
@@ -54,12 +58,14 @@ export default class Powers extends Vue {
 
 
   public fetchData() {
-    Axios
-      .request<ServerReponseList<Power>>({
-        url: AppConsts.appUri + '/Power/GetAll',
-      })
+    ajax.requestApp<ServerReponseList<Power>>('/Power/GetAll')
       .then(response => (this.items = response.data.result.items))
-      .catch(error => (this.error = error));
+      .catch(error => { throw error; });
+
+
+    // Axios
+    //   .get(AppConsts.appUri + '/Power/GetSmth')
+    //   .then(r => this.tmp = r.data as string);
   }
 }
 </script>
