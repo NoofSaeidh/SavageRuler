@@ -13,8 +13,8 @@ namespace SavageRuler.Localization
         public static void Configure(ILocalizationConfiguration localizationConfiguration)
         {
             localizationConfiguration.Languages.AddMany(
-                new LanguageInfo("en", "English", "famfamfam-flag-us", true),
-                new LanguageInfo("ru", "Russian", "famfamfam-flag-ru")
+                new LanguageInfo("en", "English", "famfamfam-flag-us"),
+                new LanguageInfo("ru", "Russian", "famfamfam-flag-ru", true)
             );
 
             localizationConfiguration.Sources.AddMany(

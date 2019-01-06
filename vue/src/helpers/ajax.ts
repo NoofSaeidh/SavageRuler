@@ -1,5 +1,6 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosPromise } from 'axios';
 import { AppConsts } from '../global/app-consts';
+import { ServerReponse, ServerReponseList } from '@/types/server';
 
 export class Ajax {
   public axios: AxiosInstance;
@@ -62,11 +63,25 @@ export class Ajax {
     //         },
   }
 
-  public requestApp<T = any>(
+  public requestAppBase<T = any>(
     actionUrl: string,
     config?: AxiosRequestConfig,
   ): AxiosPromise<T> {
     return this.axios.request<T>(this.getAppConfig(actionUrl, config));
+  }
+
+  public requestAppList<T>(
+    actionUrl: string,
+    config?: AxiosRequestConfig,
+  ): AxiosPromise<ServerReponseList<T>> {
+    return this.axios.request<ServerReponseList<T>>(this.getAppConfig(actionUrl, config));
+  }
+
+  public requestApp<T>(
+    actionUrl: string,
+    config?: AxiosRequestConfig,
+  ): AxiosPromise<ServerReponse<T>> {
+    return this.axios.request<ServerReponse<T>>(this.getAppConfig(actionUrl, config));
   }
 
   private getRequestConfig(
