@@ -4,7 +4,7 @@
     <br>
     <span>{{tmp}}</span>
     <br>
-    <b-table striped hover :items="items" :fields="fields"></b-table>
+    <b-table striped hover :items="items" :fields="headers"></b-table>
     <br>
     <!-- <span>{{error}}</span> -->
   </div>
@@ -18,29 +18,29 @@ import { AppConsts } from '../../global/app-consts';
 import { Power } from '../../types/power';
 import ajax, { Ajax } from '@/helpers/ajax';
 import BaseVue from '@/base-vue';
+import { Table, TableHeader } from '@/types/tables';
 
-const mappedFields = [
+const mappedFields: TableHeader[] = [
   {
     key: 'name',
-    sortable: true,
     label: 'Название',
-  },
-  {
-    key: 'text',
-    sortable: false,
-    label: 'Текст',
-  },
-  {
-    book: 'book',
     sortable: true,
+  },
+  // {
+  //   key: 'text',
+  //   sortable: false,
+  //   label: 'Текст',
+  // },
+  {
+    key: 'book',
     label: 'Книга',
   },
 ];
 
 @Component({})
 export default class Powers extends Vue {
-  public items: Power[];
-  public fields = mappedFields;
+  public items: any[];
+  public headers: TableHeader[];
   public tmp: any = null;
   constructor() {
     super();
@@ -54,12 +54,16 @@ export default class Powers extends Vue {
         text: 'some other text',
       },
     ];
+    this.headers = mappedFields;
   }
 
 
   public fetchData() {
-    ajax.requestApp<ServerReponseList<Power>>('/Power/GetAll')
-      .then(response => (this.items = response.data.result.items))
+    ajax.requestApp<ServerReponse<Table>>('/Power/GetTable')
+      .then(response => {
+        this.items = response.data.result.data;
+        this.headers = response.data.result.headers;
+      })
       .catch(error => { throw error; });
 
 

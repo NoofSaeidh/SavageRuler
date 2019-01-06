@@ -66,11 +66,26 @@ export class Ajax {
     actionUrl: string,
     config?: AxiosRequestConfig,
   ): AxiosPromise<T> {
+    return this.axios.request<T>(this.getAppConfig(actionUrl, config));
+  }
+
+  private getRequestConfig(
+    baseUrl: string,
+    url: string,
+    config?: AxiosRequestConfig,
+  ): AxiosRequestConfig {
     if (config === undefined) {
       config = {};
     }
-    config.url = AppConsts.appUri + actionUrl;
-    return this.axios.request<T>(config);
+    config.url = baseUrl + url;
+    return config;
+  }
+
+  private getAppConfig(
+    url: string,
+    config?: AxiosRequestConfig,
+  ): AxiosRequestConfig {
+    return this.getRequestConfig(AppConsts.appUri, url, config);
   }
 }
 
