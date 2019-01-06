@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<localizationDictionary culture="ru">
+  <texts>
+    <text name="Name" value="Название" />
+    <text name="Book" value="Книга" />
+    <text name="Points" value="Пункты Силы" />
+    <text name="Duration" value="Длительность" />
+    <text name="Distance" value="Дистанция" />
+    <text name="Rank" value="Ранг" />
+    <text name="Trappings" value="Проявления" />
+    <text name="Text" value="Текст" />
+  </texts>
+</localizationDictionary>

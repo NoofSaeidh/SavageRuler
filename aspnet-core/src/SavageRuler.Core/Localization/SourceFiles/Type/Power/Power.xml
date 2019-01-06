@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<localizationDictionary culture="en">
+  <texts>
+    <text name="Name" value="Name" />
+    <text name="Book" value="Book" />
+    <text name="Points" value="Points" />
+    <text name="Duration" value="Duration" />
+    <text name="Distance" value="Distance" />
+    <text name="Rank" value="Rank" />
+    <text name="Trappings" value="Trappings" />
+    <text name="Text" value="Text" />
+  </texts>
+</localizationDictionary>

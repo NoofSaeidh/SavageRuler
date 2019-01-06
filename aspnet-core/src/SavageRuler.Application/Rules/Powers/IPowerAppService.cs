@@ -10,6 +10,5 @@ namespace SavageRuler.Rules.Powers
 {
     public interface IPowerAppService : IAsyncCrudAppService<PowerDto, int, PowerListDto>
     {
-        
     }
 }
