@@ -17,5 +17,7 @@ export interface ServerList<T> {
 
 export interface ServerError {
   message: string;
+  code: number;
+  details: string | null;
+  validationErrors: string | null;
 }
-
