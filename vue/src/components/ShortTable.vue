@@ -1,11 +1,15 @@
 <template>
   <div class="post">
+    <b-modal ref="modalInfo" title="Bootstrap-Vue">
+      <p class="my-4">Hello from modal!</p>
+    </b-modal>
+
     <div class="loading" v-if="loading">Loading...</div>
 
     <div v-if="error" class="error">{{ error.message }}</div>
 
     <div v-if="items" class="content">
-      <b-table small striped hover :items="items" :fields="headers"></b-table>
+      <b-table small striped hover :items="items" :fields="headers" @row-clicked="showModal"></b-table>
     </div>
   </div>
 </template>
@@ -17,12 +21,19 @@ import { AppConsts } from '@/global/app-consts';
 import { Tabler } from '@/api/tabler';
 import { Power } from '@/types/power';
 import { Field } from '@/types/table';
+import { Entity } from '@/types/entity';
+import { Modal } from 'bootstrap-vue';
 
 @Component({})
-export default class ShortTable<T> extends Vue {
+export default class ShortTable<T extends Entity<TKey>, TKey> extends Vue {
   @Prop() public appName!: string;
   @Prop() public includeFields!: string[] | null;
   @Prop() public excludeFields!: string[] | null;
+
+  public $refs!: {
+    modalInfo: Modal,
+  }
+
   public items: T[] | null = null;
   public headers: Field[] | null = null;
   public loading = false;
@@ -31,6 +42,8 @@ export default class ShortTable<T> extends Vue {
   @Provide() private tabler: Tabler<T> = new Tabler<T>(
     '/' + this.appName + '/GetAll',
     '/' + this.appName + '/GetLocalizedProperties');
+
+
 
   public created() {
     this.fetchLabels();
@@ -64,6 +77,14 @@ export default class ShortTable<T> extends Vue {
     } finally {
       this.loading = false;
     }
+  }
+
+  public onRowClicked(record: T, index: number) {
+    window.alert(record.id);
+  }
+
+  public showModal() {
+    this.$refs.modalInfo.show();
   }
 }
 </script>
