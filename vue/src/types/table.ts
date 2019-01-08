@@ -1,4 +1,4 @@
-export interface Field {
+export interface TableField {
   key: string;
   label: string;
   sortable?: boolean;

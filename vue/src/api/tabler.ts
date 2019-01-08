@@ -1,20 +1,20 @@
 import ajax from './ajax';
-import { Field } from '@/types/table';
+import { TableField } from '@/types/table';
 
 export class Tabler<T> {
   public readonly hasFields: boolean;
 
-  private $$cachedFields: Field[] | null = null;
+  private $$cachedFields: TableField[] | null = null;
 
   constructor(public getAllUrl: string, public getPropsUrl?: string) {
     this.hasFields = !!getPropsUrl;
   }
 
-  public async getFields(): Promise<Field[] | null> {
+  public async getFields(): Promise<TableField[] | null> {
     if (!this.getPropsUrl) {
       return null;
     }
-    return ajax.requestApp<object>(this.getPropsUrl).then<Field[]>(response => {
+    return ajax.requestApp<object>(this.getPropsUrl).then<TableField[]>(response => {
       const res = Object.entries(response.data.result).map(([name, value]) => ({
         key: name,
         label: value,
@@ -25,7 +25,7 @@ export class Tabler<T> {
   }
 
   // the same as getFields but caches it after first get and then reuse
-  public async getCachedFields(): Promise<Field[] | null> {
+  public async getCachedFields(): Promise<TableField[] | null> {
     if (this.$$cachedFields) {
       return this.$$cachedFields;
     }

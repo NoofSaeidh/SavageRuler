@@ -1,15 +1,11 @@
 <template>
   <div class="post">
-    <b-modal ref="modalInfo" title="Bootstrap-Vue">
-      <p class="my-4">Hello from modal!</p>
-    </b-modal>
-
     <div class="loading" v-if="loading">Loading...</div>
 
     <div v-if="error" class="error">{{ error.message }}</div>
 
     <div v-if="items" class="content">
-      <b-table small striped hover :items="items" :fields="headers" @row-clicked="showModal"></b-table>
+      <b-table small striped hover :items="items" :fields="headers" @row-clicked="onRowClicked" ></b-table>
     </div>
   </div>
 </template>
@@ -17,25 +13,21 @@
 <script lang="ts">
 import { Vue, Component, Prop, Provide } from 'vue-property-decorator';
 import { ServerList, ServerReponseList, ServerReponse, ServerError } from '@/types/server';
-import { AppConsts } from '@/global/app-consts';
 import { Tabler } from '@/api/tabler';
-import { Power } from '@/types/power';
-import { Field } from '@/types/table';
+import { TableField } from '@/types/table';
 import { Entity } from '@/types/entity';
-import { Modal } from 'bootstrap-vue';
+import { OnRowClicked } from '@/types/delegates';
 
 @Component({})
 export default class ShortTable<T extends Entity<TKey>, TKey> extends Vue {
   @Prop() public appName!: string;
   @Prop() public includeFields!: string[] | null;
   @Prop() public excludeFields!: string[] | null;
-
-  public $refs!: {
-    modalInfo: Modal,
-  }
+  // todo: make conditional??
+  @Prop() public onRowClicked?: OnRowClicked<T>;
 
   public items: T[] | null = null;
-  public headers: Field[] | null = null;
+  public headers: TableField[] | null = null;
   public loading = false;
   public error: ServerError | null = null;
 
@@ -57,12 +49,10 @@ export default class ShortTable<T extends Entity<TKey>, TKey> extends Vue {
       return;
     }
     if (this.excludeFields) {
-      const exclude = this.excludeFields;
-      headers = headers.filter(h => !exclude.some(e => e === h.key));
+      headers = headers.filter(h => !this.excludeFields!.some(e => e === h.key));
     }
     if (this.includeFields) {
-      const include = this.includeFields;
-      headers = headers.filter(h => include.some(e => e === h.key));
+      headers = headers.filter(h => this.includeFields!.some(e => e === h.key));
     }
     this.headers = headers;
   }
@@ -77,14 +67,6 @@ export default class ShortTable<T extends Entity<TKey>, TKey> extends Vue {
     } finally {
       this.loading = false;
     }
-  }
-
-  public onRowClicked(record: T, index: number) {
-    window.alert(record.id);
-  }
-
-  public showModal() {
-    this.$refs.modalInfo.show();
   }
 }
 </script>
