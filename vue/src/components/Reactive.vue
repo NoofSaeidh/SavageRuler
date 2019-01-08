@@ -1,38 +1,17 @@
 <template>
   <div>
-    <div class="greeting">Hello {{name}}{{exclamationMarks}}</div>
-    <button @click="decrement">-</button>
-    <button @click="increment">+</button>
+    <div class="greeting">Hello {{name}} / {{counter}}</div>
   </div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-export default Vue.extend({
-  props: ['value'],
-  model:{
-      prop: 'value',
-  },
-  data() {
-    return {
-      enthusiasm: this.value.counter,
-      name: this.value.name,
-    };
-  },
-  methods: {
-    increment() { this.enthusiasm++; },
-    decrement() {
-      if (this.enthusiasm > 1) {
-        this.enthusiasm--;
-      }
-    },
-  },
-  computed: {
-    exclamationMarks(): string {
-      return Array(this.enthusiasm + 1).join('!');
-    }
-  },
-});
+import { Vue, Component, Prop, Provide, Watch } from 'vue-property-decorator';
+
+@Component({})
+export default class Reactive extends Vue {
+  @Prop() name!: string;
+  @Prop() counter!: number;
+}
 </script>
 
 <style>

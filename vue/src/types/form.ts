@@ -12,18 +12,3 @@ export class FormFieldValue {
   }
   constructor(public field: FormField, public value: any) {}
 }
-
-// todo: temp
-// tslint:disable-next-line: max-classes-per-file
-export class CurrentItem<T> {
-  public item: T | null = null;
-  public fields: FormField[] | null = null;
-  public get fieldValues() {
-    if (!this.item || !this.fields) {
-      throw {
-        message: '"item" or "fields" is not initialized',
-      };
-    }
-    return FormFieldValue.parse(this.item as unknown as object, this.fields);
-  }
-}

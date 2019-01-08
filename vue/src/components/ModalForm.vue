@@ -1,13 +1,13 @@
 <template>
   <div>
-    <p>{{id}}</p>
+    <h1 class="danger">{{id}}</h1>
     <b-container class="content" fluid>
-      <b-row class="my-1" v-for="item in items" :key="item.field.key">
+      <b-row class="my-1" v-for="value in fieldValues" :key="value.field.key">
         <b-col sm="3">
-          <label :for="`field-${item}`">{{ item.field.label }}</label>
+          <label :for="`field-${value}`">{{ value.field.label }}</label>
         </b-col>
         <b-col sm="9">
-          <b-form-input readonly :id="`field-${item}`" :value="item.value"></b-form-input>
+          <b-form-input readonly :id="`field-${value}`" :value="value.value"></b-form-input>
         </b-col>
       </b-row>
     </b-container>
@@ -21,34 +21,22 @@ import { Entity } from '@/types/entity';
 import { Modal } from 'bootstrap-vue';
 import { FormField, FormFieldValue } from '@/types/form';
 
-@Component({
-  data() {
-    return {
-      id: 0,
-    };
-  },
-})
+@Component({})
 export default class ModalForm<T extends Entity<TKey>, TKey> extends Vue {
-  public source: T | null = null;
-  public fields: FormField[] = [];
+  @Prop() public item!: T;
+  @Prop() public fields!: FormField[];
+  @Prop() public id!: number;
 
-  public get items(): FormFieldValue[] {
-    // return [
-    //   new FormFieldValue({
-    //     key: 'name',
-    //     label: 'Name',
-    //   }, 'Value'),
-    // ];
-    return [];
-    // return FormFieldValue.parse(this.source, this.fields);
+  public get fieldValues(): FormFieldValue[] {
+   return FormFieldValue.parse(this.item, this.fields);
   }
 
-  public $ref!: {
-    modalInfo: Modal;
-  };
+  // public $ref!: {
+  //   modalInfo: Modal;
+  // };
 
-  public showModal(record: T, index: number) {
-    this.$ref.modalInfo.show();
-  }
+  // public showModal(record: T, index: number) {
+  //   this.$ref.modalInfo.show();
+  // }
 }
 </script>

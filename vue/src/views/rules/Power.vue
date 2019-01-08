@@ -1,8 +1,8 @@
 <template>
   <div>
-    <Reactive v-model="react"></Reactive>
+    {{id}}
     <div v-if="showModal">
-      <ModalForm :current="item" :fields="formFields" :id="id"></ModalForm>
+      <ModalForm :item="item" :fields="formFields" :id="id"></ModalForm>
     </div>
     <div>
       <ShortTable appName="Power" :includeFields="tableFields" :onRowClicked="rowClicked"></ShortTable>
@@ -17,20 +17,14 @@ import { OnRowClicked } from '@/types/delegates';
 import { FormField, FormFieldValue } from '@/types/form';
 import ShortTable from '@/components/ShortTable.vue';
 import ModalForm from '@/components/ModalForm.vue';
-import Reactive from '@/components/Reactive.vue';
 
 @Component({
   components: {
     ShortTable,
     ModalForm,
-    Reactive,
   },
 })
 export default class Powers extends Vue {
-  public react = {
-    name: 'tmp',
-    counter: 1,
-  };
   public id: number = 0;
   public showModal = false;
   public formFields: FormField[] = [
@@ -50,12 +44,7 @@ export default class Powers extends Vue {
   public rowClicked(record: Power, index: number, event: MouseEvent) {
     this.item = record;
     this.showModal = true;
-    // this.id = index;
-    this.react.name = 'name';
-    this.react = {
-      name: record.name,
-      counter: index,
-    };
+    this.id = index;
   }
 }
 </script>
