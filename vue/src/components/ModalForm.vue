@@ -19,7 +19,7 @@ import { Vue, Component, Prop, Provide, Watch } from 'vue-property-decorator';
 import { ServerList, ServerReponseList, ServerReponse, ServerError } from '@/types/server';
 import { Entity } from '@/types/entity';
 import { Modal } from 'bootstrap-vue';
-import { FormField, FormFieldValue } from '@/types/form';
+import { FormField, FormFieldValue, convertObjToFormFields } from '@/types/form';
 
 @Component({})
 export default class ModalForm<T extends Entity<TKey>, TKey> extends Vue {
@@ -28,7 +28,7 @@ export default class ModalForm<T extends Entity<TKey>, TKey> extends Vue {
   @Prop() public id!: number;
 
   public get fieldValues(): FormFieldValue[] {
-   return FormFieldValue.parse(this.item, this.fields);
+   return convertObjToFormFields(this.item, this.fields);
   }
 
   // public $ref!: {

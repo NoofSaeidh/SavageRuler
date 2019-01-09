@@ -4,11 +4,11 @@ export interface FormField {
   type?: any; // todo: handle this
 }
 
-export class FormFieldValue {
-  public static parse(value: object, fields: FormField[]): FormFieldValue[] {
-    return fields.map(
-      f => new FormFieldValue(f, value[f.key as keyof (object)]),
-    );
-  }
-  constructor(public field: FormField, public value: any) {}
+export interface FormFieldValue {
+  value: any;
+  field: FormField;
+}
+
+export function convertObjToFormFields(value: object, fields: FormField[]): FormFieldValue[] {
+  return fields.map(f => ({field: f, value: value[f.key as keyof (object)]}));
 }

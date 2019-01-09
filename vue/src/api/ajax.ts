@@ -1,12 +1,12 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosPromise } from 'axios';
-import { AppConsts } from '../global/app-consts';
+import { AppConsts } from '@/global/app-consts';
 import { ServerReponse, ServerReponseList } from '@/types/server';
 
 export class Ajax {
-  public axios: AxiosInstance;
+  public readonly axios: AxiosInstance;
   constructor() {
     this.axios = axios.create({
-      baseURL: AppConsts.baseUri,
+      baseURL: AppConsts.baseUrl,
       timeout: 30000,
     });
     this.axios.interceptors.request.use(
@@ -100,7 +100,7 @@ export class Ajax {
     url: string,
     config?: AxiosRequestConfig,
   ): AxiosRequestConfig {
-    return this.getRequestConfig(AppConsts.appUri, url, config);
+    return this.getRequestConfig(AppConsts.appUrl, url, config);
   }
 }
 
