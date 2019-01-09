@@ -5,6 +5,7 @@ using Abp.Localization.Dictionaries.Xml;
 using Abp.Reflection.Extensions;
 using SavageRuler.Extensions;
 using SavageRuler.Rules.Powers;
+using System.Linq;
 
 namespace SavageRuler.Localization
 {
@@ -17,14 +18,17 @@ namespace SavageRuler.Localization
                 new LanguageInfo("ru", "Russian", "famfamfam-flag-ru", true)
             );
 
+            localizationConfiguration.Sources.Add(
+                GetXmlSource(
+                    SavageRulerConsts.Localization.SourceName,
+                    "SavageRuler.Localization.SourceFiles.Default"
+                )
+            );
+
+
             localizationConfiguration.Sources.AddMany(
-                GetXmlSource(
-                    SavageRulerConsts.Localization.SourceName, 
-                    "SavageRuler.Localization.SourceFiles"
-                ),
-                GetXmlSource(
-                    SavageRulerConsts.Localization.GetTypeSourceName(nameof(Power)), 
-                    "SavageRuler.Localization.SourceFiles.Type.Power.Power"
+                GetXmlSourceForTypes("SavageRuler.Localization.SourceFiles.Type",
+                    nameof(Power)
                 )
             );
         }
@@ -37,6 +41,21 @@ namespace SavageRuler.Localization
                         rootNamespace
                 )
             );
+        }
+
+        private static DictionaryBasedLocalizationSource[] GetXmlSourceForTypes(string rootNamespace, params string[] typeNames)
+        {
+            return typeNames
+                .Select(type =>
+                    new DictionaryBasedLocalizationSource(
+                        SavageRulerConsts.Localization.GetTypeSourceName(type),
+                        new XmlEmbeddedFileLocalizationTypeDictionaryProvider(
+                            typeof(SavageRulerLocalizationConfigurer).GetAssembly(),
+                            rootNamespace
+                        )
+                    )
+                )
+                .ToArray();
         }
     }
 }

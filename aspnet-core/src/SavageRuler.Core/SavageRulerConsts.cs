@@ -12,8 +12,7 @@
         {
             public const string SourceName = "SavageRuler";
 
-            // typename doubletime because file in folder with the same name
-            public static string GetTypeSourceName(string typeName) => "Type." + typeName + '.' + typeName;
+            public static string GetTypeSourceName(string typeName) => SourceName +  ".Type." + typeName;
         }
     }
 }
