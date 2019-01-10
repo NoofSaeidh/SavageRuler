@@ -1,5 +1,5 @@
-export interface TableField {
-  key: string;
-  label: string;
+import { ViewField } from './view-field';
+
+export interface TableField extends ViewField {
   sortable?: boolean;
 }

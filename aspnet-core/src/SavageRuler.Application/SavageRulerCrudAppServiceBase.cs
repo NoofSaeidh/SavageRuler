@@ -19,8 +19,7 @@ namespace SavageRuler
 {
     public class SavageRulerCrudAppServiceBase<TEntity, TEntityDto, TPrimaryKey, TGetAllInput, TCreateInput, TUpdateInput, TGetInput, TDeleteInput> :
         AsyncCrudAppService<TEntity, TEntityDto, TPrimaryKey, TGetAllInput, TCreateInput, TUpdateInput, TGetInput, TDeleteInput>,
-        IAsyncCrudAppService<TEntityDto, TPrimaryKey, TGetAllInput, TCreateInput, TUpdateInput, TGetInput, TDeleteInput>,
-        ILocalizablePropertiesAppService
+        IAsyncCrudAppService<TEntityDto, TPrimaryKey, TGetAllInput, TCreateInput, TUpdateInput, TGetInput, TDeleteInput>
         where TEntity : class, IEntity<TPrimaryKey>
         where TEntityDto : IEntityDto<TPrimaryKey>
         where TUpdateInput : IEntityDto<TPrimaryKey>
@@ -32,37 +31,12 @@ namespace SavageRuler
         public SavageRulerCrudAppServiceBase(IRepository<TEntity, TPrimaryKey> repository) : base(repository)
         {
             LocalizationSourceName = SavageRulerConsts.LocalizationSourceName;
-            TypeLocalizationSourceName = SavageRulerConsts.Localization.GetTypeSourceName(typeof(TEntity).Name);
         }
 
         public TenantManager TenantManager { get; set; }
 
-        public ILocalizationSource TypeLocalizationSource
-        {
-            get
-            {
-                if (TypeLocalizationSourceName == null)
-                {
-                    throw new AbpException("Must set LocalizationSourceName before, in order to get LocalizationSource");
-                }
-
-                if (_typeLocalizationSource == null || _typeLocalizationSource.Name != LocalizationSourceName)
-                {
-                    _typeLocalizationSource = LocalizationManager.GetSource(TypeLocalizationSourceName);
-                }
-
-                return _typeLocalizationSource;
-            }
-        }
-
-        public string TypeLocalizationSourceName { get; protected set; }
-
         public UserManager UserManager { get; set; }
 
-        public virtual IDictionary<string, string> GetLocalizedProperties()
-        {
-            return TypeLocalizationSource.ToStringsDictionary(true, true);
-        }
 
         protected virtual void CheckErrors(IdentityResult identityResult)
         {
@@ -83,17 +57,6 @@ namespace SavageRuler
             }
 
             return user;
-        }
-
-        // localize but for properties (use different source)
-        protected virtual string LP(string name)
-        {
-            return TypeLocalizationSource.GetString(name);
-        }
-
-        protected virtual string LP(string name, CultureInfo culture)
-        {
-            return TypeLocalizationSource.GetString(name, culture);
         }
     }
 }

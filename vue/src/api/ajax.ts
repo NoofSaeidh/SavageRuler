@@ -65,42 +65,53 @@ export class Ajax {
 
   public requestAppBase<T = any>(
     actionUrl: string,
-    config?: AxiosRequestConfig,
+    params?: any,
+    config?: (config: AxiosRequestConfig) => void,
   ): AxiosPromise<T> {
-    return this.axios.request<T>(this.getAppConfig(actionUrl, config));
+    return this.axios.request<T>(this.getAppConfig(actionUrl, params, config));
   }
 
   public requestAppList<T>(
     actionUrl: string,
-    config?: AxiosRequestConfig,
+    params?: any,
+    config?: (config: AxiosRequestConfig) => void,
   ): AxiosPromise<ServerReponseList<T>> {
-    return this.axios.request<ServerReponseList<T>>(this.getAppConfig(actionUrl, config));
+    return this.axios.request<ServerReponseList<T>>(
+      this.getAppConfig(actionUrl, params, config),
+    );
   }
 
   public requestApp<T>(
     actionUrl: string,
-    config?: AxiosRequestConfig,
+    params?: any,
+    config?: (config: AxiosRequestConfig) => void,
   ): AxiosPromise<ServerReponse<T>> {
-    return this.axios.request<ServerReponse<T>>(this.getAppConfig(actionUrl, config));
+    return this.axios.request<ServerReponse<T>>(
+      this.getAppConfig(actionUrl, params, config),
+    );
   }
 
   private getRequestConfig(
     baseUrl: string,
     url: string,
-    config?: AxiosRequestConfig,
+    params?: any,
+    config?: (config: AxiosRequestConfig) => void,
   ): AxiosRequestConfig {
-    if (config === undefined) {
-      config = {};
+    const request: AxiosRequestConfig = {};
+    request.url = baseUrl + url;
+    request.params = params;
+    if (config) {
+      config(request);
     }
-    config.url = baseUrl + url;
-    return config;
+    return request;
   }
 
   private getAppConfig(
     url: string,
-    config?: AxiosRequestConfig,
+    params?: any,
+    config?: (config: AxiosRequestConfig) => void,
   ): AxiosRequestConfig {
-    return this.getRequestConfig(AppConsts.appUrl, url, config);
+    return this.getRequestConfig(AppConsts.appUrl, url, params, config);
   }
 }
 

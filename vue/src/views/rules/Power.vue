@@ -1,11 +1,15 @@
 <template>
   <div>
-    {{id}}
+    {{temp}}
+    <br>
+    {{formFields}}
+    <br>
+    <button @click="rowClicked">Click Me!</button>
     <div v-if="showModal">
-      <ModalForm :item="item" :fields="formFields" :id="id"></ModalForm>
+      <!-- <ModalForm :item="item" :fields="formFields" :id="id"></ModalForm> -->
     </div>
     <div>
-      <ShortTable appName="Power" :includeFields="tableFields" :onRowClicked="rowClicked"></ShortTable>
+      <!-- <ShortTable appName="Power" :includeFields="tableFields" :onRowClicked="rowClicked"></ShortTable> -->
     </div>
   </div>
 </template>
@@ -15,6 +19,9 @@ import { Vue, Component, Prop, Provide, Watch } from 'vue-property-decorator';
 import { Power } from '@/types/power';
 import { OnRowClicked } from '@/types/delegates';
 import { FormField, FormFieldValue } from '@/types/form';
+import abpHelper from '@/global/abp-helper';
+import localization from '@/api/localization';
+import localizationHelper from '@/helpers/localization-helper';
 import ShortTable from '@/components/ShortTable.vue';
 import ModalForm from '@/components/ModalForm.vue';
 
@@ -25,7 +32,7 @@ import ModalForm from '@/components/ModalForm.vue';
   },
 })
 export default class Powers extends Vue {
-  public id: number = 0;
+  public temp: string = '';
   public showModal = false;
   public formFields: FormField[] = [
     {
@@ -44,7 +51,8 @@ export default class Powers extends Vue {
   public rowClicked(record: Power, index: number, event: MouseEvent) {
     this.item = record;
     this.showModal = true;
-    this.id = index;
+    localizationHelper.getLocalizedLabels('Power').then(r => this.formFields = r);
+    localization.getLocalizedProperties('Power').then(p => this.temp = JSON.stringify(p));
   }
 }
 </script>

@@ -10,8 +10,7 @@ using System.Threading.Tasks;
 namespace SavageRuler.Rules.Powers
 {
     public interface IPowerAppService : 
-        IAsyncCrudAppService<PowerDto, int, PowerListDto>, 
-        ILocalizablePropertiesAppService
+        IAsyncCrudAppService<PowerDto, int, PowerListDto>
     {
     }
 }
