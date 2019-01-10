@@ -3,10 +3,13 @@ import { AppConsts } from '@/global/app-consts';
 import { ServerReponse, ServerReponseList } from '@/types/server';
 
 export class Ajax {
-  public readonly axios: AxiosInstance;
-  constructor() {
+  readonly axios: AxiosInstance;
+  readonly baseUrl: string;
+  constructor(addUrl?: string) {
+    // todo: make this helper
+    this.baseUrl = [AppConsts.baseUrl, addUrl].join('');
     this.axios = axios.create({
-      baseURL: AppConsts.baseUrl,
+      baseURL: this.baseUrl,
       timeout: 30000,
     });
     this.axios.interceptors.request.use(
@@ -63,58 +66,44 @@ export class Ajax {
     //         },
   }
 
-  public requestAppBase<T = any>(
-    actionUrl: string,
+  requestBase<T>(
+    url: string,
     params?: any,
     config?: (config: AxiosRequestConfig) => void,
   ): AxiosPromise<T> {
-    return this.axios.request<T>(this.getAppConfig(actionUrl, params, config));
+    return this.axios.request<T>(this.getRequestConfig(url, params, config));
   }
 
-  public requestAppList<T>(
-    actionUrl: string,
+ // use requestBase for Axios metadat (AxiosPromise)
+  async requestList<T>(
+    url: string,
     params?: any,
     config?: (config: AxiosRequestConfig) => void,
-  ): AxiosPromise<ServerReponseList<T>> {
-    return this.axios.request<ServerReponseList<T>>(
-      this.getAppConfig(actionUrl, params, config),
-    );
+  ): Promise<ServerReponseList<T>> {
+    return (await this.requestBase<ServerReponseList<T>>(url, params, config)).data;
   }
 
-  public requestApp<T>(
-    actionUrl: string,
+  async request<T>(
+    url: string,
     params?: any,
     config?: (config: AxiosRequestConfig) => void,
-  ): AxiosPromise<ServerReponse<T>> {
-    return this.axios.request<ServerReponse<T>>(
-      this.getAppConfig(actionUrl, params, config),
-    );
+  ): Promise<ServerReponse<T>> {
+    return (await this.requestBase<ServerReponse<T>>(url, params, config)).data;
   }
 
   private getRequestConfig(
-    baseUrl: string,
     url: string,
     params?: any,
     config?: (config: AxiosRequestConfig) => void,
   ): AxiosRequestConfig {
     const request: AxiosRequestConfig = {};
-    request.url = baseUrl + url;
+    request.url = this.baseUrl + url;
     request.params = params;
     if (config) {
       config(request);
     }
     return request;
   }
-
-  private getAppConfig(
-    url: string,
-    params?: any,
-    config?: (config: AxiosRequestConfig) => void,
-  ): AxiosRequestConfig {
-    return this.getRequestConfig(AppConsts.appUrl, url, params, config);
-  }
 }
 
-const ajax = new Ajax();
-
-export default ajax;
+export const baseAjax = new Ajax();

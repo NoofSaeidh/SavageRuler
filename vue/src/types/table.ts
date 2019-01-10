@@ -1,4 +1,4 @@
-import { ViewField } from './view-field';
+import { ViewField } from './view';
 
 export interface TableField extends ViewField {
   sortable?: boolean;

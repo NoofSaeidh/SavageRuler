@@ -1,58 +1,32 @@
 <template>
   <div>
-    {{temp}}
-    <br>
-    {{formFields}}
-    <br>
-    <button @click="rowClicked">Click Me!</button>
-    <div v-if="showModal">
-      <!-- <ModalForm :item="item" :fields="formFields" :id="id"></ModalForm> -->
-    </div>
-    <div>
-      <!-- <ShortTable appName="Power" :includeFields="tableFields" :onRowClicked="rowClicked"></ShortTable> -->
-    </div>
+    <ReadOnlyScreen
+      :apiDescriptor="apiDescriptor"
+      :formFields="formFields"
+      :tableFields="tableFields"
+      :localizeTypeName="localizeTypeName"
+    ></ReadOnlyScreen>
   </div>
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop, Provide, Watch } from 'vue-property-decorator';
-import { Power } from '@/types/power';
-import { OnRowClicked } from '@/types/delegates';
-import { FormField, FormFieldValue } from '@/types/form';
-import abpHelper from '@/global/abp-helper';
-import localization from '@/api/localization';
-import localizationHelper from '@/helpers/localization-helper';
-import ShortTable from '@/components/ShortTable.vue';
-import ModalForm from '@/components/ModalForm.vue';
+import { Vue, Component } from 'vue-property-decorator';
+import { apiServiceHelper } from '@/api/api-service-helper';
+// import { FormField } from '@/types/form';
+// import { TableField } from '@/types/table';
+// import { Power } from '@/types/power';
+
+import ReadOnlyScreen from '@/components/ReadOnlyScreen.vue';
 
 @Component({
   components: {
-    ShortTable,
-    ModalForm,
+    ReadOnlyScreen,
   },
 })
 export default class Powers extends Vue {
-  public temp: string = '';
-  public showModal = false;
-  public formFields: FormField[] = [
-    {
-      key: 'name',
-      label: 'Name',
-    },
-    {
-      key: 'book',
-      label: 'Book',
-    },
-  ];
   public tableFields = ['name', 'book', 'points', 'duration', 'distance', 'rank'];
-  public item!: Power;
-
-
-  public rowClicked(record: Power, index: number, event: MouseEvent) {
-    this.item = record;
-    this.showModal = true;
-    localizationHelper.getLocalizedLabels('Power').then(r => this.formFields = r);
-    localization.getLocalizedProperties('Power').then(p => this.temp = JSON.stringify(p));
-  }
+  public formFields = ['name', 'book', 'points', 'duration', 'distance', 'rank', 'text'];
+  public apiDescriptor = apiServiceHelper.getDefaultDescriptor('Power');
+  public localizeTypeName = 'Power';
 }
 </script>
