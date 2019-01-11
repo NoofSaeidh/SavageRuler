@@ -1,7 +1,6 @@
 <template>
   <div>
     <ReadOnlyModal v-if="selected" :show="showModal" @hide="showModal=false"  >
-      Some Text
       <ReadOnlyForm :fields="localizedFormFields" :item="selected"></ReadOnlyForm>
     </ReadOnlyModal>
     <!-- TODO: add some animation -->

@@ -1,6 +1,10 @@
 <template>
   <div>
-    <b-modal :ref="refId" ok-only @hide="hide">
+    <b-modal :ref="refId" ok-only @hide="hide" header-class="text-center d-block" hide-header-close>
+      <div v-if="title" slot="modal-title" class="modal-title text-center d-block">
+          <b v-text="title"></b>
+      </div>
+
       <slot></slot>
     </b-modal>
   </div>
@@ -15,6 +19,7 @@ export default class ReadOnlyModal extends Vue {
   private static $uniqueId: number = 0;
 
   @Prop() show!: boolean;
+  @Prop() title?: string;
 
   refId = 'modalReadOnlyForm_' + ReadOnlyModal.$uniqueId++;
 
