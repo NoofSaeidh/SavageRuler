@@ -18,21 +18,21 @@
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
 import { OnRowClicked } from '@/types/delegates';
-import { ViewField } from '@/types/view';
-import { FormField } from '@/types/form';
-import { TableField } from '@/types/table';
+import { ViewField, TableField, FormField } from '@/types/view-field';
 import { Entity } from '@/types/entity';
 import { ApiServiceDescriptor } from '@/types/services';
 import { localizationHelper } from '@/helpers/localization-helper';
 import { baseAjax } from '@/api/ajax';
 
-import ShortTable from '@/components/ShortTable.vue';
-import ModalForm from '@/components/ModalForm.vue';
+import ShortTable from './ShortTable.vue';
+import ModalForm from './ModalForm.vue';
+import ReadOnlyForm from './ReadOnlyForm.vue';
 
 @Component({
   components: {
     ShortTable,
     ModalForm,
+    ReadOnlyForm
   },
 })
 export default class ReadOnlyScreen<T extends Entity<TKey>, TKey> extends Vue {

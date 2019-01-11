@@ -1,5 +1,5 @@
 import { localizationService } from '@/api/localization-service';
-import { ViewField } from '@/types/view';
+import { ViewField } from '@/types/view-field';
 // import { LocalizationMap } from '@/types/localization';
 export class LocalizationHelper {
   // todo: add cache
