@@ -4,7 +4,6 @@
       :apiDescriptor="apiDescriptor"
       :formFields="formFields"
       :tableFields="tableFields"
-      :localizeTypeName="localizeTypeName"
     ></ReadOnlyScreen>
   </div>
 </template>
@@ -12,8 +11,8 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
 import { apiServiceHelper } from '@/api/api-service-helper';
-// import { FormField } from '@/types/form';
-// import { TableField } from '@/types/table';
+import { fieldsHelper } from '@/helpers/fields-helper';
+import { FormField, TableField } from '@/types/view-field';
 // import { Power } from '@/types/power';
 
 import ReadOnlyScreen from '@/components/ReadOnlyScreen.vue';
@@ -24,9 +23,26 @@ import ReadOnlyScreen from '@/components/ReadOnlyScreen.vue';
   },
 })
 export default class Powers extends Vue {
-  public tableFields = ['name', 'book', 'points', 'duration', 'distance', 'rank'];
-  public formFields = ['name', 'book', 'points', 'duration', 'distance', 'rank', 'text'];
-  public apiDescriptor = apiServiceHelper.getDefaultDescriptor('Power');
-  public localizeTypeName = 'Power';
+  tableFieldsDefinition = ['name', 'book', 'points', 'duration', 'distance', 'rank'];
+  formFieldsDefinition = ['name', 'book', 'points', 'duration', 'distance', 'rank', 'text'];
+  apiDescriptor = apiServiceHelper.getDefaultDescriptor('Power');
+  localizationTypeName = 'Power';
+
+  tableFields: TableField[] = fieldsHelper.buildFields(
+    this.tableFieldsDefinition,
+    'name',
+    {
+      sortable: true,
+    },
+  );
+
+  formFields: TableField[] = fieldsHelper.buildFields(
+    this.formFieldsDefinition,
+    'name',
+  );
+
+  async created() {
+    await fieldsHelper.localizeFields(this.localizationTypeName, this.tableFields, this.formFields);
+  }
 }
 </script>

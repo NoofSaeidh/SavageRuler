@@ -1,14 +1,14 @@
 <template>
   <div>
-    <ReadOnlyModal v-if="selected" :show="showModal" @hide="showModal=false"  >
-      <ReadOnlyForm :fields="localizedFormFields" :item="selected"></ReadOnlyForm>
+    <ReadOnlyModal v-if="selected" :show="showModal" @hide="showModal=false" :title="title">
+      <ReadOnlyForm :fields="formFields" :item="selected"></ReadOnlyForm>
     </ReadOnlyModal>
     <!-- TODO: add some animation -->
     <div v-if="loading">Loading...</div>
     <!-- TODO: interactive error (in ajax class ??) -->
     <div v-else-if="error">{{error}}</div>
     <div v-else-if="items">
-      <ShortTable :items="items" :fields="localizedTableFields" :onRowClicked="rowClicked"></ShortTable>
+      <ShortTable :items="items" :fields="tableFields" :onRowClicked="rowClicked"></ShortTable>
     </div>
     <!-- TODO: ensures never happen, and delete? -->
     <div v-else>Something went wrong!</div>
@@ -27,6 +27,7 @@ import { baseAjax } from '@/api/ajax';
 import ShortTable from './ShortTable.vue';
 import ReadOnlyForm from './ReadOnlyForm.vue';
 import ReadOnlyModal from './ReadOnlyModal.vue';
+import { fieldsHelper } from '@/helpers/fields-helper';
 
 @Component({
   components: {
@@ -37,16 +38,15 @@ import ReadOnlyModal from './ReadOnlyModal.vue';
 })
 export default class ReadOnlyScreen<T extends Entity<TKey>, TKey> extends Vue {
   @Prop() apiDescriptor!: ApiServiceDescriptor;
-  // not localized
-  @Prop() formFields!: Array<FormField | string> | null;
-  @Prop() tableFields!: Array<TableField | string> | null;
-  // for localization
-  @Prop() localizeTypeName!: string | null;
+  // should be already localized
+  @Prop() formFields!: FormField[] | null;
+  @Prop() tableFields!: TableField[] | null;
 
   selected: T | null = null;
   items: T[] | null = null;
-  localizedFormFields: FormField[] | null = null;
-  localizedTableFields: TableField[] | null = null;
+  title: string | null = null;
+
+  titleKey: string | undefined;
 
   loading: boolean = true;
   error: string | null = null;
@@ -54,26 +54,14 @@ export default class ReadOnlyScreen<T extends Entity<TKey>, TKey> extends Vue {
 
   async created() {
     try {
-      await this.localizeFields();
       await this.fetchItems();
     }
     catch (error) {
       this.error = error;
     }
     this.loading = false;
-  }
-
-  async localizeFields() {
-    if (!this.localizeTypeName) {
-      return;
-    }
     if (this.formFields) {
-      this.localizedFormFields = this.toFields(this.formFields);
-      await localizationHelper.localizeLabels(this.localizeTypeName, this.localizedFormFields);
-    }
-    if (this.tableFields) {
-      this.localizedTableFields = this.toFields(this.tableFields);
-      await localizationHelper.localizeLabels(this.localizeTypeName, this.localizedTableFields);
+      this.titleKey = fieldsHelper.getTitleKey(this.formFields);
     }
   }
 
@@ -87,19 +75,10 @@ export default class ReadOnlyScreen<T extends Entity<TKey>, TKey> extends Vue {
 
   rowClicked(record: T, index: number, event: MouseEvent) {
     this.selected = record;
+    if (this.titleKey) {
+      this.title = record[this.titleKey];
+    }
     this.showModal = true;
-  }
-
-  // todo: move to helper
-  private toFields(items: Array<ViewField | string>): ViewField[] {
-    return items.map(field => {
-      if (typeof field === 'string') {
-        return {
-          key: field,
-        };
-      }
-      return field;
-    });
   }
 }
 </script>

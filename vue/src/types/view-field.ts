@@ -1,6 +1,9 @@
+// todo: refactor for better join with real objects
 export interface ViewField {
   key: string;
   label?: string;
+  // should be only one for entity
+  isTitle?: boolean;
 }
 
 export interface ViewFieldValue<T extends ViewField = ViewField> {
