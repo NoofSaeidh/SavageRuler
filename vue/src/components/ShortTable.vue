@@ -6,7 +6,7 @@
       hover
       :items="items"
       :fields="fields"
-      @row-clicked="!!onRowClicked ? onRowClicked : never"
+      @row-clicked="onRowClicked"
     ></b-table>
   </div>
 </template>

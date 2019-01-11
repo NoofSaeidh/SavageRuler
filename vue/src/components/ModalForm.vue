@@ -19,17 +19,17 @@ import { Vue, Component, Prop, Provide, Watch } from 'vue-property-decorator';
 import { ServerList, ServerReponseList, ServerReponse, ServerError } from '@/types/server';
 import { Entity } from '@/types/entity';
 import { Modal } from 'bootstrap-vue';
-import { FormField, FormFieldValue, convertObjToFormFields } from '@/types/form';
+// import { FormField, FormFieldValue, convertObjToFormFields } from '@/types/form';
 
 @Component({})
 export default class ModalForm<T extends Entity<TKey>, TKey> extends Vue {
-  @Prop() public item!: T;
-  @Prop() public fields!: FormField[];
-  @Prop() public id!: number;
+  // @Prop() public item!: T;
+  // @Prop() public fields!: FormField[];
+  // @Prop() public id!: number;
 
-  public get fieldValues(): FormFieldValue[] {
-   return convertObjToFormFields(this.item, this.fields);
-  }
+  // public get fieldValues(): FormFieldValue[] {
+  //  return convertObjToFormFields(this.item, this.fields);
+  // }
 
   // public $ref!: {
   //   modalInfo: Modal;

@@ -1,6 +1,7 @@
 <template>
   <div>
     <div v-if="showModal">
+      <ReadOnlyForm :fields="localizedFormFields" :item="selected"></ReadOnlyForm>
       <!-- <ModalForm :item="item" :fields="formFields" :id="id"></ModalForm> -->
     </div>
     <!-- TODO: add some animation -->
@@ -8,7 +9,7 @@
     <!-- TODO: interactive error (in ajax class ??) -->
     <div v-else-if="error">{{error}}</div>
     <div v-else-if="items">
-      <ShortTable :items="items" :fields="tableFields" :onRowClicked="rowClicked"></ShortTable>
+      <ShortTable :items="items" :fields="localizedTableFields" :onRowClicked="rowClicked"></ShortTable>
     </div>
     <!-- TODO: ensures never happen, and delete? -->
     <div v-else>Something went wrong!</div>
@@ -32,20 +33,23 @@ import ReadOnlyForm from './ReadOnlyForm.vue';
   components: {
     ShortTable,
     ModalForm,
-    ReadOnlyForm
+    ReadOnlyForm,
   },
 })
 export default class ReadOnlyScreen<T extends Entity<TKey>, TKey> extends Vue {
   @Prop() apiDescriptor!: ApiServiceDescriptor;
   // not localized
   @Prop() formFields!: Array<FormField | string> | null;
-  @Prop() tableFields!: Array<FormField | string> | null;
+  @Prop() tableFields!: Array<TableField | string> | null;
   // for localization
   @Prop() localizeTypeName!: string | null;
 
-  showModal: boolean = false;
   selected: T | null = null;
   items: T[] | null = null;
+  localizedFormFields: FormField[] | null = null;
+  localizedTableFields: TableField[] | null = null;
+
+  showModal: boolean = false;
   loading: boolean = true;
   error: string | null = null;
 
@@ -65,10 +69,12 @@ export default class ReadOnlyScreen<T extends Entity<TKey>, TKey> extends Vue {
       return;
     }
     if (this.formFields) {
-      await localizationHelper.localizeLabels(this.localizeTypeName, this.toFields(this.formFields));
+      this.localizedFormFields = this.toFields(this.formFields);
+      await localizationHelper.localizeLabels(this.localizeTypeName, this.localizedFormFields);
     }
     if (this.tableFields) {
-      await localizationHelper.localizeLabels(this.localizeTypeName, this.toFields(this.tableFields));
+      this.localizedTableFields = this.toFields(this.tableFields);
+      await localizationHelper.localizeLabels(this.localizeTypeName, this.localizedTableFields);
     }
   }
 

@@ -1,8 +1,10 @@
 <template>
   <div>
-    <li v-for="fieldValue in fieldValues" :key="fieldValue.field.key">
-      <ReadOnlyField :fieldValue="fieldValue"></ReadOnlyField>
-    </li>
+    <ReadOnlyField
+      :fieldValue="fieldValue"
+      v-for="fieldValue in fieldValues"
+      :key="fieldValue.field.key"
+    ></ReadOnlyField>
   </div>
 </template>
 
