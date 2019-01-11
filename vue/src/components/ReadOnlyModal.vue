@@ -10,8 +10,6 @@
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
 import { Modal } from 'bootstrap-vue';
 
-import ReadOnlyForm from './ReadOnlyForm.vue';
-
 @Component({})
 export default class ReadOnlyModal extends Vue {
   private static $uniqueId: number = 0;

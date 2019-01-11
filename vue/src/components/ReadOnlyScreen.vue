@@ -18,9 +18,7 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
-import { Modal } from 'bootstrap-vue';
 
-import { OnRowClicked } from '@/types/delegates';
 import { ViewField, TableField, FormField } from '@/types/view-field';
 import { Entity } from '@/types/entity';
 import { ApiServiceDescriptor } from '@/types/services';
