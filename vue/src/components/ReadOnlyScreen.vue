@@ -1,9 +1,9 @@
 <template>
   <div>
-    <div v-if="showModal">
+    <ReadOnlyModal v-if="selected" :show="showModal" @hide="showModal=false"  >
+      Some Text
       <ReadOnlyForm :fields="localizedFormFields" :item="selected"></ReadOnlyForm>
-      <!-- <ModalForm :item="item" :fields="formFields" :id="id"></ModalForm> -->
-    </div>
+    </ReadOnlyModal>
     <!-- TODO: add some animation -->
     <div v-if="loading">Loading...</div>
     <!-- TODO: interactive error (in ajax class ??) -->
@@ -18,6 +18,8 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Modal } from 'bootstrap-vue';
+
 import { OnRowClicked } from '@/types/delegates';
 import { ViewField, TableField, FormField } from '@/types/view-field';
 import { Entity } from '@/types/entity';
@@ -26,14 +28,14 @@ import { localizationHelper } from '@/helpers/localization-helper';
 import { baseAjax } from '@/api/ajax';
 
 import ShortTable from './ShortTable.vue';
-import ModalForm from './ModalForm.vue';
 import ReadOnlyForm from './ReadOnlyForm.vue';
+import ReadOnlyModal from './ReadOnlyModal.vue';
 
 @Component({
   components: {
     ShortTable,
-    ModalForm,
     ReadOnlyForm,
+    ReadOnlyModal,
   },
 })
 export default class ReadOnlyScreen<T extends Entity<TKey>, TKey> extends Vue {
@@ -49,9 +51,9 @@ export default class ReadOnlyScreen<T extends Entity<TKey>, TKey> extends Vue {
   localizedFormFields: FormField[] | null = null;
   localizedTableFields: TableField[] | null = null;
 
-  showModal: boolean = false;
   loading: boolean = true;
   error: string | null = null;
+  showModal: boolean = false;
 
   async created() {
     try {

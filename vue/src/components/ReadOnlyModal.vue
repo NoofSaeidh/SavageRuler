@@ -1,0 +1,44 @@
+<template>
+  <div>
+    <b-modal :ref="refId" ok-only @hide="hide">
+      <slot></slot>
+    </b-modal>
+  </div>
+</template>
+
+<script lang="ts">
+import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
+import { Modal } from 'bootstrap-vue';
+
+import ReadOnlyForm from './ReadOnlyForm.vue';
+
+@Component({})
+export default class ReadOnlyModal extends Vue {
+  private static $uniqueId: number = 0;
+
+  @Prop() show!: boolean;
+
+  refId = 'modalReadOnlyForm_' + ReadOnlyModal.$uniqueId++;
+
+  $refs!: {
+    [index: string]: Modal,
+  };
+
+  mounted() {
+    this.showChanged(this.show);
+  }
+
+  @Watch('show') showChanged(newValue: boolean) {
+    if (newValue) {
+      this.$refs[this.refId].show();
+    }
+    else {
+      this.$refs[this.refId].hide();
+    }
+  }
+
+  hide() {
+    this.$emit('hide');
+  }
+}
+</script>
