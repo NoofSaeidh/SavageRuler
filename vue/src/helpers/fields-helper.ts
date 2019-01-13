@@ -1,4 +1,4 @@
-import { ViewField, ViewFieldValue, TableField, FormField } from '@/types/view-field';
+import { ViewField, ViewFieldValue } from '@/types/view-field';
 import { localizationHelper } from '@/helpers/localization-helper';
 import { arrayHelper } from './array-helper';
 

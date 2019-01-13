@@ -27,12 +27,11 @@
 
 <script lang="ts">
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
-import { NavigationGuard, Route } from 'vue-router';
+import { Route } from 'vue-router';
 
-import { ViewField, TableField, FormField } from '@/types/view-field';
+import { TableField, FormField } from '@/types/view-field';
 import { Entity } from '@/types/entity';
 import { ApiServiceDescriptor } from '@/types/services';
-import { localizationHelper } from '@/helpers/localization-helper';
 import { baseAjax } from '@/api/ajax';
 
 import ShortTable from './ShortTable.vue';
@@ -97,8 +96,9 @@ export default class ReadOnlyScreen<T extends Entity<TKey>, TKey> extends Vue {
   }
 
   async fetchSelected(id: string) {
+    // todo: some handle
     if (!this.apiDescriptor.getUrl) {
-      throw new Error('This component cannot be presented, because it must have url for fetch all');
+      throw new Error('This component cannot be presented, because it must have url for fetch id');
     }
     this.selected = (await baseAjax.request<T>(apiServiceHelper.buildUrl(this.apiDescriptor.getUrl, id))).result;
   }

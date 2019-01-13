@@ -36,7 +36,7 @@ export default class Powers extends Vue {
     },
   );
 
-  formFields: TableField[] = fieldsHelper.buildFields(
+  formFields: FormField[] = fieldsHelper.buildFields(
     this.formFieldsDefinition,
     'name',
   );
