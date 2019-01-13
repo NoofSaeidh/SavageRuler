@@ -12,6 +12,11 @@ export class ApiServiceHelper {
       deleteUrl: base + '/Delete',
     };
   }
+
+  // todo: add body also
+  buildUrl(url: string, id: string) {
+    return url + '?id=' + id;
+  }
 }
 
 export const apiServiceHelper = new ApiServiceHelper();
