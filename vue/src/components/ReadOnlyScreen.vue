@@ -108,7 +108,20 @@ export default class ReadOnlyScreen<T extends Entity<TKey>, TKey> extends Vue {
     if (this.titleKey) {
       this.title = record[this.titleKey];
     }
-    this.showModal = true;
+    // show selected item in modal on click
+    // or as common screen when click with alt
+    // or in new window with ctrl
+    // todo: handle different on mobile
+    if (event.altKey) {
+      this.showTable = false;
+    }
+    else if (event.ctrlKey) {
+      window.open(this.$router.resolve(
+        { path: record.id.toString(), append: true }).href);
+    }
+    else {
+      this.showModal = true;
+    }
   }
 
   @Watch('$route') async routeChanged(newRoute: Route, oldRoute: Route) {
