@@ -11,14 +11,16 @@
     <!-- TODO: interactive error (in ajax class ??) -->
     <div v-else-if="error">{{error}}</div>
 
-    <!-- single item -->
-    <div v-else-if="showSingle">
-      <ReadOnlyForm :fields="formFields" :item="selected"></ReadOnlyForm>
-    </div>
-
-    <!-- grid -->
     <div v-else>
-      <ShortTable :items="items" :fields="tableFields" :onRowClicked="rowClicked"></ShortTable>
+      <!-- single item -->
+      <div v-if="showTable">
+        <ShortTable v-if="items" :items="items" :fields="tableFields" :onRowClicked="rowClicked"></ShortTable>
+      </div>
+
+      <!-- grid -->
+      <div v-else>
+        <ReadOnlyForm v-if="selected" :fields="formFields" :item="selected"></ReadOnlyForm>
+      </div>
     </div>
   </div>
 </template>
@@ -55,13 +57,12 @@ export default class ReadOnlyScreen<T extends Entity<TKey>, TKey> extends Vue {
   selected: T | null = null;
   items: T[] | null = null;
   title: string | null = null;
-
-  titleKey: string | undefined;
-
   loading: boolean = true;
   error: string | null = null;
   showModal: boolean = false;
-  showSingle!: boolean;
+  showTable: boolean = true;
+
+  titleKey: string | undefined;
 
   async created() {
     await this.load(this.$route);
@@ -73,11 +74,11 @@ export default class ReadOnlyScreen<T extends Entity<TKey>, TKey> extends Vue {
   async load(route: Route) {
     try {
       if (route.params.id) {
-        this.showSingle = true;
+        this.showTable = false;
         await this.fetchSelected(route.params.id);
       }
       else {
-        this.showSingle = false;
+        this.showTable = true;
         await this.fetchItems();
       }
     }
