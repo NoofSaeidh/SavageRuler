@@ -6,6 +6,7 @@ import 'bootstrap-vue/dist/bootstrap-vue.css';
 import App from './App.vue';
 import router from './router';
 import store, { RootStore } from './store';
+import { localizationHelper } from './helpers/localization-helper';
 
 // import abpHelper from './global/abp-helper';
 

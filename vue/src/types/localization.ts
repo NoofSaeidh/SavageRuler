@@ -11,9 +11,3 @@ export interface SourceInfo {
   name: string;
   type: string;
 }
-
-// simple object actually
-// todo: use real Map instead?
-export interface LocalizationMap {
-  [keyof: string]: string | undefined;
-}

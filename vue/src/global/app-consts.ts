@@ -12,7 +12,7 @@ export const AppConsts = {
   },
   localization: {
     defaultLocalizationSourceName: 'SavageRuler',
-    entityLocalizationPath: '/GetLocalizedProperties',
+    defaultLanguage: 'ru', // should be handle by abp (coockie, browser, e.t.c.), but in this app only ru is required (now)
   },
   authorization: {
     encrptedAuthTokenName: 'enc_auth_token',
