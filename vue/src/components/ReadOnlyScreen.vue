@@ -112,12 +112,15 @@ export default class ReadOnlyScreen<T extends Entity<TKey>, TKey> extends Vue {
     // or as common screen when click with alt
     // or in new window with ctrl
     // todo: handle different on mobile
-    if (event.altKey) {
-      this.showTable = false;
-    }
-    else if (event.ctrlKey) {
-      window.open(this.$router.resolve(
-        { path: record.id.toString(), append: true }).href);
+    if (event.altKey || event.ctrlKey) {
+      const href = this.$router.resolve(
+        { path: record.id.toString(), append: true }).href;
+      if (event.altKey) {
+        this.$router.push(href);
+      }
+      else {
+        window.open(href);
+      }
     }
     else {
       this.showModal = true;
