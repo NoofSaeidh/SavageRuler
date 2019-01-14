@@ -1,11 +1,12 @@
 import { localizationService } from '@/api/localization-service';
 import { ViewField } from '@/types/view-field';
+import localizationStore from '@/store/modules/localization';
 // import { LocalizationMap } from '@/types/localization';
 export class LocalizationHelper {
   // todo: add cache
   async localizeLabels(typeName: string, fields: ViewField[]): Promise<void> {
     // todo: current culture
-    const map = await localizationService.getLocalizedProperties(typeName);
+    const map = await localizationService.getLocalizedProperties(typeName, localizationStore.state.currentCulture);
 
     for (const field of fields) {
       const label = map[field.key];
@@ -22,7 +23,7 @@ export class LocalizationHelper {
 
   async getLocalizedLabels(typeName: string): Promise<ViewField[]> {
     return await localizationService
-      .getLocalizedProperties(typeName)
+      .getLocalizedProperties(typeName, localizationStore.state.currentCulture)
       .then(map =>
         Object
           // todo: if it became real map -> fix this

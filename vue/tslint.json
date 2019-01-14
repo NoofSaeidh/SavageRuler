@@ -16,6 +16,7 @@
     "max-line-length": [true, 200],
     "one-line": [true, "check-open-brace", "check-whitespace"],
     "no-unused-expression": true,
-    "no-unused-variable": true
+    "no-unused-variable": true,
+    "max-classes-per-file": false
   }
 }

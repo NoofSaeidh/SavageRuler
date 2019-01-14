@@ -3,7 +3,7 @@ import abpUtils from '@/lib/abp-utils';
 
 export class AbpHelper {
   loadAbpScripts() {
-    this.safeLoadScript(AppConsts.getScriptsUrl);
+    this.safeLoadScript(AppConsts.getAppScriptsUrlFull);
   }
 
   // the same as loadScript in abp
