@@ -1,8 +1,15 @@
 <template>
   <div>
-    <b-modal :ref="refId" ok-only @hide="hide" header-class="text-center d-block" hide-header-close>
+    <b-modal
+      :ref="refId"
+      ok-only
+      @hide="hide"
+      header-class="text-center d-block"
+      hide-header-close
+      size="lg"
+    >
       <div v-if="title" slot="modal-title" class="modal-title text-center d-block">
-          <b v-text="title"></b>
+        <b v-text="title"></b>
       </div>
 
       <slot></slot>

@@ -1,6 +1,6 @@
 <template>
   <b-row class="text-left">
-    <b-col cols="2" lg="1">
+    <b-col lg="2" md="3" sm="3">
       <b v-text="title"/>: 
     </b-col>
     <b-col v-text="value">
