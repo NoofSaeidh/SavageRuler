@@ -1,5 +1,5 @@
 import { AppConsts } from '@/global/app-consts';
-import { LanguageInfo, SourceInfo, LocalizationMap } from '@/types/localization';
+import { LanguageInfo, SourceInfo } from '@/types/localization';
 import { Ajax } from './ajax';
 import { Dictionary } from 'vue-router/types/router';
 
