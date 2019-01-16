@@ -1,11 +1,6 @@
 <template>
   <div>
-    <ReadOnlyField
-      v-for="[key, field, value] in fields"
-      :key="key"
-      :field="field"
-      :value="value"
-    ></ReadOnlyField>
+    <ReadOnlyField v-for="[key, field, value] in fields" :key="key" :field="field" :value="value"></ReadOnlyField>
   </div>
 </template>
 
@@ -26,13 +21,17 @@ export default class ReadOnlyScreen<T extends Entity<TKey>, TKey> extends Vue {
   @Prop() item!: T;
 
   // todo: add real checkings?
-  get fields(): Array<[string, FormField | undefined, any]> | undefined {
+  get fields(): Array<[string, FormField, any]> | undefined {
     if (!this.descriptor.formFields) {
       return;
     }
-    const result: Array<[string, FormField | undefined, any]> = [];
-    for(const [key, value] of Object.entries(this.item)){
-      result.push([key, this.descriptor.formFields[key], value]);
+    const result: Array<[string, FormField, any]> = [];
+    for (const [key, value] of Object.entries(this.item)) {
+      const field = this.descriptor.formFields[key];
+      if (!field) {
+        continue;
+      }
+      result.push([key, field, value]);
     }
     return result;
   }
