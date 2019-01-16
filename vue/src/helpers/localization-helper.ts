@@ -1,22 +1,25 @@
 import { localizationService } from '@/api/localization-service';
-import { ViewField } from '@/types/view-field';
+import { ViewField, ViewObjectDescriptor, ViewFieldDescriptor } from '@/types/view-object';
 import localizationStore from '@/store/modules/localization';
-import { AppConsts } from '@/global/app-consts';
 import { Dictionary } from 'vue-router/types/router';
-// import { LocalizationMap } from '@/types/localization';
-export class LocalizationHelper {
-  // todo: add cache
-  async localizeLabels(typeName: string, fields: ViewField[]): Promise<void> {
-    const props = await this.getCachedLocalizaedProperties(typeName);
 
-    for (const field of fields) {
-      const label = props[field.key];
-      if (label) {
-        field.label = label;
-      } else {
-        field.label = field.key;
-      }
+export class LocalizationHelper {
+  get currentCulture(): string {
+    return localizationStore.state.currentCulture;
+  }
+
+  async checkOrLocalizeDescriptor<T>(descriptor: ViewObjectDescriptor<T>) {
+    if(descriptor.locale && descriptor.locale === this.currentCulture) {
+      return;
     }
+    await this.localizeDescriptor(descriptor);
+  }
+
+  async localizeDescriptor<T>(descriptor: ViewObjectDescriptor<T>) {
+    const props = await this.getCachedLocalizaedProperties(descriptor.typeName);
+    const entries = Object.entries(props);
+    this.localizeFieldsInt(entries, descriptor.formFields);
+    this.localizeFieldsInt(entries, descriptor.tableFields);
   }
 
   async getLocalizedLabels(typeName: string): Promise<ViewField[]> {
@@ -25,7 +28,19 @@ export class LocalizationHelper {
   }
 
   async getCachedLocalizaedProperties(typeName: string): Promise<Dictionary<string>> {
-    return await localizationStore.localizeTypeAsync(typeName, () => localizationService.getLocalizedProperties(typeName, localizationStore.state.currentCulture));
+    return await localizationStore.localizeTypeAsync(typeName, () => localizationService.getLocalizedProperties(typeName, this.currentCulture));
+  }
+
+  private localizeFieldsInt<T>(props: Array<[string, string]>, fields?: ViewFieldDescriptor<T>) {
+    if (!fields) {
+      return;
+    }
+    for (const [key, label] of props) {
+      const field = fields[key as keyof T];
+      if (field) {
+        field.label = label;
+      }
+    }
   }
 }
 export const localizationHelper = new LocalizationHelper();

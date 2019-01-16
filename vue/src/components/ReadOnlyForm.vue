@@ -1,21 +1,20 @@
 <template>
   <div>
     <ReadOnlyField
-      :fieldValue="fieldValue"
-      v-for="fieldValue in fieldValues"
-      :key="fieldValue.field.key"
+      v-for="[key, field, value] in fields"
+      :key="key"
+      :field="field"
+      :value="value"
     ></ReadOnlyField>
   </div>
 </template>
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
-// import { OnRowClicked } from '@/types/delegates';
-import { FormField, ViewFieldValue } from '@/types/view-field';
 import { Entity } from '@/types/entity';
-import {fieldsHelper} from '@/helpers/fields-helper';
 
 import ReadOnlyField from './ReadOnlyField.vue';
+import { ViewObjectDescriptor, FormField } from '@/types/view-object';
 
 @Component({
   components: {
@@ -23,10 +22,19 @@ import ReadOnlyField from './ReadOnlyField.vue';
   },
 })
 export default class ReadOnlyScreen<T extends Entity<TKey>, TKey> extends Vue {
-  @Prop() fields!: FormField[];
+  @Prop() descriptor!: ViewObjectDescriptor<T>;
   @Prop() item!: T;
-  get fieldValues(): Array<ViewFieldValue<FormField>> {
-    return fieldsHelper.convertObjToFieldValues<FormField>(this.item, this.fields);
+
+  // todo: add real checkings?
+  get fields(): Array<[string, FormField | undefined, any]> | undefined {
+    if (!this.descriptor.formFields) {
+      return;
+    }
+    const result: Array<[string, FormField | undefined, any]> = [];
+    for(const [key, value] of Object.entries(this.item)){
+      result.push([key, this.descriptor.formFields[key], value]);
+    }
+    return result;
   }
 }
 </script>

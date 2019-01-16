@@ -2,7 +2,7 @@
   <div>
     <!-- modal dialog -->
     <ReadOnlyModal v-if="selected" :show="showModal" @hide="showModal=false" :title="title">
-      <ReadOnlyForm :fields="formFields" :item="selected"></ReadOnlyForm>
+      <ReadOnlyForm :descriptor="objectDescriptor" :item="selected"></ReadOnlyForm>
     </ReadOnlyModal>
 
     <!-- TODO: add some animation -->
@@ -14,12 +14,12 @@
     <div v-else>
       <!-- single item -->
       <div v-if="showTable">
-        <ShortTable v-if="items" :items="items" :fields="tableFields" :onRowClicked="rowClicked"></ShortTable>
+        <ShortTable v-if="items" :items="items" :descriptor="objectDescriptor" :onRowClicked="rowClicked"></ShortTable>
       </div>
 
       <!-- grid -->
       <div v-else>
-        <ReadOnlyForm v-if="selected" :fields="formFields" :item="selected"></ReadOnlyForm>
+        <ReadOnlyForm v-if="selected" :descriptor="objectDescriptor" :item="selected"></ReadOnlyForm>
       </div>
     </div>
   </div>
@@ -29,7 +29,6 @@
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
 import { Route } from 'vue-router';
 
-import { TableField, FormField } from '@/types/view-field';
 import { Entity } from '@/types/entity';
 import { ApiServiceDescriptor } from '@/types/services';
 import { baseAjax } from '@/api/ajax';
@@ -37,8 +36,8 @@ import { baseAjax } from '@/api/ajax';
 import ShortTable from './ShortTable.vue';
 import ReadOnlyForm from './ReadOnlyForm.vue';
 import ReadOnlyModal from './ReadOnlyModal.vue';
-import { fieldsHelper } from '@/helpers/fields-helper';
 import { apiServiceHelper } from '@/api/api-service-helper';
+import { ViewObjectDescriptor } from '@/types/view-object';
 
 @Component({
   components: {
@@ -49,9 +48,7 @@ import { apiServiceHelper } from '@/api/api-service-helper';
 })
 export default class ReadOnlyScreen<T extends Entity<TKey>, TKey> extends Vue {
   @Prop() apiDescriptor!: ApiServiceDescriptor;
-  // should be already localized
-  @Prop() formFields!: FormField[] | null;
-  @Prop() tableFields!: TableField[] | null;
+  @Prop() objectDescriptor!: ViewObjectDescriptor<T>;
 
   selected: T | null = null;
   items: T[] | null = null;
@@ -61,13 +58,8 @@ export default class ReadOnlyScreen<T extends Entity<TKey>, TKey> extends Vue {
   showModal: boolean = false;
   showTable: boolean = true;
 
-  titleKey: string | undefined;
-
   async created() {
     await this.load(this.$route);
-    if (this.formFields) {
-      this.titleKey = fieldsHelper.getTitleKey(this.formFields);
-    }
   }
 
   async load(route: Route) {
@@ -105,9 +97,7 @@ export default class ReadOnlyScreen<T extends Entity<TKey>, TKey> extends Vue {
 
   rowClicked(record: T, index: number, event: MouseEvent) {
     this.selected = record;
-    if (this.titleKey) {
-      this.title = record[this.titleKey];
-    }
+    this.title = record[this.objectDescriptor.titleKey];
     // show selected item in modal on click
     // or as common screen when click with alt
     // or in new window with ctrl

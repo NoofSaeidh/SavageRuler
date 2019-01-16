@@ -11,16 +11,14 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
-import { FormField, ViewFieldValue } from '@/types/view-field';
+import { FormField } from '@/types/view-object';
 
 @Component({})
 export default class ReadOnlyField extends Vue {
-  @Prop() fieldValue!: ViewFieldValue<FormField>;
+  @Prop() field!: FormField;
+  @Prop() value!: any;
   get title() {
-    return this.fieldValue.field.label || this.fieldValue.field.key;
-  }
-  get value() {
-    return this.fieldValue.value;
+    return this.field.label;
   }
 }
 </script>
