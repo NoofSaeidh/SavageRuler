@@ -9,7 +9,7 @@ const formFields: ViewFieldDescriptor<Power, FormField> = {
   distance: {},
   rank: {},
   trappings: {},
-  text: { type: 'hRuler' },
+  text: {addHorizontalRuler: true, hideLabel: true, encode: true},
 };
 
 const tableFields: ViewFieldDescriptor<Power, TableField> = {

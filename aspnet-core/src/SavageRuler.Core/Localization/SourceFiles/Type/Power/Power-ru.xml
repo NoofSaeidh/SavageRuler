@@ -3,7 +3,7 @@
   <texts>
     <text name="Name" value="Название" />
     <text name="Book" value="Книга" />
-    <text name="Points" value="Пункты Силы" />
+    <text name="Points" value="Пункты cилы" />
     <text name="Duration" value="Длительность" />
     <text name="Distance" value="Дистанция" />
     <text name="Rank" value="Ранг" />

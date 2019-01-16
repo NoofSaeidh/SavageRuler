@@ -8,7 +8,7 @@ export type ViewFieldDescriptor<T, V extends ViewField = ViewField> = TypeDescri
 export interface ViewObjectDescriptor<T> {
   typeName: string;
   titleKey: keyof T;
-  locale?: string; // contain locale already
+  locale?: string; // shows that descriptor is already localized
   formFields?: ViewFieldDescriptor<T, FormField>;
   tableFields?: ViewFieldDescriptor<T, TableField>;
 }
@@ -23,10 +23,12 @@ export interface ViewField {
   label?: string;
 }
 
-export type FormFieldType = 'default' | 'hRuler';
-
 export interface FormField extends ViewField {
-  type?: FormFieldType;
+  showNullValue?: boolean; // if true null will be presented (undefined willl not be presented always)
+  preformated?: boolean; // use <pre> instead of <p> for value
+  addHorizontalRuler?: boolean;
+  hideLabel?: boolean;
+  encode?: boolean; // replace line breaks and tabs with html tags
 }
 
 export interface TableField extends ViewField {
