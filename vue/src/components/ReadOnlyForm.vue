@@ -1,5 +1,5 @@
 <template>
-  <div class="container-fluid">
+  <div>
     <ReadOnlyField v-for="[key, field, value] in fields" :key="key" :field="field" :value="value"></ReadOnlyField>
   </div>
 </template>

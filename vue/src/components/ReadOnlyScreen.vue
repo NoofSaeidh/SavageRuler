@@ -1,8 +1,15 @@
 <template>
-  <div @keydown="arrowPressed">
+  <div class="container-fluid">
     <!-- modal dialog -->
-    <ReadOnlyModal v-if="selected" :show="showModal" @hide="showModal=false" :title="title">
-      <ReadOnlyForm :descriptor="objectDescriptor" :item="selected"></ReadOnlyForm>
+    <ReadOnlyModal
+      v-if="selected"
+      :show="showModal"
+      :title="title"
+      @hide="showModal=false"
+      @keydown.native.left="swipeLeftModal"
+      @keydown.native.right="swipeRightModal"
+    >
+      <ReadOnlyForm :descriptor="objectDescriptor" :item="selected"/>
     </ReadOnlyModal>
 
     <!-- TODO: add some animation -->
@@ -12,7 +19,7 @@
     <div v-else-if="error">{{error}}</div>
 
     <div v-else>
-      <!-- single item -->
+      <!-- grid -->
       <div v-if="showTable">
         <ShortTable
           v-if="items"
@@ -22,9 +29,9 @@
         ></ShortTable>
       </div>
 
-      <!-- grid -->
+      <!-- single item -->
       <div v-else>
-        <ReadOnlyForm v-if="selected" :descriptor="objectDescriptor" :item="selected"></ReadOnlyForm>
+        <ReadOnlyForm v-if="selected" :descriptor="objectDescriptor" :item="selected"/>
       </div>
     </div>
   </div>
@@ -68,6 +75,10 @@ export default class ReadOnlyScreen<T extends Entity<TKey>, TKey> extends Vue {
     await this.load(this.$route);
   }
 
+  @Watch('$route') async routeChanged(newRoute: Route, oldRoute: Route) {
+    await this.load(newRoute);
+  }
+
   async load(route: Route) {
     try {
       if (route.params.id) {
@@ -84,6 +95,7 @@ export default class ReadOnlyScreen<T extends Entity<TKey>, TKey> extends Vue {
     }
     this.loading = false;
   }
+
 
   async fetchItems() {
     if (!this.apiDescriptor.getAllUrl) {
@@ -124,11 +136,39 @@ export default class ReadOnlyScreen<T extends Entity<TKey>, TKey> extends Vue {
     }
   }
 
-  @Watch('$route') async routeChanged(newRoute: Route, oldRoute: Route) {
-    await this.load(newRoute);
+  swipeLeftModal() {
+    let index = this.selectedIndex || 0;
+    index--;
+    if (index < 0) {
+      index = 0;
+    }
+    this.selectedIndex = index;
+    this.selected = this.items![index];
+    this.title = this.selected[this.objectDescriptor.titleKey];
+  }
+
+  swipeRightModal() {
+    let index = this.selectedIndex || 0;
+    index++;
+    if (index >= this.items!.length) {
+      index = this.items!.length - 1;
+    }
+    this.selectedIndex = index;
+    this.selected = this.items![index];
+    this.title = this.selected[this.objectDescriptor.titleKey];
+  }
+
+  swipeLeft() {
+    console.log('sl');
+
+  }
+
+  swipeRight() {
+    console.log('sr');
   }
 
   async arrowPressed(event: KeyboardEvent) {
+    console.log(event.key + ' - ' + event.keyCode);
     if (event.keyCode < 37 || event.keyCode > 40) {
       return;
     }
@@ -180,6 +220,7 @@ export default class ReadOnlyScreen<T extends Entity<TKey>, TKey> extends Vue {
 
     this.selectedIndex = index;
     this.selected = this.items![index];
+    this.title = this.selected[this.objectDescriptor.titleKey];
   }
 }
 </script>
