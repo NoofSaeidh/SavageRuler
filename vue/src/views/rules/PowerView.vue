@@ -1,9 +1,9 @@
 <template>
   <div>
-    <ReadOnlyScreen
+    <TheScreen
       :apiDescriptor="apiDescriptor"
       :objectDescriptor="objectDescriptor"
-    ></ReadOnlyScreen>
+    ></TheScreen>
   </div>
 </template>
 
@@ -15,14 +15,14 @@ import { Power } from '@/types/power';
 import { PowerDescriptor } from '@/descriptors/power';
 import { localizationHelper } from '@/helpers/localization-helper';
 
-import ReadOnlyScreen from '@/components/ReadOnlyScreen.vue';
+import TheScreen from '@/components/screen/TheScreen.vue';
 
 @Component({
   components: {
-    ReadOnlyScreen,
+    TheScreen,
   },
 })
-export default class Powers extends Vue {
+export default class PowerView extends Vue {
   objectDescriptor: ViewObjectDescriptor<Power> = PowerDescriptor;
   apiDescriptor = apiServiceHelper.getDefaultDescriptor('Power');
 

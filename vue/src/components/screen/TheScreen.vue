@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid">
     <!-- modal dialog -->
-    <ReadOnlyModal
+    <ReadModal
       v-if="selected"
       :show="showModal"
       :title="title"
@@ -9,8 +9,8 @@
       @keydown.native.left="swipeLeftModal"
       @keydown.native.right="swipeRightModal"
     >
-      <ReadOnlyForm :descriptor="objectDescriptor" :item="selected"/>
-    </ReadOnlyModal>
+      <ReadForm :descriptor="objectDescriptor" :item="selected"/>
+    </ReadModal>
 
     <!-- TODO: add some animation -->
     <div v-if="loading">Loading...</div>
@@ -21,17 +21,17 @@
     <div v-else>
       <!-- grid -->
       <div v-if="showTable">
-        <ShortTable
+        <InfoGrid
           v-if="items"
           :items="items"
           :descriptor="objectDescriptor"
           :onRowClicked="rowClicked"
-        ></ShortTable>
+        ></InfoGrid>
       </div>
 
       <!-- single item -->
       <div v-else>
-        <ReadOnlyForm v-if="selected" :descriptor="objectDescriptor" :item="selected"/>
+        <ReadForm v-if="selected" :descriptor="objectDescriptor" :item="selected"/>
       </div>
     </div>
   </div>
@@ -44,21 +44,21 @@ import { Route } from 'vue-router';
 import { Entity } from '@/types/entity';
 import { ApiServiceDescriptor } from '@/types/services';
 import { baseAjax } from '@/api/ajax';
-
-import ShortTable from './ShortTable.vue';
-import ReadOnlyForm from './ReadOnlyForm.vue';
-import ReadOnlyModal from './ReadOnlyModal.vue';
 import { apiServiceHelper } from '@/api/api-service-helper';
 import { ViewObjectDescriptor } from '@/types/view-object';
 
+import InfoGrid from './InfoGrid.vue';
+import ReadForm from './ReadForm.vue';
+import ReadModal from './ReadModal.vue';
+
 @Component({
   components: {
-    ShortTable,
-    ReadOnlyForm,
-    ReadOnlyModal,
+    InfoGrid,
+    ReadForm,
+    ReadModal,
   },
 })
-export default class ReadOnlyScreen<T extends Entity<TKey>, TKey> extends Vue {
+export default class TheScreen<T extends Entity<TKey>, TKey> extends Vue {
   @Prop() apiDescriptor!: ApiServiceDescriptor;
   @Prop() objectDescriptor!: ViewObjectDescriptor<T>;
 

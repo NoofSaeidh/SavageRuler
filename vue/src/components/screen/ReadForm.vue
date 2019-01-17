@@ -1,6 +1,6 @@
 <template>
   <div>
-    <ReadOnlyField v-for="[key, field, value] in fields" :key="key" :field="field" :value="value"></ReadOnlyField>
+    <ReadField v-for="[key, field, value] in fields" :key="key" :field="field" :value="value"/>
   </div>
 </template>
 
@@ -8,16 +8,17 @@
 import { Vue, Component, Prop } from 'vue-property-decorator';
 import { Entity } from '@/types/entity';
 
-import ReadOnlyField from './ReadOnlyField.vue';
 import { ViewObjectDescriptor, FormField } from '@/types/view-object';
 import { arrayHelper } from '@/helpers/array-helper';
 
+import ReadField from '../base/ReadField.vue';
+
 @Component({
   components: {
-    ReadOnlyField,
+    ReadField,
   },
 })
-export default class ReadOnlyScreen<T extends Entity<TKey>, TKey> extends Vue {
+export default class ReadForm<T extends Entity<TKey>, TKey> extends Vue {
   @Prop() descriptor!: ViewObjectDescriptor<T>;
   @Prop() item!: T;
 

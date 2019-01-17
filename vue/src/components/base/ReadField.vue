@@ -23,7 +23,7 @@ import { FormField } from '@/types/view-object';
 import { stringHelper } from '@/helpers/string-helper';
 
 @Component({})
-export default class ReadOnlyField extends Vue {
+export default class ReadField extends Vue {
   @Prop() field!: FormField;
   @Prop() value!: any;
   get show(): boolean {

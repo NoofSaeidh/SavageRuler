@@ -17,8 +17,10 @@ import { Entity } from '@/types/entity';
 import { OnRowClicked } from '@/types/delegates';
 import { ViewObjectDescriptor } from '@/types/view-object';
 
+
+// todo: oposite grid: VerboseGrid
 @Component({})
-export default class ShortTable<T extends Entity<TKey>, TKey> extends Vue {
+export default class InfoGrid<T extends Entity<TKey>, TKey> extends Vue {
   @Prop() public items!: T[];
   @Prop() public descriptor!: ViewObjectDescriptor<T>;
   // todo: make conditional??

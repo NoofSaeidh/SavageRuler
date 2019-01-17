@@ -22,13 +22,13 @@ import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
 import { Modal } from 'bootstrap-vue';
 
 @Component({})
-export default class ReadOnlyModal extends Vue {
+export default class ReadModal extends Vue {
   private static $uniqueId: number = 0;
 
   @Prop() show!: boolean;
   @Prop() title?: string;
 
-  refId = 'modalReadOnlyForm_' + ReadOnlyModal.$uniqueId++;
+  refId = 'modalReadOnlyForm_' + ReadModal.$uniqueId++;
 
   $refs!: {
     [index: string]: Modal,

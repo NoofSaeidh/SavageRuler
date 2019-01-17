@@ -24,7 +24,7 @@ export default new Router({
     {
       path: '/power',
       name: 'powers',
-      component: loadView('rules/Power'),
+      component: loadView('rules/PowerView'),
       children: [{ path: ':id', name: 'power' }],
     },
   ],
