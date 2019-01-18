@@ -2,7 +2,6 @@ import { Power } from '@/types/power';
 import { ViewFieldDescriptor, FormField, TableField, ViewObjectDescriptor } from '@/types/view-object';
 
 const formFields: ViewFieldDescriptor<Power, FormField> = {
-  name: {},
   book: {},
   points: {},
   duration: {},

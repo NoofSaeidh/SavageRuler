@@ -34,3 +34,15 @@ export interface FormField extends ViewField {
 export interface TableField extends ViewField {
   sortable?: boolean;
 }
+
+
+export interface ReadFieldValue {
+  label?: string;
+  value: any;
+  labelClass?: string; // css class
+  valueClass?: string; // css class
+  preformated?: boolean; // use <pre> instead of <p> for value
+  encodeValue?: boolean; // replace line breaks and tabs with html tags
+  addHorizontalRuler?: boolean;
+}
+

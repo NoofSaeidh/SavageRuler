@@ -1,16 +1,5 @@
 <template>
-  <div class="container-fluid">
-    <!-- modal dialog -->
-    <ReadModal
-      v-if="selected"
-      :show="showModal"
-      :title="title"
-      @hide="showModal=false"
-      @keydown.native.left="swipeLeftModal"
-      @keydown.native.right="swipeRightModal"
-    >
-      <ReadForm :descriptor="objectDescriptor" :item="selected"/>
-    </ReadModal>
+  <div>
 
     <!-- TODO: add some animation -->
     <div v-if="loading">Loading...</div>
@@ -30,8 +19,14 @@
       </div>
 
       <!-- single item -->
-      <div v-else>
-        <ReadForm v-if="selected" :descriptor="objectDescriptor" :item="selected"/>
+      <div v-else
+           class="container-fluid">
+        <ReadForm
+          v-if="selected"
+          :showTitle="true"
+          :descriptor="objectDescriptor"
+          :item="selected"
+        />
       </div>
     </div>
   </div>
@@ -49,13 +44,11 @@ import { ViewObjectDescriptor } from '@/types/view-object';
 
 import InfoGrid from './InfoGrid.vue';
 import ReadForm from './ReadForm.vue';
-import ReadModal from './ReadModal.vue';
 
 @Component({
   components: {
     InfoGrid,
     ReadForm,
-    ReadModal,
   },
 })
 export default class TheScreen<T extends Entity<TKey>, TKey> extends Vue {
@@ -63,12 +56,9 @@ export default class TheScreen<T extends Entity<TKey>, TKey> extends Vue {
   @Prop() objectDescriptor!: ViewObjectDescriptor<T>;
 
   selected: T | null = null;
-  selectedIndex: number | null = null;
   items: T[] | null = null;
-  title: string | null = null;
   loading: boolean = true;
   error: string | null = null;
-  showModal: boolean = false;
   showTable: boolean = true;
 
   async created() {
@@ -114,13 +104,6 @@ export default class TheScreen<T extends Entity<TKey>, TKey> extends Vue {
   }
 
   rowClicked(record: T, index: number, event: MouseEvent) {
-    this.selected = record;
-    this.selectedIndex = index;
-    this.title = record[this.objectDescriptor.titleKey];
-    // show selected item in modal on click
-    // or as common screen when click with alt
-    // or in new window with ctrl
-    // todo: handle different on mobile
     if (event.altKey || event.ctrlKey) {
       const href = this.$router.resolve(
         { path: record.id.toString(), append: true }).href;
@@ -130,97 +113,9 @@ export default class TheScreen<T extends Entity<TKey>, TKey> extends Vue {
       else {
         window.open(href);
       }
+      return true;
     }
-    else {
-      this.showModal = true;
-    }
-  }
-
-  swipeLeftModal() {
-    let index = this.selectedIndex || 0;
-    index--;
-    if (index < 0) {
-      index = 0;
-    }
-    this.selectedIndex = index;
-    this.selected = this.items![index];
-    this.title = this.selected[this.objectDescriptor.titleKey];
-  }
-
-  swipeRightModal() {
-    let index = this.selectedIndex || 0;
-    index++;
-    if (index >= this.items!.length) {
-      index = this.items!.length - 1;
-    }
-    this.selectedIndex = index;
-    this.selected = this.items![index];
-    this.title = this.selected[this.objectDescriptor.titleKey];
-  }
-
-  swipeLeft() {
-    console.log('sl');
-
-  }
-
-  swipeRight() {
-    console.log('sr');
-  }
-
-  async arrowPressed(event: KeyboardEvent) {
-    console.log(event.key + ' - ' + event.keyCode);
-    if (event.keyCode < 37 || event.keyCode > 40) {
-      return;
-    }
-    let index = this.selectedIndex || 1;
-    switch (event.keyCode) {
-      // swipe to the side
-      case 37 /* left */:
-        if (!this.showModal) {
-          this.showTable = false;
-        }
-        if (index > 1) {
-          index--;
-        }
-        break;
-
-      case 39 /* right */:
-        if (!this.showModal) {
-          this.showTable = false;
-        }
-        // todo: check max index
-        index++;
-        break;
-
-      // // show table
-      // case 38 /* up */:
-      //   if (this.showModal) {
-      //     this.showModal = false;
-      //   }
-      //   if (!this.showTable) {
-      //     this.showTable = true;
-      //   }
-
-      //   break;
-
-      // // show single element
-      // case 40 /* down */:
-      //   if (!this.showModal) {
-      //     this.showTable = false;
-      //   }
-      //   break;
-    }
-
-    if (this.items == null) {
-      await this.fetchItems();
-    }
-    if (index >= this.items!.length) {
-      index = this.items!.length - 1;
-    }
-
-    this.selectedIndex = index;
-    this.selected = this.items![index];
-    this.title = this.selected[this.objectDescriptor.titleKey];
+    return false;
   }
 }
 </script>
