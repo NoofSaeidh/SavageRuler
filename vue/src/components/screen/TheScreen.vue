@@ -7,7 +7,7 @@
     <!-- TODO: interactive error (in ajax class ??) -->
     <div v-else-if="error">{{error}}</div>
 
-    <div v-else>
+    <div v-else >
       <!-- grid -->
       <div v-if="showTable">
         <InfoGrid
@@ -72,12 +72,12 @@ export default class TheScreen<T extends Entity<TKey>, TKey> extends Vue {
   async load(route: Route) {
     try {
       if (route.params.id) {
-        this.showTable = false;
         await this.fetchSelected(route.params.id);
+        this.showTable = false;
       }
       else {
-        this.showTable = true;
         await this.fetchItems();
+        this.showTable = true;
       }
     }
     catch (error) {
