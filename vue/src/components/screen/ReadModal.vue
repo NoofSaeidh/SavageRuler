@@ -5,12 +5,14 @@
       ok-only
       @hide="hide"
       header-class="text-center d-block"
-      hide-header-close
+      hide-header
+      hide-footer
+      centered
       size="lg"
     >
-      <div v-if="title" slot="modal-title" class="modal-title text-center d-block">
+      <!-- <div v-if="title" slot="modal-title" class="modal-title text-center d-block">
         <b v-text="title"></b>
-      </div>
+      </div> -->
 
       <slot></slot>
     </b-modal>

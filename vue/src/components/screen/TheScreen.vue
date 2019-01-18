@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="mb-5">
 
     <!-- TODO: add some animation -->
     <div v-if="loading">Loading...</div>
@@ -15,7 +15,7 @@
           :items="items"
           :descriptor="objectDescriptor"
           :onRowClicked="rowClicked"
-        ></InfoGrid>
+        />
       </div>
 
       <!-- single item -->
@@ -26,6 +26,7 @@
           :showTitle="true"
           :descriptor="objectDescriptor"
           :item="selected"
+          :cssClasses="{labels: 'col-md-3 col-lg-2 col-sm-4 col-xs-12'}"
         />
       </div>
     </div>

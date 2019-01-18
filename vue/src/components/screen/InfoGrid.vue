@@ -12,6 +12,7 @@
       <ReadForm
         :descriptor="descriptor"
         :item="selected"
+        :cssClasses="{labels: 'col-md-4 col-lg-3'}"
       />
     </ReadModal>
 
