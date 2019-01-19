@@ -1,21 +1,20 @@
-﻿using System;
-using System.Linq;
-using System.Reflection;
+﻿using Abp.AspNetCore;
+using Abp.AspNetCore.SignalR.Hubs;
+using Abp.Castle.Logging.Log4Net;
+using Abp.Extensions;
+using Castle.Facilities.Logging;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Cors.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Castle.Facilities.Logging;
-using Swashbuckle.AspNetCore.Swagger;
-using Abp.AspNetCore;
-using Abp.Castle.Logging.Log4Net;
-using Abp.Extensions;
 using SavageRuler.Configuration;
 using SavageRuler.Identity;
-
-using Abp.AspNetCore.SignalR.Hubs;
+using Swashbuckle.AspNetCore.Swagger;
+using System;
+using System.Linq;
+using System.Reflection;
 
 namespace SavageRuler.Web.Host.Startup
 {
@@ -91,6 +90,11 @@ namespace SavageRuler.Web.Host.Startup
 
             app.UseCors(_defaultCorsPolicyName); // Enable CORS!
 
+            if (env.IsDevelopment())
+                app.UseDeveloperExceptionPage();
+            else
+                app.UseExceptionHandler("/Error");
+
             app.UseStaticFiles();
 
             app.UseAuthentication();
@@ -103,26 +107,35 @@ namespace SavageRuler.Web.Host.Startup
                 routes.MapHub<AbpCommonHub>("/signalr");
             });
 
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "defaultWithArea",
-                    template: "{area}/{controller=Home}/{action=Index}/{id?}");
-
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
-            });
-
+            // should be before MapSpaFallbackRoute or it will be redirected to SPA
             // Enable middleware to serve generated Swagger as a JSON endpoint
-            app.UseSwagger();
+            app.UseSwagger(options =>
+            {
+                options.RouteTemplate = "api/docs/swagger/{documentName}/swagger.json";
+            });
             // Enable middleware to serve swagger-ui assets (HTML, JS, CSS etc.)
             app.UseSwaggerUI(options =>
             {
-                options.SwaggerEndpoint(_appConfiguration["App:ServerRootAddress"].EnsureEndsWith('/') + "swagger/v1/swagger.json", "SavageRuler API V1");
+                options.RoutePrefix = "api/docs";
+
+                options.SwaggerEndpoint(
+                    _appConfiguration["App:ServerRootAddress"].EnsureEndsWith('/')
+                    + "api/docs/swagger/v1/swagger.json", "SavageRuler API V1");
+
                 options.IndexStream = () => Assembly.GetExecutingAssembly()
                     .GetManifestResourceStream("SavageRuler.Web.Host.wwwroot.swagger.ui.index.html");
-            }); // URL: /swagger
+            }); // URL: /api-docs/swagger
+
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute(
+                    name: "apiController",
+                    template: "api/{controller=Api}/{action=Index}/{id?}");
+
+                routes.MapSpaFallbackRoute(
+                    name: "spa-fallback",
+                    defaults: new { controller = "Home", action = "Index" });
+            });
         }
     }
 }

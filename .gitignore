@@ -12,3 +12,4 @@ aspnet-core/src/SavageRuler.Migrator/Logs/Logs.txt
 /aspnet-core/src/SavageRuler.Web.Mvc/wwwroot/lib/
 /aspnet-core/src/SavageRuler.Web.Client/wwwroot/dist/
 /aspnet-core/src/SavageRuler.Web.Client/App_Data/Logs/Logs.txt
+/.deploy/*

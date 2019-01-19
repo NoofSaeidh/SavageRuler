@@ -1,12 +1,12 @@
-const baseUrl = 'http://localhost:21021';
+import { baseURL } from '@/base-url';
 const appUrl = '/api/services/app';
 const getScriptsUrl = '/AbpScripts/GetScripts';
 export const AppConsts = {
-  baseUrl,
+  baseUrl: baseURL,
   appUrl,
-  appUrlFull: baseUrl + appUrl, // perhaps should rm
+  appUrlFull: baseURL + appUrl, // perhaps should rm
   getScriptsUrl,
-  getAppScriptsUrlFull: baseUrl + getScriptsUrl, // perhaps should rm
+  getAppScriptsUrlFull: baseURL + getScriptsUrl, // perhaps should rm
   userManagement: {
     defaultAdminUserName: 'admin',
   },
