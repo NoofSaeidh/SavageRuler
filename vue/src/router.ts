@@ -27,5 +27,14 @@ export default new Router({
       component: loadView('rules/PowerView'),
       children: [{ path: ':id', name: 'power' }],
     },
+    {
+      path: '/404',
+      name: '404',
+      component: loadView('PageNotFound'),
+    },
+    {
+      path: '*',
+      redirect: '/404',
+    },
   ],
 });
