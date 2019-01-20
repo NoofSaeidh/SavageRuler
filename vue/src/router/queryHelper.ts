@@ -31,7 +31,7 @@ export class QueryHelper {
         propName = prop.property;
         // todo: arrays!
         const qValue = query[propName] as string;
-        if (prop.type) {
+        if (prop.type && qValue !== undefined || null) {
           switch (prop.type) {
             case 'float':
               value = parseFloat(qValue);

@@ -32,7 +32,6 @@ export default class PowerView extends Vue {
   apiDescriptor = apiServiceHelper.getDefaultDescriptor('Power');
 
   async created() {
-    this.$logger.info('id: {0}, inModal: {1}', this.id + '', this.inModal + '');
     await localizationHelper.checkOrLocalizeDescriptor(this.objectDescriptor);
   }
 }
