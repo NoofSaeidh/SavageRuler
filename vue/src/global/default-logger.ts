@@ -3,7 +3,7 @@ import { stringHelper } from '@/helpers/string-helper';
 
 // tslint:disable:no-console
 export class DefaultLogger implements ILogger {
-  log(level: LogLevel, message: string, ...args: any[]) {
+  log(level: LogLevel, message: string, ...args: string[]) {
     // todo: create helper for env
     if (process.env.NODE_ENV === 'production') {
       return;
@@ -25,23 +25,23 @@ export class DefaultLogger implements ILogger {
         return;
     }
 
-    const resMessage = level + ': ' + stringHelper.format(message, args);
+    const resMessage = level + ': ' + stringHelper.format(message, ...args);
     logMethod(resMessage);
   }
 
-  debug(message: string, ...args: any[]) {
-    this.log('DEBUG', message, args);
+  debug(message: string, ...args: string[]) {
+    this.log('DEBUG', message, ...args);
   }
-  info(message: string, ...args: any[]) {
-    this.log('INFO', message, args);
+  info(message: string, ...args: string[]) {
+    this.log('INFO', message, ...args);
   }
-  warn(message: string, ...args: any[]) {
-    this.log('WARN', message, args);
+  warn(message: string, ...args: string[]) {
+    this.log('WARN', message, ...args);
   }
-  error(message: string, ...args: any[]) {
-    this.log('ERROR', message, args);
+  error(message: string, ...args: string[]) {
+    this.log('ERROR', message, ...args);
   }
-  fatal(message: string, ...args: any[]) {
-    this.log('FATAL', message, args);
+  fatal(message: string, ...args: string[]) {
+    this.log('FATAL', message, ...args);
   }
 }

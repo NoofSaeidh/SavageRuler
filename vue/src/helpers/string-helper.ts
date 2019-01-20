@@ -11,7 +11,7 @@ export const stringHelper = {
     return value;
   },
 
-  format(input: string, ...args: any[]): string {
+  format(input: string, ...args: string[]): string {
     if (typeof input !== 'string' || args.length < 1) {
       return input;
     }

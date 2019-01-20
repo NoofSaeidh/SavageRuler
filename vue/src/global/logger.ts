@@ -3,12 +3,12 @@ import { DefaultLogger } from './default-logger';
 export type LogLevel = 'DEBUG' | 'INFO' | 'WARN' | 'ERROR' | 'FATAL';
 
 export interface ILogger {
-  log(level: LogLevel, message: string, ...args: any[]): void;
-  debug(message: string, ...args: any[]): void;
-  info(message: string, ...args: any[]): void;
-  warn(message: string, ...args: any[]): void;
-  error(message: string, ...args: any[]): void;
-  fatal(message: string, ...args: any[]): void;
+  log(level: LogLevel, message: string, ...args: string[]): void;
+  debug(message: string, ...args: string[]): void;
+  info(message: string, ...args: string[]): void;
+  warn(message: string, ...args: string[]): void;
+  error(message: string, ...args: string[]): void;
+  fatal(message: string, ...args: string[]): void;
 }
 
 export const logger = new DefaultLogger();
