@@ -10,7 +10,7 @@
 
     <div v-else>
       <!-- grid -->
-      <div v-if="showTable">
+      <div v-if="displayMode==='GRID'">
         <InfoGrid
           v-if="items"
           :items="items"
@@ -25,7 +25,7 @@
         class="container-fluid"
       >
         <ReadForm
-          v-if="selected"
+          v-if="displayMode==='SINGLE'"
           :showTitle="true"
           :descriptor="objectDescriptor"
           :item="selected"
@@ -51,6 +51,8 @@ import InfoGrid from './InfoGrid.vue';
 import ReadForm from './ReadForm.vue';
 import { ServerError } from '@/types/server';
 
+type DisplayMode = 'GRID' | 'SINGLE' | 'MODAL';
+
 @Component({
   components: {
     InfoGrid,
@@ -61,42 +63,45 @@ import { ServerError } from '@/types/server';
 export default class TheScreen<T extends Entity<TKey>, TKey> extends Vue {
   @Prop() apiDescriptor!: ApiServiceDescriptor;
   @Prop() objectDescriptor!: ViewObjectDescriptor<T>;
+  @Prop() id?: number;
+  @Prop() inModal?: boolean;
 
   selected: T | null = null;
   items: T[] | null = null;
   loading: boolean = true;
   error: ServerError | null = null;
-  showTable: boolean = true;
+
+  private selectedId: number | null = null;
 
   async created() {
-    await this.load(this.$route);
+    await this.encsureLoaded();
   }
 
-  @Watch('$route') async routeChanged(newRoute: Route, oldRoute: Route) {
-    await this.load(newRoute);
+  @Watch('id')
+  @Watch('inModal')
+  async itemChanged() {
+    await this.encsureLoaded();
   }
 
-  async load(route: Route) {
-    try {
-      if (route.params.id) {
-        await this.fetchSelected(route.params.id);
-        this.showTable = false;
-      }
-      else {
-        await this.fetchItems();
-        this.showTable = true;
-      }
+  get displayMode(): DisplayMode {
+    if (this.id === undefined) {
+      return 'GRID';
     }
-    catch (error) {
-      const parsed = baseAjax.tryParseError(error);
-      if (parsed) {
-        this.error = parsed;
-      }
-      else {
-        this.$logUnhandled(error);
-      }
+    if (this.inModal) {
+      return 'MODAL';
     }
-    this.loading = false;
+    return 'SINGLE';
+  }
+
+
+  async encsureLoaded() {
+    if (this.inModal === true || this.id === undefined) {
+      await this.fetchItems();
+    }
+
+    if (this.id !== undefined && this.selectedId !== this.id) {
+      await this.fetchSelected(this.id);
+    }
   }
 
 
@@ -105,15 +110,30 @@ export default class TheScreen<T extends Entity<TKey>, TKey> extends Vue {
       throw new Error('This component cannot be presented, because it must have url for fetch all');
     }
     // todo: handle large lists?
-    this.items = (await baseAjax.requestList<T>(this.apiDescriptor.getAllUrl)).result.items;
+    this.loading = true;
+    try {
+      this.items = (await baseAjax.requestList<T>(this.apiDescriptor.getAllUrl)).result.items;
+    }
+    catch (error) {
+      this.handleError(error);
+    }
+    this.loading = false;
   }
 
-  async fetchSelected(id: string) {
+  async fetchSelected(id: number) {
     // todo: some handle
     if (!this.apiDescriptor.getUrl) {
       throw new Error('This component cannot be presented, because it must have url for fetch id');
     }
-    this.selected = (await baseAjax.request<T>(apiServiceHelper.buildUrl(this.apiDescriptor.getUrl, id))).result;
+    this.loading = true;
+    try {
+      this.selected = (await baseAjax.request<T>(apiServiceHelper.buildUrl(this.apiDescriptor.getUrl, id))).result;
+      this.selectedId = id;
+    }
+    catch (error) {
+      this.handleError(error);
+    }
+    this.loading = false;
   }
 
   rowClicked(record: T, index: number, event: MouseEvent) {
@@ -129,6 +149,16 @@ export default class TheScreen<T extends Entity<TKey>, TKey> extends Vue {
       return true;
     }
     return false;
+  }
+
+  private handleError(error: any) {
+    const parsed = baseAjax.tryParseError(error);
+    if (parsed) {
+      this.error = parsed;
+    }
+    else {
+      this.$logUnhandled(error);
+    }
   }
 }
 </script>

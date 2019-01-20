@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import Router from 'vue-router';
+import { queryHelper } from './queryHelper';
 
 Vue.use(Router);
 
@@ -23,9 +24,17 @@ export default new Router({
     },
     {
       path: '/power',
-      name: 'powers',
+      name: 'power',
       component: loadView('rules/PowerView'),
-      children: [{ path: ':id', name: 'power' }],
+      props: queryHelper.mapRoute({ property: 'id', type: 'int' }, { property: 'inModal', type: 'boolean' }),
+
+      // children: [
+      //   {
+      //     path: ':id',
+      //     name: 'power',
+      //     redirect: route => ({ name: 'powers', params: { id: '5' } }),
+      //   },
+      // ],
     },
     {
       path: '/404',

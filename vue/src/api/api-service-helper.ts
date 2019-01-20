@@ -14,7 +14,7 @@ export class ApiServiceHelper {
   }
 
   // todo: add body also
-  buildUrl(url: string, id: string) {
+  buildUrl(url: string, id: string | number) {
     return url + '?id=' + id;
   }
 }

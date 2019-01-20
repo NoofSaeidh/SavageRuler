@@ -3,12 +3,14 @@
     <TheScreen
       :apiDescriptor="apiDescriptor"
       :objectDescriptor="objectDescriptor"
+      :id="id"
+      :inModal="inModal"
     ></TheScreen>
   </div>
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { Vue, Component, Prop } from 'vue-property-decorator';
 import { apiServiceHelper } from '@/api/api-service-helper';
 import { ViewObjectDescriptor } from '@/types/view-object';
 import { Power } from '@/types/power';
@@ -23,10 +25,14 @@ import TheScreen from '@/components/screen/TheScreen.vue';
   },
 })
 export default class PowerView extends Vue {
+  @Prop() id?: number;
+  @Prop() inModal?: boolean;
+
   objectDescriptor: ViewObjectDescriptor<Power> = PowerDescriptor;
   apiDescriptor = apiServiceHelper.getDefaultDescriptor('Power');
 
   async created() {
+    this.$logger.info('id: {0}, inModal: {1}', this.id + '', this.inModal + '');
     await localizationHelper.checkOrLocalizeDescriptor(this.objectDescriptor);
   }
 }
