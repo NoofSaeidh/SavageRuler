@@ -19,7 +19,6 @@ import { Vue, Component, Prop } from 'vue-property-decorator';
 import { Entity } from '@/types/entity';
 
 import { ViewObjectDescriptor, FormField, ReadFieldValue, ViewFieldDescriptor } from '@/types/view-object';
-import { arrayHelper } from '@/helpers/array-helper';
 
 import ReadField from '../base/ReadField.vue';
 

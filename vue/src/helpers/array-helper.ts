@@ -11,7 +11,7 @@ function _flatten(arr: any, result: any[] = []) {
 }
 
 export const arrayHelper = {
-  flatten<T>(...args: T[][][]): T[] {
+    flatten<T>(...args: T[][][]): T[] {
     return _flatten(args);
   },
 };

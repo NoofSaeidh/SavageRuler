@@ -1,3 +1,4 @@
+// tslint:disable
 // import Vue from 'vue';
 // // import { FieldType, CompareType, Filter } from '../store/entities/filter';
 // import { AppConsts as appconst } from '@/global/app-consts';

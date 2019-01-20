@@ -9,7 +9,7 @@ export class LocalizationHelper {
   }
 
   async checkOrLocalizeDescriptor<T>(descriptor: ViewObjectDescriptor<T>) {
-    if(descriptor.locale && descriptor.locale === this.currentCulture) {
+    if (descriptor.locale && descriptor.locale === this.currentCulture) {
       return;
     }
     await this.localizeDescriptor(descriptor);
