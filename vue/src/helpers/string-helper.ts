@@ -10,4 +10,18 @@ export const stringHelper = {
     value = this.replaceAll(value, '\t', '&emsp;');
     return value;
   },
+
+  format(input: string, ...args: any[]): string {
+    if (typeof input !== 'string' || args.length < 1) {
+      return input;
+    }
+
+    let result = input;
+    for (let i = 0; i < args.length; i++) {
+      const placeHolder = '{' + (i) + '}';
+      result = this.replaceAll(result, placeHolder, args[i]);
+    }
+
+    return result;
+  },
 };

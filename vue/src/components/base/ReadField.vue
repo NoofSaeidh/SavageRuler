@@ -34,7 +34,6 @@
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
 import { FormField, ReadFieldValue } from '@/types/view-object';
-import { Size } from '@/types/bootstrap';
 import { stringHelper } from '@/helpers/string-helper';
 
 @Component({})

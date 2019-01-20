@@ -1,13 +1,14 @@
 <template>
   <div class="mb-5">
-
     <!-- TODO: add some animation -->
     <div v-if="loading">Loading...</div>
 
-    <!-- TODO: interactive error (in ajax class ??) -->
-    <div v-else-if="error">{{error}}</div>
+    <BaseError
+      v-else-if="error"
+      :error="error"
+    />
 
-    <div v-else >
+    <div v-else>
       <!-- grid -->
       <div v-if="showTable">
         <InfoGrid
@@ -19,8 +20,10 @@
       </div>
 
       <!-- single item -->
-      <div v-else
-           class="container-fluid">
+      <div
+        v-else
+        class="container-fluid"
+      >
         <ReadForm
           v-if="selected"
           :showTitle="true"
@@ -43,13 +46,16 @@ import { baseAjax } from '@/api/ajax';
 import { apiServiceHelper } from '@/api/api-service-helper';
 import { ViewObjectDescriptor } from '@/types/view-object';
 
+import BaseError from '../base/BaseError.vue';
 import InfoGrid from './InfoGrid.vue';
 import ReadForm from './ReadForm.vue';
+import { ServerError } from '@/types/server';
 
 @Component({
   components: {
     InfoGrid,
     ReadForm,
+    BaseError,
   },
 })
 export default class TheScreen<T extends Entity<TKey>, TKey> extends Vue {
@@ -59,7 +65,7 @@ export default class TheScreen<T extends Entity<TKey>, TKey> extends Vue {
   selected: T | null = null;
   items: T[] | null = null;
   loading: boolean = true;
-  error: string | null = null;
+  error: ServerError | null = null;
   showTable: boolean = true;
 
   async created() {
@@ -82,7 +88,13 @@ export default class TheScreen<T extends Entity<TKey>, TKey> extends Vue {
       }
     }
     catch (error) {
-      this.error = error;
+      const parsed = baseAjax.tryParseError(error);
+      if (parsed) {
+        this.error = parsed;
+      }
+      else {
+        this.$logUnhandled(error);
+      }
     }
     this.loading = false;
   }
