@@ -14,6 +14,18 @@
         v-if="displayMode==='SINGLE'"
         class="container-fluid"
       >
+        <span class="row">
+          <h5 class="col text-left">
+            <button
+              class="btn btn-secondary"
+              @click="showGrid"
+            >
+              <font-awesome-icon icon="th" />
+              Grid
+            </button>
+          </h5>
+        </span>
+
         <ReadForm
           v-if="selected"
           :showTitle="true"
@@ -97,7 +109,6 @@ export default class TheScreen<T extends Entity<TKey>, TKey> extends Vue {
   private gridIndex: number | null = null;
   private selectedId: TKey | null = null;
 
-
   get displayMode(): DisplayMode {
     if (this.selectedId === null) {
       return 'GRID';
@@ -112,6 +123,17 @@ export default class TheScreen<T extends Entity<TKey>, TKey> extends Vue {
     this.isInModal = this.inModal || false;
     this.selectedId = this.id || null;
     await this.ensureFetched();
+    if (this.selectedId !== null && this.isInModal !== null) {
+      // this.$refs.singleForm.focus();
+    }
+  }
+
+  mounted() {
+    document.addEventListener('keydown', this.onKeyDownGlobal);
+  }
+
+  beforeDestroy() {
+    document.removeEventListener('keydown', this.onKeyDownGlobal);
   }
 
   @Watch('id')
@@ -125,8 +147,6 @@ export default class TheScreen<T extends Entity<TKey>, TKey> extends Vue {
     this.isInModal = newValue || false;
     await this.ensureFetched();
   }
-
-
 
   async ensureFetched() {
     // to not to fetch everytime
@@ -151,6 +171,7 @@ export default class TheScreen<T extends Entity<TKey>, TKey> extends Vue {
       window.open(this.$router.resolve(location).href);
     }
     else if (mode === 'SINGLE') {
+      this.selected = record;
       this.$router.push(location);
     }
     else if (mode === 'MODAL') {
@@ -162,6 +183,10 @@ export default class TheScreen<T extends Entity<TKey>, TKey> extends Vue {
     else {
       this.$logUnhandled(`unexpected mode ${mode}`);
     }
+  }
+
+  showGrid() {
+    this.$router.push({ query: {} });
   }
 
   rowClicked(record: T, index: number, event: MouseEvent) {
@@ -203,6 +228,12 @@ export default class TheScreen<T extends Entity<TKey>, TKey> extends Vue {
     this.$router.push({
       query: {},
     });
+  }
+
+  private onKeyDownGlobal(event: KeyboardEvent) {
+    if (this.displayMode === 'SINGLE' && event.key === 'Escape') {
+      this.showGrid();
+    }
   }
 
 
