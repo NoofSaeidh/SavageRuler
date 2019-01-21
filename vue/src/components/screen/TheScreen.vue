@@ -161,7 +161,7 @@ export default class TheScreen<T extends Entity<TKey>, TKey> extends Vue {
     }
   }
 
-  showItem(record: T, mode: 'MODAL' | 'SINGLE' | 'WINDOW') {
+  showItem(record: T, mode: 'MODAL_PUSH' | 'MODAL_REPLACE' | 'SINGLE' | 'WINDOW') {
     const location: Location = {
       query: {
         id: String(record.id),
@@ -174,11 +174,17 @@ export default class TheScreen<T extends Entity<TKey>, TKey> extends Vue {
       this.selected = record;
       this.$router.push(location);
     }
-    else if (mode === 'MODAL') {
+    else if (mode === 'MODAL_PUSH') {
       location.query!.inModal = 'true';
       // this will speed up (because no need additional load)
       this.selected = record;
       this.$router.push(location);
+    }
+    else if (mode === 'MODAL_REPLACE') {
+      location.query!.inModal = 'true';
+      // this will speed up (because no need additional load)
+      this.selected = record;
+      this.$router.replace(location);
     }
     else {
       this.$logUnhandled(`unexpected mode ${mode}`);
@@ -199,7 +205,7 @@ export default class TheScreen<T extends Entity<TKey>, TKey> extends Vue {
       this.showItem(record, 'SINGLE');
     }
     else {
-      this.showItem(record, 'MODAL');
+      this.showItem(record, 'MODAL_PUSH');
     }
   }
 
@@ -221,7 +227,7 @@ export default class TheScreen<T extends Entity<TKey>, TKey> extends Vue {
       return;
     }
     this.gridIndex = newIndex;
-    this.showItem(this.items![this.gridIndex], 'MODAL');
+    this.showItem(this.items![this.gridIndex], 'MODAL_REPLACE');
   }
 
   hideModal() {
