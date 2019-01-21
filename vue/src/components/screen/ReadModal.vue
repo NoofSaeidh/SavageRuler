@@ -15,8 +15,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
-import { Modal } from 'bootstrap-vue';
+import { Vue, Component, Prop } from 'vue-property-decorator';
 
 @Component({})
 export default class ReadModal extends Vue {

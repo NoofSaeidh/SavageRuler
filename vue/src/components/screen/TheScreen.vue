@@ -68,7 +68,7 @@
 
 <script lang="ts">
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
-import { Route, Location } from 'vue-router';
+import { Location } from 'vue-router';
 
 import { Entity } from '@/types/entity';
 import { ApiServiceDescriptor } from '@/types/services';

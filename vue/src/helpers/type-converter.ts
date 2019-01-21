@@ -5,8 +5,7 @@ export class TypeConverter {
   // everything that not 'true' is false (case insensetive)
   parseBoolean(input: string): boolean {
     const val = input.toLowerCase();
-    if(val === 'true')
-      return true;
+    if (val === 'true') return true;
     return false;
   }
   // numberToString(input: number): string {
