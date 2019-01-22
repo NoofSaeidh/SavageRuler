@@ -24,6 +24,13 @@ namespace SavageRuler.Web.Host.Startup
 
         public async Task Invoke(HttpContext context)
         {
+            if(!_logger.IsErrorEnabled || !_logger.IsInfoEnabled || !_logger.IsDebugEnabled)
+            {
+                // do nothing if logger turned off
+                await _next(context);
+                return;
+            }
+
             bool addBody = _logger.IsDebugEnabled;
 
             //First, get the incoming request
@@ -51,8 +58,10 @@ namespace SavageRuler.Web.Host.Startup
                 //Format the response from the server
                 var response = await FormatResponse(context.Response, addBody);
 
-                _logger.Debug(request + "\r\n" + response);
-
+                if(_logger.IsDebugEnabled)
+                    _logger.Debug(request + "\r\n" + response);
+                else
+                    _logger.Info(request + "\r\n" + response);
                 //Copy the contents of the new memory stream (which contains the response) to the original stream, which is then returned to the client.
                 await responseBody.CopyToAsync(originalBodyStream);
             }
