@@ -91,7 +91,10 @@ namespace SavageRuler.Web.Host.Startup
             app.UseCors(_defaultCorsPolicyName); // Enable CORS!
 
             if (env.IsDevelopment())
+            {
+                app.UseMiddleware<RequestResponseLoggingMiddleware>();
                 app.UseDeveloperExceptionPage();
+            }
             else
                 app.UseExceptionHandler("/Error");
 
@@ -130,7 +133,7 @@ namespace SavageRuler.Web.Host.Startup
             {
                 routes.MapRoute(
                     name: "apiController",
-                    template: "api/{controller=Api}/{action=Index}/{id?}");
+                    template: "api/{controller}/{action=Index}/{id?}");
 
                 routes.MapSpaFallbackRoute(
                     name: "spa-fallback",
