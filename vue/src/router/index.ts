@@ -23,6 +23,11 @@ export default new Router({
       component: loadView('About'),
     },
     {
+      path: '/auth',
+      name: 'auth',
+      component: loadView('AuthView'),
+    },
+    {
       path: '/power',
       name: 'power',
       component: loadView('rules/PowerView'),

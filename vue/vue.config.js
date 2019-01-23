@@ -1,6 +1,6 @@
 // const CopyWebpackPlugin = require('copy-webpack-plugin');
 module.exports = {
-  baseUrl: '/',
+  publicPath: '/',
   configureWebpack: config => {
     return {
       devtool: 'source-map',

@@ -2,59 +2,47 @@ import axios, { AxiosInstance, AxiosRequestConfig, AxiosPromise } from 'axios';
 import { AppConsts } from '@/global/app-consts';
 import { ServerReponse, ServerReponseList, ServerError } from '@/types/server';
 
+// todo: api descriptor
 export class Ajax {
   readonly axios: AxiosInstance;
   readonly baseUrl: string;
+  readonly loginAxios: AxiosInstance;
+
+  token?: string;
   constructor(addUrl?: string) {
-    // todo: make this helper
+    // todo: make helper for this?
     this.baseUrl = [AppConsts.baseUrl, addUrl].join('');
     this.axios = axios.create({
       baseURL: this.baseUrl,
       timeout: 30000,
     });
-    // this.axios.interceptors.request.use(config => {
-    //   // if (!!abp.auth.getToken()) {
-    //   //   config.headers.common.Authorization = 'Bearer ' + abp.auth.getToken();
-    //   // }
-    //   // config.headers.common['.AspNetCore.Culture'] = abp.utils.getCookieValue(
-    //   //   'Abp.Localization.CultureName',
-    //   // );
-    //   // config.headers.common[
-    //   //   'Abp.TenantId'
-    //   // ] = abp.multiTenancy.getTenantIdCookie();
-    //   return config;
-    // });
-    // this.axios.interceptors.response.use(
-    //   response => response,
-    //   error => {
-    //     if (!!error.response) {
-    //       const data = error.response.data as ServerReponse;
-    //       if (!!data) {
-    //         const sError = data.error;
-    //         if (!!sError) {
-    //           vue.$modal.show('dialog', {
-    //             // todo: localize
-    //             title: 'Error!!!',
-    //             text: sError.message,
-    //             buttons: [
-    //               {
-    //                 title: 'Cancel',
-    //                 // todo: add goback
-    //                 // handler: () => vue.$router.back(),
-    //               },
-    //             ],
-    //           });
-    //           // todo: add error details somehow
-    //         }
-    //       }
-    //       // todo: handle other
-    //     }
-    //     // setTimeout(() => {
-    //     //   vue.$modal.hide('dialog');
-    //     // }, 1000);
-    //     return Promise.reject(error);
-    //   },
-    // );
+    // todo: move into api descriptor
+    this.loginAxios = axios.create({
+      baseURL: [AppConsts.baseUrl, '/api/TokenAuth'].join(''),
+      timeout: 30000,
+    });
+  }
+
+  header?: string;
+  async login(user: string, password: string, rememberClient: boolean = true) {
+    const result = await this.loginAxios.post('Authenticate', {
+      userNameOrEmailAddress: user,
+      password,
+      rememberClient,
+    });
+    document.cookie = 'Abp.AuthToken=' + result.data.result.accessToken;
+    // this.token = result.data.
+  }
+
+  // TODO: remove!!!
+  async checkLogin() {
+    try {
+      const res = await this.requestBase('/api/services/app/User/GetAll');
+      window.alert('success: ' + JSON.stringify(res, null, ' '));
+    } catch (error) {
+      const se = this.tryParseError(error);
+      window.alert('error: ' + JSON.stringify(error, null, ' '));
+    }
   }
 
   tryParseError(error: any): ServerError | null {
