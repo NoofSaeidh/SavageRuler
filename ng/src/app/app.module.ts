@@ -4,11 +4,16 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { ChecherComponent } from './checher/checher.component';
+import { MDBBootstrapModule } from 'angular-bootstrap-md';
 
 @NgModule({
-  declarations: [AppComponent, ChecherComponent],
-  imports: [NgbModule, BrowserModule, AppRoutingModule],
+  declarations: [AppComponent],
+  imports: [
+    NgbModule,
+    BrowserModule,
+    AppRoutingModule,
+    MDBBootstrapModule.forRoot(),
+  ],
   providers: [],
   bootstrap: [AppComponent],
 })
