@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace SavageRuler.Web.Host.Startup
 {
+    // for some reason it breaks auth
     public class RequestResponseLoggingMiddleware
     {
         private readonly RequestDelegate _next;

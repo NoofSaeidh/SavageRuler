@@ -92,7 +92,6 @@ namespace SavageRuler.Web.Host.Startup
 
             if (env.IsDevelopment())
             {
-                app.UseMiddleware<RequestResponseLoggingMiddleware>();
                 app.UseDeveloperExceptionPage();
             }
             else
