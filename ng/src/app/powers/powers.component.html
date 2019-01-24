@@ -1,7 +1,49 @@
 <div>
-  <h1>WORKS!</h1>
-  <p>
-      powers works!
-    </p>
+  <h2>Powers</h2>
+  <div>
+    <table
+      class="table table-striped table-bordered"
+    >
+      <thead>
+        <tr>
+          <th>
+            Name
+            <!-- <mdb-icon icon="sort" (click)="sortBy('name')"></mdb-icon> -->
+          </th>
+          <th>
+            Book
+            <!-- <mdb-icon icon="sort" (click)="sortBy('book')"></mdb-icon> -->
+          </th>
+        </tr>
+      </thead>
+      <tfoot>
+        <tr>
+          <th>Name</th>
+          <th>Position</th>
+        </tr>
+      </tfoot>
+      <tbody>
+        <tr *ngFor="let power of powers">
+          <td>{{ power.name }}</td>
+          <td>{{ power.book }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <!--  
+    <div>
+      <label>power name:
+        <input #powerName />
+      </label>
+      <button (click)="add(powerName.value); powerName.value=''">
+        add
+      </button>
+    </div>
+     
+    <ul class="powers">
+      <li *ngFor="let power of powers">
+        <a routerLink="/detail/{{power.id}}">
+          <span class="badge">{{power.id}}</span> {{power.name}}
+        </a>
+    </ul> -->
 </div>
-
