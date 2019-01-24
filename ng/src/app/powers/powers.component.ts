@@ -3,13 +3,13 @@ import { PowersService } from '../api/powers/powers.service';
 import { Power } from '../types/api/power';
 
 @Component({
-  selector: 'app-powers',
+  selector: 'sr-powers',
   templateUrl: './powers.component.html',
   styleUrls: ['./powers.component.scss'],
 })
 export class PowersComponent implements OnInit {
   powers: Power[];
-  
+
   private sorted = false;
 
   get text() {
