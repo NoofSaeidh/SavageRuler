@@ -1,5 +1,60 @@
 <div>
   <h2>Powers</h2>
+  <table
+  mdbTable
+  striped="true"
+  bordered="true"
+>
+  <thead class="">
+    <tr>
+      <th
+        tabindex="0"
+        class="sort-column"
+      >
+        Name
+      </th>
+      <th
+        tabindex="0"
+      >
+        Book
+      </th>
+      <th
+        tabindex="0"
+      >
+        Points
+      </th>
+      <th
+        tabindex="0"
+      >
+        Duration
+      </th>
+      <th
+        tabindex="0"
+      >
+        Distance
+      </th>
+      <th
+        tabindex="0"
+      >
+        Rank
+      </th>
+    </tr>
+  </thead>
+  <tbody class="">
+    <tr class="" mdbTableCol  *ngFor="let power of powers">
+        <td aria-colindex="1" class="">{{ power.name }}</td>
+        <td aria-colindex="2" class="">{{ power.book }}</td>
+        <td aria-colindex="3" class="">{{ power.points }}</td>
+        <td aria-colindex="4" class="">{{ power.duration }}</td>
+        <td aria-colindex="5" class="">{{ power.distance }}</td>
+        <td aria-colindex="6" class="">{{ power.rank }}</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<!-- <div>
+  <h2>Powers</h2>
   <mdb-icon fab icon="fab fa-500px"></mdb-icon>
   <mdb-icon far icon="fab fa-address-book"></mdb-icon>
   <i class="fas fa-arrow-alt-circle-down"></i>
@@ -35,7 +90,6 @@
       </tbody>
     </table>
   </div>
-  <!--  
     <div>
       <label>power name:
         <input #powerName />
@@ -50,5 +104,5 @@
         <a routerLink="/detail/{{power.id}}">
           <span class="badge">{{power.id}}</span> {{power.name}}
         </a>
-    </ul> -->
-</div>
+    </ul>
+</div> -->
