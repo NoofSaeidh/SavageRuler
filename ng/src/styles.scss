@@ -1,1 +1,12 @@
-/* You can add global styles to this file, and also import other style files */
+$fa-font-path : '../node_modules/@fortawesome/fontawesome-free/webfonts';
+@import "fontawesome";
+@import "solid";
+
+.sort-column {
+  &::after {
+    @extend %fa-icon;
+    @extend .fas;
+    // float: right;
+    content: fa-content($fa-var-sort);
+  }
+}
