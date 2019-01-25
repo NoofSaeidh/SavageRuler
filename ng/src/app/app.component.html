@@ -1,19 +1,27 @@
 <!--The content below is only a placeholder and can be replaced.-->
 <!--Navbar-->
-<mdb-navbar SideClass="navbar navbar-expand-sm navbar-light blue-grey lighten-3">
+<mdb-navbar SideClass="navbar navbar-expand-sm navbar-dark bg-dark">
+  <!-- Navbar brand -->
+  <mdb-navbar-brand
+    ><span class="navbar-brand">Savage Ruler</span></mdb-navbar-brand
+  >
 
-    <!-- Navbar brand -->
-    <mdb-navbar-brand><span class="navbar-brand">Savage Ruler</span></mdb-navbar-brand>
-
-    <!-- Collapsible content -->
-    <links>
-      <div class="navbar-nav">
-          <a class="nav-item nav-link active waves-light" href="#" mdbWavesEffect>Home <span class="sr-only">(current)</span></a>
-          <a class="nav-item nav-link waves-light" href="/powers" mdbWavesEffect>Powers</a>
-      </div>
-    </links>
-    <!-- Collapsible content -->
-
+  <!-- Collapsible content -->
+  <links>
+    <div class="navbar-nav">
+      <a class="nav-item nav-link text-light" routerLink="/" mdbWavesEffect>
+        Home
+      </a>
+      <a
+        class="nav-item nav-link text-light"
+        routerLink="/powers"
+        mdbWavesEffect
+      >
+        Powers
+      </a>
+    </div>
+  </links>
+  <!-- Collapsible content -->
 </mdb-navbar>
 <!--/.Navbar-->
 <router-outlet></router-outlet>

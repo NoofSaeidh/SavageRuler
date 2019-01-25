@@ -7,6 +7,7 @@ import { AppComponent } from './app.component';
 import { MDBBootstrapModule } from 'angular-bootstrap-md';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { PowersModule } from './powers/powers.module';
+import { UiModule } from './ui/ui.module';
 
 @NgModule({
   declarations: [AppComponent, DashboardComponent],
@@ -16,6 +17,7 @@ import { PowersModule } from './powers/powers.module';
     MDBBootstrapModule.forRoot(),
     PowersModule,
     HttpClientModule,
+    UiModule,
   ],
   providers: [
   ],

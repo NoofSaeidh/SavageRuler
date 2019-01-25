@@ -1,17 +1,15 @@
 <div>
   <h2>Powers</h2>
-  <table
-  mdbTable
-  striped="true"
-  bordered="true"
+  <table class="table b-table table-striped table-hover table-sm"
 >
   <thead class="">
     <tr>
       <th
         tabindex="0"
         class="sort-column"
+        (click)="sortBy('name')"
       >
-        Name
+      Name
       </th>
       <th
         tabindex="0"
