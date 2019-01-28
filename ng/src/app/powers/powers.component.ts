@@ -45,3 +45,20 @@ export class PowersComponent implements OnInit {
   }
 
 }
+
+
+  // this.descriptor = new ViewDescriptor<T>(
+  //   'Power',
+  //   'name',
+  //   // readForm
+  //   null,
+  //   // infoGrid
+  //   {
+  //     name: { sortable: true },
+  //     book: { sortable: true },
+  //     points: { sortable: true },
+  //     duration: { sortable: true },
+  //     distance: { sortable: true },
+  //     rank: { sortable: true },
+  //   },
+  // );

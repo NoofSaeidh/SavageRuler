@@ -1,5 +1,5 @@
 export interface ServerReponse<T = any> {
-  result: T;
+  result: T | null;
   targetUrl: string | null;
   success: boolean;
   error: ServerError | null;

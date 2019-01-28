@@ -1,11 +1,7 @@
-import { IEntity, EntityKey } from '../api/ientity';
 import { TypeDescriptor } from './type-descriptor';
 import { LocalizeDescriptor } from './localize-descriptor';
 
-export class ViewDescriptor<
-  T extends IEntity<TKey>,
-  TKey extends EntityKey = number
-> {
+export class ViewDescriptor<T> {
   constructor(
     public readonly typeName: string,
     public readonly titleKey: keyof T,
