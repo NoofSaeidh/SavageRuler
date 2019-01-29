@@ -1,6 +1,9 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PowersComponent } from './powers.component';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { ApiDescriptor } from 'src/app/api/types/api-descriptor';
+import { powerApiDescriptor, POWER_API_DESCRIPTOR } from '../../api/entities/powers/descriptors/power-api-descriptor';
 
 describe('PowersComponent', () => {
   let component: PowersComponent;
@@ -8,7 +11,11 @@ describe('PowersComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ PowersComponent ]
+      declarations: [ PowersComponent ],
+      imports: [HttpClientTestingModule],
+      providers: [
+        {provide: POWER_API_DESCRIPTOR, useValue: powerApiDescriptor}
+      ]
     })
     .compileComponents();
   }));

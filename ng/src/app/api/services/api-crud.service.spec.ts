@@ -6,7 +6,7 @@ import {
 } from '@angular/common/http/testing';
 
 import { ApiCrudService } from './api-crud.service';
-import { Power } from 'src/app/views/powers/types/power';
+import { Power } from 'src/app/api/entities/powers/descriptors/power';
 import { ApiDescriptor } from '../types/api-descriptor';
 
 

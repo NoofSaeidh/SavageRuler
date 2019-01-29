@@ -16,7 +16,7 @@ type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
   providedIn: 'root',
 })
 export class ApiCrudService<T extends IEntity<TKey>, TKey extends EntityKey> extends ApiService {
-  constructor(private _http: HttpClient, public descriptor: ApiDescriptor<T>) {
+  constructor(protected http: HttpClient, protected descriptor: ApiDescriptor<T>) {
     super();
   }
 
@@ -51,7 +51,7 @@ export class ApiCrudService<T extends IEntity<TKey>, TKey extends EntityKey> ext
   ): Observable<ServerReponse<TResult>> {
     // it will throw error if no specified
     const url = this.descriptor.getUrl(apiKey);
-    return this._http.request<ServerReponse<TResult>>(httpMethod, url, {
+    return this.http.request<ServerReponse<TResult>>(httpMethod, url, {
       body,
     });
   }

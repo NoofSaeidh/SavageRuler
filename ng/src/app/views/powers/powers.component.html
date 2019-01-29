@@ -8,7 +8,6 @@
       <th
         tabindex="0"
         class="sort-column"
-        (click)="sortBy('name')"
       >
       Name
       </th>
@@ -40,13 +39,13 @@
     </tr>
   </thead>
   <tbody class="">
-    <tr class="" mdbTableCol  *ngFor="let power of powers">
-        <td aria-colindex="1" class="">{{ power.name }}</td>
-        <td aria-colindex="2" class="">{{ power.book }}</td>
-        <td aria-colindex="3" class="">{{ power.points }}</td>
-        <td aria-colindex="4" class="">{{ power.duration }}</td>
-        <td aria-colindex="5" class="">{{ power.distance }}</td>
-        <td aria-colindex="6" class="">{{ power.rank }}</td>
+    <tr class="" mdbTableCol  *ngFor="let item of items">
+        <td aria-colindex="1" class="">{{ item.name }}</td>
+        <td aria-colindex="2" class="">{{ item.book }}</td>
+        <td aria-colindex="3" class="">{{ item.points }}</td>
+        <td aria-colindex="4" class="">{{ item.duration }}</td>
+        <td aria-colindex="5" class="">{{ item.distance }}</td>
+        <td aria-colindex="6" class="">{{ item.rank }}</td>
     </tr>
   </tbody>
 </table>
