@@ -1,9 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PowersComponent } from './powers.component';
-import { PowersService } from '../api/powers/powers.service';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { MDBBootstrapModule } from 'angular-bootstrap-md';
 
 describe('PowersComponent', () => {
   let component: PowersComponent;
@@ -11,10 +8,9 @@ describe('PowersComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, MDBBootstrapModule.forRoot()],
-      declarations: [PowersComponent],
-      providers: [PowersService],
-    }).compileComponents();
+      declarations: [ PowersComponent ]
+    })
+    .compileComponents();
   }));
 
   beforeEach(() => {

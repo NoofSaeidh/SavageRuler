@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
 import { ApiService } from './api.service';
-import { Power } from 'src/app/types/api/power';
+import { Power } from 'src/app/views/powers/types/power';
 
 describe('ApiService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
 
   it('should be created', () => {
-    const service: ApiService<Power, number> = TestBed.get(ApiService);
+    const service: ApiService = TestBed.get(ApiService);
     expect(service).toBeTruthy();
   });
 });

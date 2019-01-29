@@ -9,7 +9,7 @@ import { IEntity, EntityKey } from 'src/app/types/api/ientity';
 })
 export class InfoGridComponent<T extends IEntity<TKey>, TKey extends EntityKey> implements OnInit {
   @Input() items: T[];
-  @Input() descriptor: ViewDescriptor<T, TKey>;
+  @Input() descriptor: ViewDescriptor<T>;
 
   constructor() { }
 

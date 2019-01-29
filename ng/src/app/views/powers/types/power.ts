@@ -1,4 +1,4 @@
-import {IEntity} from './ientity';
+import {IEntity} from '../../../types/api/ientity';
 
 export interface Power extends IEntity<number> {
   name: string;
