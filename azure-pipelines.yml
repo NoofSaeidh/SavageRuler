@@ -11,7 +11,8 @@ pool:
 
 variables:
   buildConfiguration: 'Release'
+  hostProject: 'aspnet-core/src/SavageRule.Web.Host/SavageRuler.Web.Host.csproj'
 
 steps:
-- script: dotnet build --configuration $(buildConfiguration)
+- script: dotnet build ${hostProject} --configuration $(buildConfiguration)
   displayName: 'dotnet build $(buildConfiguration)'
