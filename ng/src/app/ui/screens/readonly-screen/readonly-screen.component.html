@@ -1,0 +1,50 @@
+<div>
+  <table class="table b-table table-striped table-hover table-sm">
+    <thead class="">
+      <tr>
+        <th
+          tabindex="0"
+          class="sort-column"
+        >
+        Name
+        </th>
+        <th
+          tabindex="0"
+        >
+          Book
+        </th>
+        <th
+          tabindex="0"
+        >
+          Points
+        </th>
+        <th
+          tabindex="0"
+        >
+          Duration
+        </th>
+        <th
+          tabindex="0"
+        >
+          Distance
+        </th>
+        <th
+          tabindex="0"
+        >
+          Rank
+        </th>
+      </tr>
+    </thead>
+    <tbody class="">
+      <tr class="" mdbTableCol  *ngFor="let item of items">
+          <td aria-colindex="1" class="">{{ item.name }}</td>
+          <td aria-colindex="2" class="">{{ item.book }}</td>
+          <td aria-colindex="3" class="">{{ item.points }}</td>
+          <td aria-colindex="4" class="">{{ item.duration }}</td>
+          <td aria-colindex="5" class="">{{ item.distance }}</td>
+          <td aria-colindex="6" class="">{{ item.rank }}</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+  

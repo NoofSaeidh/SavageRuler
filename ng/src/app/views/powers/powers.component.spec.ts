@@ -2,8 +2,11 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PowersComponent } from './powers.component';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { ApiDescriptor } from 'src/app/api/types/api-descriptor';
-import { powerApiDescriptor, POWER_API_DESCRIPTOR } from '../../api/entities/powers/descriptors/power-api-descriptor';
+import { ReadonlyScreenComponent } from 'src/app/ui/screens/readonly-screen/readonly-screen.component';
+import { ApiCrudService } from 'src/app/api/services/api-crud.service';
+import { PowersApiService } from 'src/app/api/entities/powers/powers.api.service';
+import { SrTestBed } from 'src/tests/sr-test-bed';
+import { AppModule } from 'src/app/app.module';
 
 describe('PowersComponent', () => {
   let component: PowersComponent;
@@ -11,13 +14,8 @@ describe('PowersComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ PowersComponent ],
-      imports: [HttpClientTestingModule],
-      providers: [
-        {provide: POWER_API_DESCRIPTOR, useValue: powerApiDescriptor}
-      ]
-    })
-    .compileComponents();
+      imports: [AppModule]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
