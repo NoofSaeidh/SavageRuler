@@ -1,3 +1,19 @@
-<p>
-  info-grid works!
-</p>
+<table class="table b-table table-striped table-hover table-sm">
+    <thead class="">
+      <tr>
+        <th *ngFor="let head of heads" tabindex="0">
+          {{head.field.label || head.key}}
+        </th>
+      </tr>
+    </thead>
+    <tbody class="">
+      <tr class="" mdbTableCol *ngFor="let item of items">
+        <td aria-colindex="1" class="">{{ item.name }}</td>
+        <td aria-colindex="2" class="">{{ item.book }}</td>
+        <td aria-colindex="3" class="">{{ item.points }}</td>
+        <td aria-colindex="4" class="">{{ item.duration }}</td>
+        <td aria-colindex="5" class="">{{ item.distance }}</td>
+        <td aria-colindex="6" class="">{{ item.rank }}</td>
+      </tr>
+    </tbody>
+  </table>
