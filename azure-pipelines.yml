@@ -11,7 +11,14 @@ pool:
 
 variables:
   buildConfiguration: 'Release'
+  aspWebDir: '$(Build.SourcesDirectory)/aspnet-core/src/SavageRule.Web.Host/'
+  ngDir: '$(Build.SourcesDirectory)/ng/'
 
 steps:
-- script: dotnet build --configuration $(buildConfiguration)
-  displayName: 'dotnet build $(buildConfiguration)'
+- task: NodeTool@0 
+  inputs:
+    versionSpec: '9.x'
+
+- script: dotnet build ${hostProject} --configuration $(buildConfiguration)
+  displayName: Build Host
+  workingDirectory: ${aspWebDir}
