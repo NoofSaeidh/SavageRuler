@@ -12,6 +12,8 @@ import {
   TestBed,
 } from '@angular/core/testing';
 import { AppModule } from 'src/app/app.module';
+import { ViewDescriptor } from 'src/app/types/descriptors/view-descriptor';
+import { powerViewDescriptor } from 'src/app/views/powers/descriptors/power-view-descriptor';
 
 export class SrTestBed {
   static defaultApiMetadata(
@@ -22,6 +24,7 @@ export class SrTestBed {
       providers: [
         { provide: POWER_API_DESCRIPTOR, useValue: powerApiDescriptor },
         { provide: ApiCrudService, useClass: PowersApiService },
+        { provide: ViewDescriptor, useValue: powerViewDescriptor},
       ],
     };
     return this.mergeMetadata(metadata, moduleDef);

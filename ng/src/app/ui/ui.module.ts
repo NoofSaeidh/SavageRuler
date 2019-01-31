@@ -4,13 +4,15 @@ import { InfoGridComponent } from './grid/info-grid/info-grid.component';
 import { ReadonlyScreenComponent } from './screens/readonly-screen/readonly-screen.component';
 import { ReadonlyFieldComponent } from './elements/readonly-field/readonly-field.component';
 
-const components = [InfoGridComponent, ReadonlyScreenComponent, ReadonlyFieldComponent];
+const components = [
+  InfoGridComponent,
+  ReadonlyScreenComponent,
+  ReadonlyFieldComponent,
+];
 
 @NgModule({
   declarations: components,
-  imports: [
-    CommonModule
-  ],
+  imports: [CommonModule],
   exports: components,
 })
-export class UiModule { }
+export class UiModule {}

@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { IEntity, EntityKey } from 'src/app/types/api/ientity';
 import { ApiCrudService } from 'src/app/api/services/api-crud.service';
-import { BehaviorSubject } from 'rxjs';
 import { EntityStateService } from 'src/app/state/entity/entity-state.service';
 
 @Component({
@@ -23,7 +22,7 @@ export class ReadonlyScreenComponent<
   }
 
   get isLoading(): boolean {
-    return this.entityState.isLoading$.getValue();
+    return this.entityState.loadingCollection$.getValue();
   }
 
   get items(): T[] {
@@ -35,14 +34,14 @@ export class ReadonlyScreenComponent<
   }
 
   getItems() {
-    this.entityState.isLoading$.next(true);
+    this.entityState.loadingCollection$.next(true);
     this.apiService.getAll().subscribe(
       data => {
         this.entityState.collection$.next(data.result.items);
       },
       error => {},
       () => {
-        this.entityState.isLoading$.next(false);
+        this.entityState.loadingCollection$.next(false);
       },
     );
   }

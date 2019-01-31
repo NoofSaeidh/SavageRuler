@@ -1,13 +1,12 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class EntityStateService<T> {
   readonly collection$ = new BehaviorSubject<T[]>([]);
   readonly current$ = new BehaviorSubject<T | null>(null);
-  readonly isLoading$ = new BehaviorSubject<boolean>(false);
+  readonly loadingCollection$ = new BehaviorSubject<boolean>(false);
+  readonly loadingCurrent$ = new BehaviorSubject<boolean>(false);
 
-  constructor() { }
+  constructor() {}
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnChanges } from '@angular/core';
 import {
   ViewDescriptor,
   InfoGridField,
@@ -6,6 +6,7 @@ import {
 } from 'src/app/types/descriptors/view-descriptor';
 import { IEntity, EntityKey } from 'src/app/types/api/ientity';
 import { EntityStateService } from 'src/app/state/entity/entity-state.service';
+import { RawTypeEntry, TypeEntry } from 'src/app/types/global/type-entry';
 
 @Component({
   selector: 'sr-info-grid',
@@ -14,23 +15,22 @@ import { EntityStateService } from 'src/app/state/entity/entity-state.service';
 })
 export class InfoGridComponent<T extends IEntity<TKey>, TKey extends EntityKey>
   implements OnInit {
+  items: T[];
+  fields: TypeEntry<T, InfoGridField>[];
+
   constructor(
     protected entityState: EntityStateService<T>,
     protected descriptor: ViewDescriptor<T>,
   ) {}
 
-  get items(): T[] {
-    return this.entityState.collection$.getValue();
+  ngOnInit() {
+    this.fields = this.descriptor.infoGridEntries;
+    this.entityState.collection$.subscribe(items => (this.items = items));
   }
 
-  get heads(): { key: keyof T; field: InfoGridField }[] {
-    return Object.entries(this.descriptor.infoGrid).map(([key, value]) => {
-      return {
-        key: key as keyof T,
-        field: value,
-      };
-    });
+  getThClass(field: InfoGridField): {} {
+    return {
+      'sort-column': field.sortable ? true : false
+    };
   }
-
-  ngOnInit() {}
 }

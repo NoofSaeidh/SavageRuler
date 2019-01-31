@@ -1,6 +1,8 @@
 import { TypeDescriptor } from './type-descriptor';
 import { LocalizeDescriptor } from './localize-descriptor';
+import { RawTypeEntry, TypeEntry, toTypeEntries } from '../global/type-entry';
 
+// todo: refactor constructor or use simple interface
 export class ViewDescriptor<T> {
   constructor(
     public readonly typeName: string,
@@ -18,6 +20,20 @@ export class ViewDescriptor<T> {
   }
   localize(locale: string, localize: LocalizeDescriptor<T>) {
     // todo: implement
+  }
+
+  get infoGridEntries(): TypeEntry<T, InfoGridField>[] {
+    if (!this.infoGrid) {
+      throw new Error('infoGrid is undefined');
+    }
+    return toTypeEntries(this.infoGrid);
+  }
+
+  get readFromEntries(): TypeEntry<T, ReadFormField>[] {
+    if (!this.readForm) {
+      throw new Error('readForm is undefined');
+    }
+    return toTypeEntries(this.readForm);
   }
 }
 
