@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnChanges } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, OnDestroy } from '@angular/core';
 import {
   ViewDescriptor,
   InfoGridField,
@@ -8,6 +8,7 @@ import { IEntity, EntityKey } from 'src/app/types/api/ientity';
 import { EntityStateService } from 'src/app/state/entity/entity-state.service';
 import { RawTypeEntry, TypeEntry } from 'src/app/types/global/type-entry';
 import { arraySorter } from 'src/app/types/global/array-sorter';
+import { Unsubscribable } from 'rxjs';
 
 interface Header<T> {
   key: keyof T;
@@ -23,11 +24,12 @@ type SortOrder = 'asc' | 'desc';
   styleUrls: ['./info-grid.component.scss']
 })
 export class InfoGridComponent<T extends IEntity<TKey>, TKey extends EntityKey>
-  implements OnInit {
+  implements OnInit, OnDestroy {
   items: T[];
   headers: Header<T>[];
   fields: TypeEntry<T, InfoGridField>[];
   private sorted?: { key: keyof T; order: SortOrder };
+  private subscription: Unsubscribable;
 
   constructor(
     protected entityState: EntityStateService<T>,
@@ -47,7 +49,13 @@ export class InfoGridComponent<T extends IEntity<TKey>, TKey extends EntityKey>
         field: value.value
       };
     });
-    this.entityState.collection$.subscribe(items => (this.items = items));
+    this.subscription = this.entityState.collection$.subscribe(
+      items => (this.items = items)
+    );
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 
   clickHead(header: Header<T>, event: MouseEvent) {
@@ -56,7 +64,18 @@ export class InfoGridComponent<T extends IEntity<TKey>, TKey extends EntityKey>
     }
   }
 
-  sortItems(header: Header<T>) {
+  clickRow(item: T, event: MouseEvent) {
+    this.entityState.current$.next(item);
+    if (event.ctrlKey || event.altKey) {
+      // todo: open new tab when ctrlKey
+    } else {
+      this.entityState.extra$.next({
+        modal: true
+      });
+    }
+  }
+
+  private sortItems(header: Header<T>) {
     const key = header.key;
     let order: SortOrder;
     if (!this.sorted) {
@@ -75,11 +94,11 @@ export class InfoGridComponent<T extends IEntity<TKey>, TKey extends EntityKey>
     this.setSortOrder(header, this.sorted.order);
   }
 
-  opositeOrder(order: SortOrder): SortOrder {
+  private opositeOrder(order: SortOrder): SortOrder {
     return order === 'asc' ? 'desc' : 'asc';
   }
 
-  setSortOrder(header: Header<T>, order: SortOrder | false) {
+  private setSortOrder(header: Header<T>, order: SortOrder | false) {
     header.class['sort-column-asc'] = order === 'asc';
     header.class['sort-column-desc'] = order === 'desc';
   }

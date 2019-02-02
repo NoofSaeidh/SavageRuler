@@ -7,6 +7,6 @@ export class EntityStateService<T> {
   readonly current$ = new BehaviorSubject<T | null>(null);
   readonly loadingCollection$ = new BehaviorSubject<boolean>(false);
   readonly loadingCurrent$ = new BehaviorSubject<boolean>(false);
-
+  readonly extra$ = new BehaviorSubject<{}>({});
   constructor() {}
 }
