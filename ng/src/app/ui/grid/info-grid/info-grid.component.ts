@@ -2,16 +2,17 @@ import { Component, OnInit, Input, OnChanges } from '@angular/core';
 import {
   ViewDescriptor,
   InfoGridField,
-  FieldDescriptor,
+  FieldDescriptor
 } from 'src/app/types/descriptors/view-descriptor';
 import { IEntity, EntityKey } from 'src/app/types/api/ientity';
 import { EntityStateService } from 'src/app/state/entity/entity-state.service';
 import { RawTypeEntry, TypeEntry } from 'src/app/types/global/type-entry';
+import { arraySorter } from 'src/app/types/global/array-sorter';
 
 @Component({
   selector: 'sr-info-grid',
   templateUrl: './info-grid.component.html',
-  styleUrls: ['./info-grid.component.scss'],
+  styleUrls: ['./info-grid.component.scss']
 })
 export class InfoGridComponent<T extends IEntity<TKey>, TKey extends EntityKey>
   implements OnInit {
@@ -21,7 +22,7 @@ export class InfoGridComponent<T extends IEntity<TKey>, TKey extends EntityKey>
 
   constructor(
     protected entityState: EntityStateService<T>,
-    protected descriptor: ViewDescriptor<T>,
+    protected descriptor: ViewDescriptor<T>
   ) {}
 
   ngOnInit() {
@@ -37,30 +38,15 @@ export class InfoGridComponent<T extends IEntity<TKey>, TKey extends EntityKey>
 
   sortItems(key: keyof T) {
     if (!this.sorted || this.sorted.key !== key) {
-      this.items.sort(this.sortFunction(true));
+      arraySorter.sortBy(this.items, key, false);
       this.sorted = {
         key: key,
-        order: 'asc',
+        order: 'asc'
       };
     } else {
       const order = this.sorted.order === 'asc' ? 'desc' : 'asc';
-      this.items.sort(this.sortFunction(order === 'asc'));
+      arraySorter.sortBy(this.items, key, order === 'desc');
       this.sorted.order = order;
     }
-    console.log(JSON.stringify(this.sorted));
-    // console.log(JSON.stringify(this.items));
-    // this.items = [...this.items];
-  }
-
-  private sortFunction<Ts>(asc: boolean) {
-    return (a: Ts, b: Ts) => {
-      if (a > b) {
-        return asc ? 1 : -1;
-      }
-      if (b > a) {
-        return asc ? -1 : 1;
-      }
-      return 0;
-    };
   }
 }
