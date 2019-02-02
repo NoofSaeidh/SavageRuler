@@ -15,7 +15,8 @@ describe('ApiCrudService', () => {
   beforeEach(() => TestBed.configureTestingModule({
     imports: [HttpClientTestingModule],
     providers: [
-      {provide: ApiDescriptor, useValue: new ApiDescriptor({})}
+      {provide: ApiDescriptor, useValue: new ApiDescriptor({})},
+      ApiCrudService,
     ]
   }));
 

@@ -4,7 +4,9 @@ import { ApiService } from './api.service';
 import { Power } from 'src/app/api/entities/powers/descriptors/power';
 
 describe('ApiService', () => {
-  beforeEach(() => TestBed.configureTestingModule({}));
+  beforeEach(() => TestBed.configureTestingModule({
+    providers: [ApiService],
+  }));
 
   it('should be created', () => {
     const service: ApiService = TestBed.get(ApiService);

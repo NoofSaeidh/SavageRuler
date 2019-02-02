@@ -14,6 +14,7 @@ import {
 import { AppModule } from 'src/app/app.module';
 import { ViewDescriptor } from 'src/app/types/descriptors/view-descriptor';
 import { powerViewDescriptor } from 'src/app/views/powers/descriptors/power-view-descriptor';
+import { EntityStateService } from 'src/app/state/entity/entity-state.service';
 
 export class SrTestBed {
   static defaultApiMetadata(
@@ -24,7 +25,7 @@ export class SrTestBed {
       providers: [
         { provide: POWER_API_DESCRIPTOR, useValue: powerApiDescriptor },
         { provide: ApiCrudService, useClass: PowersApiService },
-        { provide: ViewDescriptor, useValue: powerViewDescriptor},
+        { provide: ViewDescriptor, useValue: powerViewDescriptor },
       ],
     };
     return this.mergeMetadata(metadata, moduleDef);
@@ -33,14 +34,17 @@ export class SrTestBed {
   static defaultUiComponentsMetadata(
     moduleDef?: TestModuleMetadata,
   ): TestModuleMetadata {
-    return this.defaultApiMetadata({imports: [AppModule]});
+    return this.defaultApiMetadata({
+      imports: [AppModule],
+      providers: [EntityStateService],
+    });
   }
 
   static defaultViewComponentsMetadata(
     moduleDef?: TestModuleMetadata,
   ): TestModuleMetadata {
     return this.defaultUiComponentsMetadata({
-      imports: [UiModule]
+      imports: [UiModule],
     });
   }
 

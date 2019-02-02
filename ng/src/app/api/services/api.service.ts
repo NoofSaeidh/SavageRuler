@@ -7,9 +7,7 @@ import { map } from 'rxjs/operators';
 import { IEntity, EntityKey } from 'src/app/types/api/ientity';
 
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export abstract class ApiService {
  // todo: interceptors here?
 }

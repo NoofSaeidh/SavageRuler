@@ -12,9 +12,7 @@ import { IEntity, EntityKey } from 'src/app/types/api/ientity';
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class ApiCrudService<T extends IEntity<TKey>, TKey extends EntityKey> extends ApiService {
   constructor(protected http: HttpClient, protected descriptor: ApiDescriptor<T>) {
     super();

@@ -4,6 +4,7 @@
         <th *ngFor="let field of fields" 
             [class.sort-column]="field.value.sortable ? true : false"
             tabindex="0"
+            (click)="clickHead(field, $event)"
         >
           {{field.value.label || field.key}}
         </th>
