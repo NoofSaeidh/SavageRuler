@@ -9,6 +9,14 @@ import { EntityStateService } from 'src/app/state/entity/entity-state.service';
 import { RawTypeEntry, TypeEntry } from 'src/app/types/global/type-entry';
 import { arraySorter } from 'src/app/types/global/array-sorter';
 
+interface Header<T> {
+  key: keyof T;
+  class: {};
+  field: InfoGridField;
+}
+
+type SortOrder = 'asc' | 'desc';
+
 @Component({
   selector: 'sr-info-grid',
   templateUrl: './info-grid.component.html',
@@ -17,8 +25,9 @@ import { arraySorter } from 'src/app/types/global/array-sorter';
 export class InfoGridComponent<T extends IEntity<TKey>, TKey extends EntityKey>
   implements OnInit {
   items: T[];
+  headers: Header<T>[];
   fields: TypeEntry<T, InfoGridField>[];
-  private sorted: { key: keyof T; order: 'asc' | 'desc' } | false = false;
+  private sorted?: { key: keyof T; order: SortOrder };
 
   constructor(
     protected entityState: EntityStateService<T>,
@@ -27,26 +36,51 @@ export class InfoGridComponent<T extends IEntity<TKey>, TKey extends EntityKey>
 
   ngOnInit() {
     this.fields = this.descriptor.infoGridEntries;
+    this.headers = this.fields.map(value => {
+      const class_ = {};
+      if (value.value.sortable) {
+        class_['sort-column'] = true;
+      }
+      return {
+        key: value.key,
+        class: class_,
+        field: value.value
+      };
+    });
     this.entityState.collection$.subscribe(items => (this.items = items));
   }
 
-  clickHead(field: TypeEntry<T, InfoGridField>, event: MouseEvent) {
-    if (field.value.sortable) {
-      this.sortItems(field.key);
+  clickHead(header: Header<T>, event: MouseEvent) {
+    if (header.field.sortable) {
+      const order = this.sortItems(header);
     }
   }
 
-  sortItems(key: keyof T) {
-    if (!this.sorted || this.sorted.key !== key) {
-      arraySorter.sortBy(this.items, key, false);
-      this.sorted = {
-        key: key,
-        order: 'asc'
-      };
+  sortItems(header: Header<T>) {
+    const key = header.key;
+    let order: SortOrder;
+    if (!this.sorted) {
+      order = 'asc';
+    } else if (this.sorted.key !== key) {
+      const oldHeader = this.headers.find(v => v.key === this.sorted.key);
+      if (oldHeader) {
+        this.setSortOrder(oldHeader, false);
+      }
+      order = 'asc';
     } else {
-      const order = this.sorted.order === 'asc' ? 'desc' : 'asc';
-      arraySorter.sortBy(this.items, key, order === 'desc');
-      this.sorted.order = order;
+      order = this.opositeOrder(this.sorted.order);
     }
+    this.sorted = { key, order };
+    arraySorter.sortBy(this.items, key, order === 'desc');
+    this.setSortOrder(header, this.sorted.order);
+  }
+
+  opositeOrder(order: SortOrder): SortOrder {
+    return order === 'asc' ? 'desc' : 'asc';
+  }
+
+  setSortOrder(header: Header<T>, order: SortOrder | false) {
+    header.class['sort-column-asc'] = order === 'asc';
+    header.class['sort-column-desc'] = order === 'desc';
   }
 }

@@ -1,20 +1,28 @@
-<table class="table b-table table-striped table-hover table-sm">
-    <thead class="">
-      <tr>
-        <th *ngFor="let field of fields" 
-            [class.sort-column]="field.value.sortable ? true : false"
-            tabindex="0"
-            (click)="clickHead(field, $event)"
-        >
-          {{field.value.label || field.key}}
-        </th>
-      </tr>
-    </thead>
-    <tbody class="">
-      <tr class="" mdbTableCol *ngFor="let item of items">
-        <!-- TODO: aria-colindex -->
-        <td *ngFor="let field of fields" 
-          class="">{{ item[field.key] }}</td>
-      </tr>
-    </tbody>
-  </table>
+<table
+  class="table
+        b-table
+        table-striped
+        table-hover
+        table-sm"
+>
+  <thead class="">
+    <tr>
+      <th
+        *ngFor="let header of headers"
+        tabindex="0"
+        scope="col"
+        (click)="clickHead(header, $event)"
+      >
+        <span [ngClass]="header.class">
+          {{ header.field.label || header.key }}
+        </span>
+      </th>
+    </tr>
+  </thead>
+  <tbody class="">
+    <tr class="" mdbTableCol *ngFor="let item of items">
+      <!-- TODO: aria-colindex -->
+      <td *ngFor="let field of fields" class="">{{ item[field.key] }}</td>
+    </tr>
+  </tbody>
+</table>
