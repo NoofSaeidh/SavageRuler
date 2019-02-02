@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <AssetTargetFallback>$(AssetTargetFallback);portable-net45+win8+wp8+wpa81;</AssetTargetFallback>
@@ -21,9 +21,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SavageRuler.Core\SavageRuler.Core.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <DotNetCliToolReference Include="Microsoft.EntityFrameworkCore.Tools.DotNet" Version="2.0.0" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Migrations\20181221181516_Initial_Migration.Designer.cs">
