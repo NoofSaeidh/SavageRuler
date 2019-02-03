@@ -1,7 +1,8 @@
-import { ViewDescriptor } from './../../../types/descriptors/view-descriptor';
+import { ViewDescriptor, ReadFormField } from './../../../types/descriptors/view-descriptor';
 import { EntityStateService } from './../../../state/entity/entity-state.service';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Unsubscribable } from 'rxjs';
+import { TypeEntry, toTypeEntries, toTypeEntriesMap } from 'src/app/types/global/type-entry';
 
 @Component({
   selector: 'sr-readonly-form',
@@ -30,5 +31,9 @@ export class ReadonlyFormComponent<T> implements OnInit, OnDestroy {
 
   get title(): string {
     return String(this.item[this.viewDescriptor.titleKey]);
+  }
+
+  get fields(): TypeEntry<T, ReadFormField>[] {
+    return this.viewDescriptor.readFromEntries;
   }
 }

@@ -5,10 +5,13 @@
 <div class="card border-dark text-dark">
   <h4 class="card-header">{{title}}</h4>
   <div class="card-body px-3">
-    <!-- <ReadField
-        v-for="[key, field] in fields"
-        :key="key"
-        :field="field"
-      /> -->
+    <div *ngFor="let field of fields" class="text-left">
+      <div class="col">
+        <b>{{field.value.label || field.key}}</b>
+      </div>
+      <div class="col">
+        <p>{{item[field.key]}}</p>
+      </div>
+    </div>
   </div>
 </div>

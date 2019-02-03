@@ -7,8 +7,20 @@ export interface TypeEntry<K, V = any> {
 
 export function toTypeEntries<T>(item: T): TypeEntry<T>[];
 
-export function toTypeEntries<T, V>(item:  { [s: string]: V } | ArrayLike<V>): TypeEntry<T, V>[] {
+export function toTypeEntries<T, V>(
+  item: { [s: string]: V } | ArrayLike<V> & T
+): TypeEntry<T, V>[] {
   return Object.entries<V>(item).map(([key, value]) => {
-    return { key, value } as TypeEntry<T, V>;
+    return { key: key as keyof T, value };
+  });
+}
+
+export function toTypeEntriesMap<T, V, R>(
+  item: { [s: string]: V } | ArrayLike<V> & T,
+  map: (item: { key: keyof T; value: V }) => R
+): TypeEntry<T, R>[] {
+  return Object.entries<V>(item).map(([key_, value]) => {
+    const key = key_ as keyof T;
+    return { key, value: map({ key, value }) };
   });
 }
