@@ -1,17 +1,11 @@
-<p>
-  readonly-form works!
-</p>
-
 <div class="card border-dark text-dark">
-  <h4 class="card-header">{{title}}</h4>
+  <h4 class="card-header">{{ title }}</h4>
   <div class="card-body px-3">
-    <div *ngFor="let field of fields" class="text-left">
-      <div class="col">
-        <b>{{field.value.label || field.key}}</b>
-      </div>
-      <div class="col">
-        <p>{{item[field.key]}}</p>
-      </div>
-    </div>
+    <span *ngFor="let field of fields" class="text-left single-line">
+      <p>
+        <b>{{ field.value.label || field.key }}: &ensp; &ensp;</b>
+        {{ item[field.key] }}
+      </p>
+    </span>
   </div>
 </div>
