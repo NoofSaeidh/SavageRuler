@@ -2,7 +2,8 @@
   <div [ngSwitch]="isLoading">
     <div *ngSwitchCase="true" class="loading">Loading...</div>
     <div *ngSwitchDefault>
-      <sr-info-grid></sr-info-grid>
+      <sr-readonly-form *ngIf="currentItem"></sr-readonly-form>
+      <sr-info-grid *ngIf="!currentItem"></sr-info-grid>
     </div>
   </div>
 </div>
