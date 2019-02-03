@@ -2,7 +2,17 @@
   <div [ngSwitch]="isLoading">
     <div *ngSwitchCase="true" class="loading">Loading...</div>
     <div *ngSwitchDefault>
-      <sr-readonly-form *ngIf="currentItem"></sr-readonly-form>
+      <div *ngIf="currentItem" class="container-fluid">
+        <div class="row">
+          <span class="col">
+            <button class="btn btn-secondary" (click)="hideForm()">
+              <i class="fas fa-th"></i>
+              Back to Grid
+            </button>
+          </span>
+        </div>
+        <sr-readonly-form></sr-readonly-form>
+      </div>
       <sr-info-grid *ngIf="!currentItem"></sr-info-grid>
     </div>
   </div>

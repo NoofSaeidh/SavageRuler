@@ -58,4 +58,8 @@ export class ReadonlyScreenComponent<
       }
     );
   }
+
+  hideForm() {
+    this.entityState.current$.next(null);
+  }
 }
