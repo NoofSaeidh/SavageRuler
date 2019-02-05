@@ -8,11 +8,10 @@ const routes: Routes = [
   { path: 'dashboard', component: DashboardComponent },
   {
     path: 'powers',
-    component: PowersComponent,
     children: [
-      { path: '', redirectTo: 'grid' },
-      { path: 'grid' },
-      { path: 'item' }
+      { path: '', redirectTo: 'grid', pathMatch: 'full' },
+      { path: 'grid', component: PowersComponent},
+      { path: 'item',  component: PowersComponent}
     ]
   }
 ];

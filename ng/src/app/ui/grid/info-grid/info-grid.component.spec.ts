@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { InfoGridComponent } from './info-grid.component';
-import { IEntity } from 'src/app/types/api/ientity';
+import { IEntity } from 'src/app/api/types/ientity';
 import { SrTestBed } from 'src/tests/sr-test-bed';
 
 describe('InfoGridComponent', () => {

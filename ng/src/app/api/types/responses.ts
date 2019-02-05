@@ -1,4 +1,4 @@
-export interface ServerReponse<T = any> {
+export interface ServerResponse<T = any> {
   result: T | null;
   targetUrl: string | null;
   success: boolean;
@@ -6,7 +6,7 @@ export interface ServerReponse<T = any> {
   unAuthorizedRequest: boolean;
 }
 
-export interface ServerReponseList<T = any> extends ServerReponse<ServerList<T>> {
+export interface ServerResponseList<T = any> extends ServerResponse<ServerList<T>> {
   result: ServerList<T>;
 }
 

@@ -14,7 +14,6 @@ import {
 import { AppModule } from 'src/app/app.module';
 import { ViewDescriptor } from 'src/app/types/descriptors/view-descriptor';
 import { powerViewDescriptor } from 'src/app/views/powers/descriptors/power-view-descriptor';
-import { EntityStateService } from 'src/app/state/entity/entity-state.service';
 
 export class SrTestBed {
   static defaultApiMetadata(
@@ -36,7 +35,6 @@ export class SrTestBed {
   ): TestModuleMetadata {
     return this.defaultApiMetadata({
       imports: [AppModule],
-      providers: [EntityStateService],
     });
   }
 

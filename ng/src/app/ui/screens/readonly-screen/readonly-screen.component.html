@@ -1,19 +1,26 @@
 <div>
-  <div [ngSwitch]="isLoading">
-    <div *ngSwitchCase="true" class="loading">Loading...</div>
-    <div *ngSwitchDefault>
-      <div *ngIf="currentItem" class="container-fluid">
-        <div class="row">
-          <span class="col">
-            <button class="btn btn-secondary" (click)="hideForm()">
-              <i class="fas fa-th"></i>
-              Back to Grid
-            </button>
-          </span>
-        </div>
-        <sr-readonly-form></sr-readonly-form>
+  <div *ngIf="isLoading; else loaded" class="loading">Loading...</div>
+  <ng-template #loaded>
+    <!-- if place *ngIf here - it will recreate readonly form on each item change -->
+    <div class="container-fluid" [hidden]="showType==='GRID' || !selectedItem">
+      <div class="row">
+        <span class="col">
+          <button class="btn btn-secondary" (click)="showGrid()">
+            <i class="fas fa-th"></i>
+            Back to Grid
+          </button>
+        </span>
       </div>
-      <sr-info-grid *ngIf="!currentItem"></sr-info-grid>
+      <sr-readonly-form
+        *ngIf="selectedItem"
+        [item]="selectedItem"
+      ></sr-readonly-form>
     </div>
-  </div>
+    <sr-info-grid
+      *ngIf="items"
+      [items]="items"
+      [hidden]="showType==='FORM'"
+      (rowClicked)="showFormItem($event.item)"
+    ></sr-info-grid>
+  </ng-template>
 </div>

@@ -1,6 +1,5 @@
 import { ViewDescriptor, ReadFormField } from './../../../types/descriptors/view-descriptor';
-import { EntityStateService } from './../../../state/entity/entity-state.service';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { Unsubscribable } from 'rxjs';
 import { TypeEntry } from 'src/app/types/global/type-entry';
 
@@ -9,24 +8,15 @@ import { TypeEntry } from 'src/app/types/global/type-entry';
   templateUrl: './readonly-form.component.html',
   styleUrls: ['./readonly-form.component.scss']
 })
-export class ReadonlyFormComponent<T> implements OnInit, OnDestroy {
-  item: T;
-
-  private subscription: Unsubscribable;
+export class ReadonlyFormComponent<T> implements OnInit {
+  @Input() item: T;
 
   constructor(
-    private entityState: EntityStateService<T>,
     private viewDescriptor: ViewDescriptor<T>
   ) {}
 
   ngOnInit() {
-    this.subscription = this.entityState.current$.subscribe(
-      item => (this.item = item)
-    );
-  }
-
-  ngOnDestroy() {
-    this.subscription.unsubscribe();
+    console.log('form initialized');
   }
 
   get title(): string {

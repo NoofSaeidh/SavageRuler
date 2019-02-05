@@ -1,11 +1,10 @@
-import { Component, OnInit, Input, OnChanges, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, OnDestroy, Output, EventEmitter } from '@angular/core';
 import {
   ViewDescriptor,
   InfoGridField,
   FieldDescriptor
 } from 'src/app/types/descriptors/view-descriptor';
-import { IEntity, EntityKey } from 'src/app/types/api/ientity';
-import { EntityStateService } from 'src/app/state/entity/entity-state.service';
+import { IEntity, EntityKey } from 'src/app/api/types/ientity';
 import { RawTypeEntry, TypeEntry } from 'src/app/types/global/type-entry';
 import { arraySorter } from 'src/app/types/global/array-sorter';
 import { Unsubscribable } from 'rxjs';
@@ -24,15 +23,14 @@ type SortOrder = 'asc' | 'desc';
   styleUrls: ['./info-grid.component.scss']
 })
 export class InfoGridComponent<T extends IEntity<TKey>, TKey extends EntityKey>
-  implements OnInit, OnDestroy {
-  items: T[];
+  implements OnInit {
+  @Input() items: T[];
+  @Output() rowClicked = new EventEmitter<{item: T, event: MouseEvent}>(true);
   headers: Header<T>[];
   fields: TypeEntry<T, InfoGridField>[];
   private sorted?: { key: keyof T; order: SortOrder };
-  private subscription: Unsubscribable;
 
   constructor(
-    protected entityState: EntityStateService<T>,
     protected descriptor: ViewDescriptor<T>
   ) {}
 
@@ -49,13 +47,6 @@ export class InfoGridComponent<T extends IEntity<TKey>, TKey extends EntityKey>
         field: value.value
       };
     });
-    this.subscription = this.entityState.collection$.subscribe(
-      items => (this.items = items)
-    );
-  }
-
-  ngOnDestroy() {
-    this.subscription.unsubscribe();
   }
 
   clickHead(header: Header<T>, event: MouseEvent) {
@@ -65,14 +56,7 @@ export class InfoGridComponent<T extends IEntity<TKey>, TKey extends EntityKey>
   }
 
   clickRow(item: T, event: MouseEvent) {
-    this.entityState.current$.next(item);
-    if (event.ctrlKey || event.altKey) {
-      // todo: open new tab when ctrlKey
-    } else {
-      this.entityState.extra$.next({
-        modal: true
-      });
-    }
+    this.rowClicked.emit({item, event});
   }
 
   private sortItems(header: Header<T>) {

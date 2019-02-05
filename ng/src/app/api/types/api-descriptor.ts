@@ -18,11 +18,26 @@ export class ApiDescriptor<T> {
     return !!this._urls[request];
   }
 
-  public getUrl(request: keyof ApiUrls, fullPath: boolean = true): string {
-    const url = this._urls[request];
+  public getUrl(
+    request: keyof ApiUrls,
+    extras?: { query?: {}; shortPath?: boolean },
+  ): string {
+    let url = this._urls[request];
     if (!url) {
       throw new Error(`Current descriptor doesn't have ${request} url.`);
     }
-    return fullPath ? this.baseUrl + url : url;
+    url = extras && extras.shortPath ? url : this.baseUrl + url;
+    if (extras && extras.query) {
+      url += this.buildQuery(extras.query);
+    }
+    return url;
+  }
+
+  public buildQuery(query: {}): string {
+    let result: string = '?';
+    for (const [key, value] of Object.entries(query)) {
+      result += `${key}=${value}`;
+    }
+    return result;
   }
 }
