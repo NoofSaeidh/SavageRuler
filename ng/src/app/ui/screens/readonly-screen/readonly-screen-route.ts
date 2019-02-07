@@ -6,12 +6,10 @@ export function readonlyScreenRoute(basePath: string, component: Type<any>): Rou
   return {
     path: basePath + '/screen',
     children: [
-      {path: '**', component: component}
-    ]
-      // { path: '', redirectTo: 'grid', pathMatch: 'full' },
-      // { path: 'grid', component: component },
-      // { path: 'item', component: component },
-    // ],
+      { path: '', redirectTo: 'grid', pathMatch: 'full' },
+      { path: 'grid', component: component },
+      { path: 'form', component: component },
+    ],
   };
 }
 

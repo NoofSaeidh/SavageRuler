@@ -8,7 +8,12 @@ import {
   InjectionToken,
   Inject,
 } from '@angular/core';
-import { Router, NavigationStart, ActivatedRoute } from '@angular/router';
+import {
+  Router,
+  NavigationStart,
+  ActivatedRoute,
+  NavigationEnd,
+} from '@angular/router';
 
 import { IEntity, EntityKey } from 'src/app/api/types/ientity';
 import {
@@ -33,10 +38,6 @@ export const LOAD_SINGLE_STATE = new InjectionToken<LoadStateService<any[]>>(
 
 type ShowType = 'GRID' | 'FORM';
 
-interface ScreenNavigationExtras {
-  dontChangeQuery: boolean;
-}
-
 @Component({
   selector: 'sr-readonly-screen',
   templateUrl: './readonly-screen.component.html',
@@ -59,50 +60,8 @@ export class ReadonlyScreenComponent<
   ) {}
 
   ngOnInit() {
-    console.log('init screen');
     this.selectedItem = null;
     this.openScreen(this.route.snapshot.queryParams);
-    // this.route.queryParams.subscribe(query => {
-    //   console.log(query);
-    //   // const current = this.routerState.router.getCurrentNavigation();
-    //   // openScreen only for newly opened screen, or browser navigation buttons
-    //   // if (!current || current.trigger === 'popstate') {
-    //   this.openScreen(query);
-    //   // }
-    // });
-
-    // this.openScreen(this.routerState.activatedRoute.snapshot.queryParams);
-    // this.routerState.router.events
-    //   .pipe(
-    //     filter(
-    //       (event: NavigationStart) =>
-    //         event instanceof NavigationStart &&
-    //         // watch only browser navigation - self navigation handled by component itselft
-    //         event.navigationTrigger === 'popstate',
-    //     ),
-    //   )
-    //   .subscribe(event => {
-    //     console.log(this.routerState.activatedRoute.snapshot.queryParams);
-    //     this.openScreen(this.routerState.activatedRoute.snapshot.queryParams);
-    //   });
-
-    // const idParam = this.routerState.activatedRoute.snapshot.queryParams.id;
-    // if (idParam) {
-    //   this.showType = 'FORM';
-    //   // todo: To Key conversion???
-    //   this.ensureSelectedItemLoaded(idParam);
-    // } else {
-    //   this.showType = 'GRID';
-    //   this.ensureItemsLoaded();
-    // }
-    // this.routerState.activatedRoute.params.subscribe(params => {
-    //   console.log('activatedRoute ' + params.id);
-    //   if (params.id) {
-    //     this.showFormItem(params.id);
-    //   } else {
-    //     this.showGrid();
-    //   }
-    // });
   }
 
   get items(): T[] | null {
@@ -117,13 +76,13 @@ export class ReadonlyScreenComponent<
 
   openScreen(data?: { id?: TKey }) {
     if (data && data.id) {
-      this.showFormItem(data.id, { dontChangeQuery: true });
+      this.showFormItem(data.id);
     } else {
-      this.showGrid({ dontChangeQuery: true });
+      this.showGrid();
     }
   }
 
-  showFormItem(item: T | TKey, extras?: ScreenNavigationExtras) {
+  showFormItem(item: T | TKey) {
     let id: TKey;
     if (typeof item === 'object' /* is T */) {
       id = item.id;
@@ -133,23 +92,27 @@ export class ReadonlyScreenComponent<
       this.ensureSelectedItemLoaded(id);
     }
     this.showType = 'FORM';
-    if (!extras || !extras.dontChangeQuery) {
-      this.location.go(this.router.createUrlTree(['../form'], {
-        relativeTo: this.route,
-        queryParams: { id: id },
-      }).toString());
-    }
+    this.location.replaceState(
+      this.router
+        .createUrlTree(['../form'], {
+          relativeTo: this.route,
+          queryParams: { id: id },
+        })
+        .toString(),
+    );
   }
 
-  showGrid(extras?: ScreenNavigationExtras) {
+  showGrid() {
     this.showType = 'GRID';
     this.ensureItemsLoaded();
-    if (!extras || !extras.dontChangeQuery) {
-      this.location.go(this.router.createUrlTree(['../grid'], {
-        relativeTo: this.route,
-        queryParams: {},
-      }).toString());
-    }
+    this.location.replaceState(
+      this.router
+        .createUrlTree(['../grid'], {
+          relativeTo: this.route,
+          queryParams: {},
+        })
+        .toString(),
+    );
   }
 
   private ensureItemsLoaded() {
