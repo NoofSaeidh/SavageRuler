@@ -1,13 +1,17 @@
-import { Component, OnInit, Input, OnChanges, OnDestroy, Output, EventEmitter } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Input,
+  Output,
+  EventEmitter,
+} from '@angular/core';
 import {
   ViewDescriptor,
   InfoGridField,
-  FieldDescriptor
 } from 'src/app/types/descriptors/view-descriptor';
 import { IEntity, EntityKey } from 'src/app/api/types/ientity';
-import { RawTypeEntry, TypeEntry } from 'src/app/types/global/type-entry';
+import { TypeEntry } from 'src/app/types/global/type-entry';
 import { arraySorter } from 'src/app/types/global/array-sorter';
-import { Unsubscribable } from 'rxjs';
 
 interface Header<T> {
   key: keyof T;
@@ -20,19 +24,17 @@ type SortOrder = 'asc' | 'desc';
 @Component({
   selector: 'sr-info-grid',
   templateUrl: './info-grid.component.html',
-  styleUrls: ['./info-grid.component.scss']
+  styleUrls: ['./info-grid.component.scss'],
 })
 export class InfoGridComponent<T extends IEntity<TKey>, TKey extends EntityKey>
   implements OnInit {
   @Input() items: T[];
-  @Output() rowClicked = new EventEmitter<{item: T, event: MouseEvent}>(true);
+  @Output() rowClicked = new EventEmitter<{ item: T; event: MouseEvent }>(true);
   headers: Header<T>[];
   fields: TypeEntry<T, InfoGridField>[];
   private sorted?: { key: keyof T; order: SortOrder };
 
-  constructor(
-    protected descriptor: ViewDescriptor<T>
-  ) {}
+  constructor(protected descriptor: ViewDescriptor<T>) {}
 
   ngOnInit() {
     this.fields = this.descriptor.infoGridEntries;
@@ -44,19 +46,19 @@ export class InfoGridComponent<T extends IEntity<TKey>, TKey extends EntityKey>
       return {
         key: value.key,
         class: class_,
-        field: value.value
+        field: value.value,
       };
     });
   }
 
   clickHead(header: Header<T>, event: MouseEvent) {
     if (header.field.sortable) {
-      const order = this.sortItems(header);
+      this.sortItems(header);
     }
   }
 
   clickRow(item: T, event: MouseEvent) {
-    this.rowClicked.emit({item, event});
+    this.rowClicked.emit({ item, event });
   }
 
   private sortItems(header: Header<T>) {

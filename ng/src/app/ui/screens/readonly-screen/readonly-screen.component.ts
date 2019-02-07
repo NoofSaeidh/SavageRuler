@@ -1,19 +1,5 @@
-import {
-  Component,
-  OnInit,
-  OnDestroy,
-  Input,
-  Output,
-  EventEmitter,
-  InjectionToken,
-  Inject,
-} from '@angular/core';
-import {
-  Router,
-  NavigationStart,
-  ActivatedRoute,
-  NavigationEnd,
-} from '@angular/router';
+import { Component, OnInit, InjectionToken, Inject } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
 
 import { IEntity, EntityKey } from 'src/app/api/types/ientity';
 import {
@@ -21,12 +7,8 @@ import {
   toServerResult,
   toServerListResult,
 } from 'src/app/api/services/api-crud.service';
-import { LoadListStateService } from 'src/app/state/load/load-list-state.service';
-import { RouterStateService } from 'src/app/state/router/router-state.service';
 import { LoadStateService } from 'src/app/state/load/load-state.service';
-import { Token } from '@angular/compiler';
 import { first, filter } from 'rxjs/operators';
-import { LoadState } from 'src/app/state/types/load-state';
 import { Location } from '@angular/common';
 
 export const LOAD_LIST_STATE = new InjectionToken<LoadStateService<any>>(
@@ -42,6 +24,10 @@ type ShowType = 'GRID' | 'FORM';
   selector: 'sr-readonly-screen',
   templateUrl: './readonly-screen.component.html',
   styleUrls: ['./readonly-screen.component.scss'],
+  providers: [
+    { provide: LOAD_LIST_STATE, useClass: LoadStateService },
+    { provide: LOAD_SINGLE_STATE, useClass: LoadStateService },
+  ],
 })
 export class ReadonlyScreenComponent<
   T extends IEntity<TKey>,
