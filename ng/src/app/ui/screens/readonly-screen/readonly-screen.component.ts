@@ -8,7 +8,7 @@ import {
   InjectionToken,
   Inject,
 } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, NavigationStart, ActivatedRoute } from '@angular/router';
 
 import { IEntity, EntityKey } from 'src/app/api/types/ientity';
 import {
@@ -22,15 +22,20 @@ import { LoadStateService } from 'src/app/state/load/load-state.service';
 import { Token } from '@angular/compiler';
 import { first, filter } from 'rxjs/operators';
 import { LoadState } from 'src/app/state/types/load-state';
+import { Location } from '@angular/common';
 
 export const LOAD_LIST_STATE = new InjectionToken<LoadStateService<any>>(
-  'List load state',
+  'List load state for readonly screen',
 );
 export const LOAD_SINGLE_STATE = new InjectionToken<LoadStateService<any[]>>(
-  'Single item load state',
+  'Single item load state for readonly screen',
 );
 
 type ShowType = 'GRID' | 'FORM';
+
+interface ScreenNavigationExtras {
+  dontChangeQuery: boolean;
+}
 
 @Component({
   selector: 'sr-readonly-screen',
@@ -46,31 +51,50 @@ export class ReadonlyScreenComponent<
 
   constructor(
     protected apiService: ApiCrudService<T, TKey>,
-    protected routerState: RouterStateService,
+    protected route: ActivatedRoute,
+    protected router: Router,
+    protected location: Location,
     @Inject(LOAD_LIST_STATE) protected loadListState: LoadStateService<T[]>,
     @Inject(LOAD_SINGLE_STATE) protected loadSingleState: LoadStateService<T>,
   ) {}
 
   ngOnInit() {
+    console.log('init screen');
     this.selectedItem = null;
-    // loaded from id path
-    this.routerState.activatedRoute.queryParams.subscribe(params => {
-      console.log('activatedRoute ' + params.id);
-      if (params.id) {
-        this._showFormItem(params.id);
-      } else {
-        this._showGrid();
-      }
-    });
-    const idParam = this.routerState.activatedRoute.snapshot.queryParams.id;
-    if (idParam) {
-      this.showType = 'FORM';
-      // todo: To Key conversion???
-      this.ensureSelectedItemLoaded(idParam);
-    } else {
-      this.showType = 'GRID';
-      this.ensureItemsLoaded();
-    }
+    this.openScreen(this.route.snapshot.queryParams);
+    // this.route.queryParams.subscribe(query => {
+    //   console.log(query);
+    //   // const current = this.routerState.router.getCurrentNavigation();
+    //   // openScreen only for newly opened screen, or browser navigation buttons
+    //   // if (!current || current.trigger === 'popstate') {
+    //   this.openScreen(query);
+    //   // }
+    // });
+
+    // this.openScreen(this.routerState.activatedRoute.snapshot.queryParams);
+    // this.routerState.router.events
+    //   .pipe(
+    //     filter(
+    //       (event: NavigationStart) =>
+    //         event instanceof NavigationStart &&
+    //         // watch only browser navigation - self navigation handled by component itselft
+    //         event.navigationTrigger === 'popstate',
+    //     ),
+    //   )
+    //   .subscribe(event => {
+    //     console.log(this.routerState.activatedRoute.snapshot.queryParams);
+    //     this.openScreen(this.routerState.activatedRoute.snapshot.queryParams);
+    //   });
+
+    // const idParam = this.routerState.activatedRoute.snapshot.queryParams.id;
+    // if (idParam) {
+    //   this.showType = 'FORM';
+    //   // todo: To Key conversion???
+    //   this.ensureSelectedItemLoaded(idParam);
+    // } else {
+    //   this.showType = 'GRID';
+    //   this.ensureItemsLoaded();
+    // }
     // this.routerState.activatedRoute.params.subscribe(params => {
     //   console.log('activatedRoute ' + params.id);
     //   if (params.id) {
@@ -91,25 +115,41 @@ export class ReadonlyScreenComponent<
     );
   }
 
-  showFormItem(item: T) {
-    // tricky optimization through state
-    this.loadSingleState.subject.next(LoadState.fromLoaded(item));
-    this.routerState.setQuery({ id: item.id });
+  openScreen(data?: { id?: TKey }) {
+    if (data && data.id) {
+      this.showFormItem(data.id, { dontChangeQuery: true });
+    } else {
+      this.showGrid({ dontChangeQuery: true });
+    }
   }
 
-  showGrid() {
-    this.routerState.setQuery({});
-  }
-
-  // no changes to route here
-  private _showFormItem(id: TKey) {
-    this.ensureSelectedItemLoaded(id);
+  showFormItem(item: T | TKey, extras?: ScreenNavigationExtras) {
+    let id: TKey;
+    if (typeof item === 'object' /* is T */) {
+      id = item.id;
+      this.selectedItem = item;
+    } /* is TKey */ else {
+      id = item;
+      this.ensureSelectedItemLoaded(id);
+    }
     this.showType = 'FORM';
+    if (!extras || !extras.dontChangeQuery) {
+      this.location.go(this.router.createUrlTree(['../form'], {
+        relativeTo: this.route,
+        queryParams: { id: id },
+      }).toString());
+    }
   }
 
-  private _showGrid() {
-    this.ensureItemsLoaded();
+  showGrid(extras?: ScreenNavigationExtras) {
     this.showType = 'GRID';
+    this.ensureItemsLoaded();
+    if (!extras || !extras.dontChangeQuery) {
+      this.location.go(this.router.createUrlTree(['../grid'], {
+        relativeTo: this.route,
+        queryParams: {},
+      }).toString());
+    }
   }
 
   private ensureItemsLoaded() {
@@ -143,7 +183,6 @@ export class ReadonlyScreenComponent<
         )
         .subscribe(state => {
           this.selectedItem = state.value;
-          console.log(state);
         });
     }
   }

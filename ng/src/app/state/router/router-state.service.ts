@@ -18,13 +18,21 @@ export class RouterStateService {
     extras?: {
       queryParamsHandling?: QueryParamsHandling;
       replaceUrl?: boolean;
+      skipLocationChange?: boolean;
+      locationOnly?: boolean;
     },
   ) {
-    this.router.navigate([], {
+    const urlTree = this.router.createUrlTree([], {
       relativeTo: this.activatedRoute,
       queryParams,
       queryParamsHandling: extras && extras.queryParamsHandling,
       replaceUrl: extras && extras.replaceUrl,
+      skipLocationChange: extras && extras.skipLocationChange,
     });
+    if (extras && extras.locationOnly) {
+      this.location.go(urlTree.toString());
+    } else {
+      this.router.navigateByUrl(urlTree.toString());
+    }
   }
 }
