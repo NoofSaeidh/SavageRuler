@@ -4,6 +4,7 @@ import { InfoGridComponent } from './grid/info-grid/info-grid.component';
 import { ReadonlyScreenComponent } from './screens/readonly-screen/readonly-screen.component';
 import { ReadonlyFieldComponent } from './elements/readonly-field/readonly-field.component';
 import { ReadonlyFormComponent } from './form/readonly-form/readonly-form.component';
+import { ModalFormComponent } from './screens/readonly-screen/modal-form/modal-form.component';
 
 const components = [
   InfoGridComponent,
@@ -13,8 +14,12 @@ const components = [
 ];
 
 @NgModule({
-  declarations: components,
+  declarations: [
+    ...components,
+    ModalFormComponent
+  ],
   imports: [CommonModule],
   exports: components,
+  entryComponents: [ModalFormComponent],
 })
 export class UiModule {}

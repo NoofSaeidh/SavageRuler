@@ -1,4 +1,11 @@
-import { Component, OnInit, InjectionToken, Inject } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  InjectionToken,
+  Inject,
+  TemplateRef,
+  ElementRef,
+} from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 
 import { IEntity, EntityKey } from 'src/app/api/types/ientity';
@@ -10,6 +17,8 @@ import {
 import { LoadStateService } from 'src/app/state/load/load-state.service';
 import { first, filter } from 'rxjs/operators';
 import { Location } from '@angular/common';
+import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ModalFormComponent } from './modal-form/modal-form.component';
 
 export const LOAD_LIST_STATE = new InjectionToken<LoadStateService<any>>(
   'List load state for readonly screen',
@@ -18,7 +27,7 @@ export const LOAD_SINGLE_STATE = new InjectionToken<LoadStateService<any[]>>(
   'Single item load state for readonly screen',
 );
 
-type ShowType = 'GRID' | 'FORM';
+type ShowType = 'GRID' | 'FORM' | 'MODAL';
 
 @Component({
   selector: 'sr-readonly-screen',
@@ -27,7 +36,7 @@ type ShowType = 'GRID' | 'FORM';
   providers: [
     { provide: LOAD_LIST_STATE, useClass: LoadStateService },
     { provide: LOAD_SINGLE_STATE, useClass: LoadStateService },
-  ],
+  ]
 })
 export class ReadonlyScreenComponent<
   T extends IEntity<TKey>,
@@ -38,6 +47,7 @@ export class ReadonlyScreenComponent<
 
   constructor(
     protected apiService: ApiCrudService<T, TKey>,
+    protected modalService: NgbModal,
     protected route: ActivatedRoute,
     protected router: Router,
     protected location: Location,
@@ -68,7 +78,7 @@ export class ReadonlyScreenComponent<
     }
   }
 
-  showFormItem(item: T | TKey) {
+  private showItem(item: T | TKey): TKey {
     let id: TKey;
     if (typeof item === 'object' /* is T */) {
       id = item.id;
@@ -77,12 +87,31 @@ export class ReadonlyScreenComponent<
       id = item;
       this.ensureSelectedItemLoaded(id);
     }
+    return id;
+  }
+
+  showFormItem(item: T | TKey) {
+    const id = this.showItem(item);
     this.showType = 'FORM';
     this.location.replaceState(
       this.router
         .createUrlTree(['../form'], {
           relativeTo: this.route,
           queryParams: { id: id },
+        })
+        .toString(),
+    );
+  }
+
+  showModalItem(item: T | TKey) {
+    const id = this.showItem(item);
+    this.showType = 'MODAL';
+    this.modalService.open(ModalFormComponent);
+    this.location.replaceState(
+      this.router
+        .createUrlTree([], {
+          relativeTo: this.route,
+          queryParams: { id: id, view: 'modal' },
         })
         .toString(),
     );
@@ -99,6 +128,10 @@ export class ReadonlyScreenComponent<
         })
         .toString(),
     );
+  }
+
+  gridRowClicked(event: { item: T; mouseEvent: MouseEvent }) {
+    this.showModalItem(event.item);
   }
 
   private ensureItemsLoaded() {

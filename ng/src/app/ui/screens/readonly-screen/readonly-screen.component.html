@@ -1,8 +1,22 @@
 <div>
   <div *ngIf="isLoading; else loaded" class="loading">Loading...</div>
   <ng-template #loaded>
+
+    <!-- MODAL -->
+    <div [hidden]="showType !== 'MODAL'">
+      <sr-readonly-form
+        *ngIf="selectedItem"
+        [item]="selectedItem"
+      ></sr-readonly-form>
+      <button (click)="showType = 'GRID'">hide</button>
+    </div>
+
     <!-- if place *ngIf here - it will recreate readonly form on each item change -->
-    <div class="container-fluid" [hidden]="showType==='GRID' || !selectedItem">
+    <!-- FORM -->
+    <div
+      class="container-fluid"
+      [hidden]="showType !== 'FORM' || !selectedItem"
+    >
       <div class="row">
         <span class="col">
           <button class="btn btn-secondary" (click)="showGrid()">
@@ -16,11 +30,13 @@
         [item]="selectedItem"
       ></sr-readonly-form>
     </div>
+    
+    <!-- GRID -->
     <sr-info-grid
       *ngIf="items"
       [items]="items"
-      [hidden]="showType==='FORM'"
-      (rowClicked)="showFormItem($event.item)"
+      [hidden]="showType === 'FORM'"
+      (rowClicked)="gridRowClicked($event)"
     ></sr-info-grid>
   </ng-template>
 </div>
