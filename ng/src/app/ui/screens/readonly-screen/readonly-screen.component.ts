@@ -85,7 +85,7 @@ export class ReadonlyScreenComponent<
       this.showItem(id);
       this.showModalOnInit = true;
       this.showType = 'MODAL';
-      this.location.replaceState(this.buildUrl('MODAL', id));
+      this.changeLocation('MODAL', id);
     } else {
       this.showGrid();
     }
@@ -95,7 +95,7 @@ export class ReadonlyScreenComponent<
     const id = this.showItem(item);
     this.showType = 'FORM';
     if (!config || !config.dontChangeUrl) {
-      this.location.replaceState(this.buildUrl('FORM', id));
+      this.changeLocation('FORM', id);
     }
   }
 
@@ -104,7 +104,7 @@ export class ReadonlyScreenComponent<
     this.showType = 'MODAL';
     this.modalForm.show();
     if (!config || !config.dontChangeUrl) {
-      this.location.replaceState(this.buildUrl('MODAL', id));
+      this.changeLocation('MODAL', id);
     }
   }
 
@@ -112,7 +112,7 @@ export class ReadonlyScreenComponent<
     this.showType = 'GRID';
     this.ensureItemsLoaded();
     if (!config || !config.dontChangeUrl) {
-      this.location.replaceState(this.buildUrl('GRID'));
+      this.changeLocation('GRID');
     }
   }
 
@@ -136,6 +136,10 @@ export class ReadonlyScreenComponent<
       this.ensureSelectedItemLoaded(id);
     }
     return id;
+  }
+
+  private changeLocation(showType: ShowType, id?: TKey) {
+    this.location.go(this.buildUrl(showType, id));
   }
 
   private buildUrl(showType: ShowType, id?: TKey) {
