@@ -4,6 +4,7 @@ import { InfoGridComponent } from './grid/info-grid/info-grid.component';
 import { ReadonlyScreenComponent } from './screens/readonly-screen/readonly-screen.component';
 import { ReadonlyFieldComponent } from './elements/readonly-field/readonly-field.component';
 import { ReadonlyFormComponent } from './form/readonly-form/readonly-form.component';
+import { ModalModule } from 'ngx-bootstrap';
 
 const components = [
   InfoGridComponent,
@@ -13,10 +14,8 @@ const components = [
 ];
 
 @NgModule({
-  declarations: [
-    ...components,
-  ],
-  imports: [CommonModule],
+  declarations: [components],
+  imports: [CommonModule, ModalModule],
   exports: components,
 })
 export class UiModule {}

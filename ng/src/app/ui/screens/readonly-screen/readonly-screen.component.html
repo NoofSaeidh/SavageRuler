@@ -2,16 +2,29 @@
   <div *ngIf="isLoading; else loaded" class="loading">Loading...</div>
   <ng-template #loaded>
     <!-- MODAL -->
-    <ng-template #modalTemplate>
-      <div class="modal-body">
-        <ng-container *ngTemplateOutlet="formItemRef"></ng-container>
+    <div
+      [config]="{ show: showModalOnInit }"
+      (onHidden)="showGrid()"
+      bsModal
+      #modalForm="bs-modal"
+      class="modal fade"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="dialog-auto-name"
+    >
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-body">
+            <ng-container *ngTemplateOutlet="formItemRef"></ng-container>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-info btn-sm" (click)="modalForm.hide()">
+              Close
+            </button>
+          </div>
+        </div>
       </div>
-      <div class="modal-footer">
-        <button class="btn btn-info btn-sm" (click)="modalRef.hide()">
-          Close
-        </button>
-      </div>
-    </ng-template>
+    </div>
 
     <!-- if place *ngIf here - it will recreate readonly form on each item change -->
     <!-- FORM -->
