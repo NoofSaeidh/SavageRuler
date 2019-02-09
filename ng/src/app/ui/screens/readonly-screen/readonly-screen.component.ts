@@ -133,8 +133,7 @@ export class ReadonlyScreenComponent<
     }
     if (event.key === 'ArrowLeft') {
       this.changeSelected(-1);
-    }
-    if (event.key === 'ArrowRight') {
+    } else if (event.key === 'ArrowRight') {
       this.changeSelected(+1);
     }
   }
@@ -157,6 +156,7 @@ export class ReadonlyScreenComponent<
       item: this.items[resultIndex],
       index: resultIndex,
     };
+    this.location.replaceState(this.buildUrl(this.showType, this.selected.item.id));
   }
 
   private showItem(item: ArrayElement<T> | TKey): TKey {
