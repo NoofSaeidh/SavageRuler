@@ -101,14 +101,7 @@ export class ReadonlyScreenComponent<
   showFormItem(item: T | TKey) {
     const id = this.showItem(item);
     this.showType = 'FORM';
-    this.location.replaceState(
-      this.router
-        .createUrlTree(['../form'], {
-          relativeTo: this.route,
-          queryParams: { id: id },
-        })
-        .toString(),
-    );
+    this.location.replaceState(this.buildUrl('FORM', id));
   }
 
   showModalItem(item: T | TKey) {
@@ -117,44 +110,37 @@ export class ReadonlyScreenComponent<
     this.modalRef = this.modalService.show(this.modalTemplate, {
       class: 'modal-lg',
     });
-    this.location.replaceState(
-      this.router
-        .createUrlTree([], {
-          relativeTo: this.route,
-          queryParams: { id: id, view: 'modal' },
-        })
-        .toString(),
-    );
+    this.location.replaceState(this.buildUrl('MODAL', id));
   }
 
   showGrid() {
     this.showType = 'GRID';
     this.ensureItemsLoaded();
-    this.location.replaceState(
-      this.router
-        .createUrlTree(['../grid'], {
-          relativeTo: this.route,
-          queryParams: {},
-        })
-        .toString(),
-    );
+    this.location.replaceState(this.buildUrl('GRID'));
   }
 
   gridRowClicked(event: { item: T; mouse: MouseEvent }) {
     if (event.mouse.altKey) {
       this.showFormItem(event.item);
     } else if (event.mouse.ctrlKey) {
-      window.open(
-        this.router
-          .createUrlTree(['../form'], {
-            relativeTo: this.route,
-            queryParams: { id: event.item.id },
-          })
-          .toString(),
-      );
+      window.open(this.buildUrl('FORM', event.item.id));
     } else {
       this.showModalItem(event.item);
     }
+  }
+
+  private buildUrl(showType: ShowType, id?: TKey) {
+    const type = showType === 'MODAL' ? 'grid' : showType.toLowerCase();
+    let view;
+    if (showType === 'MODAL') {
+      view = 'modal';
+    }
+    return this.router
+      .createUrlTree(['../' + type], {
+        relativeTo: this.route,
+        queryParams: {id, view},
+      })
+      .toString();
   }
 
   private ensureItemsLoaded() {
