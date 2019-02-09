@@ -30,7 +30,7 @@
     <!-- FORM -->
     <div
       class="container-fluid"
-      [hidden]="showType !== 'FORM' || !selectedItem"
+      [hidden]="showType !== 'FORM' || !selected"
     >
       <div class="row">
         <span class="col">
@@ -45,8 +45,8 @@
 
     <ng-template #formItemRef>
       <sr-readonly-form
-        *ngIf="selectedItem"
-        [item]="selectedItem"
+        *ngIf="selected"
+        [item]="selected.item"
       ></sr-readonly-form>
     </ng-template>
 
@@ -55,7 +55,7 @@
       *ngIf="items"
       [items]="items"
       [hidden]="showType === 'FORM'"
-      (rowClicked)="gridRowClicked($event)"
+      (rowClicked)="onGridRowClicked($event)"
     ></sr-info-grid>
   </ng-template>
 </div>

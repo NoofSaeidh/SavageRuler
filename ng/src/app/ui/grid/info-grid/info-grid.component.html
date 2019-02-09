@@ -20,8 +20,8 @@
     </tr>
   </thead>
   <tbody class="">
-    <tr class="" *ngFor="let item of items"
-        (click)="clickRow(item, $event)">
+    <tr class="" *ngFor="let item of items; let i = index"
+        (click)="clickRow(item, i, $event)">
       <!-- TODO: aria-colindex -->
       <td *ngFor="let field of fields" class="">{{ item[field.key] }}</td>
     </tr>
