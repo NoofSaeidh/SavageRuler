@@ -63,7 +63,7 @@ export class ReadonlyScreenComponent<
     const snapshot = this.route.snapshot;
     // todo: handle modal
     const showType =
-      snapshot.url[snapshot.url.length - 1].path === 'FORM' ? 'FORM' : 'GRID';
+      snapshot.url[snapshot.url.length - 1].path.toUpperCase() === 'FORM' ? 'FORM' : 'GRID';
     const id = snapshot.queryParams.id;
     this.openScreen({ showType, id });
   }
@@ -140,8 +140,21 @@ export class ReadonlyScreenComponent<
     );
   }
 
-  gridRowClicked(event: { item: T; mouseEvent: MouseEvent }) {
-    this.showModalItem(event.item);
+  gridRowClicked(event: { item: T; mouse: MouseEvent }) {
+    if (event.mouse.altKey) {
+      this.showFormItem(event.item);
+    } else if (event.mouse.ctrlKey) {
+      window.open(
+        this.router
+          .createUrlTree(['../form'], {
+            relativeTo: this.route,
+            queryParams: { id: event.item.id },
+          })
+          .toString(),
+      );
+    } else {
+      this.showModalItem(event.item);
+    }
   }
 
   private ensureItemsLoaded() {

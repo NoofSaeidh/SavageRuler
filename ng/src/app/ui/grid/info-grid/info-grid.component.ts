@@ -29,7 +29,7 @@ type SortOrder = 'asc' | 'desc';
 export class InfoGridComponent<T extends IEntity<TKey>, TKey extends EntityKey>
   implements OnInit {
   @Input() items: T[];
-  @Output() rowClicked = new EventEmitter<{ item: T; event: MouseEvent }>(true);
+  @Output() rowClicked = new EventEmitter<{ item: T; mouse: MouseEvent }>(true);
   headers: Header<T>[];
   fields: TypeEntry<T, InfoGridField>[];
   private sorted?: { key: keyof T; order: SortOrder };
@@ -58,7 +58,7 @@ export class InfoGridComponent<T extends IEntity<TKey>, TKey extends EntityKey>
   }
 
   clickRow(item: T, event: MouseEvent) {
-    this.rowClicked.emit({ item, event });
+    this.rowClicked.emit({ item, mouse: event });
   }
 
   private sortItems(header: Header<T>) {

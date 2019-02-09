@@ -3,16 +3,13 @@
   <ng-template #loaded>
     <!-- MODAL -->
     <ng-template #modalTemplate>
-        <div class="modal-body">
-          <sr-readonly-form
-            *ngIf="selectedItem"
-            [item]="selectedItem"
-          ></sr-readonly-form>
-        </div>
-        <div class="modal-footer">
-          <button class="btn btn-info btn-sm" (click)="modalRef.hide()">
-            Close
-          </button>
+      <div class="modal-body">
+        <ng-container *ngTemplateOutlet="formItemRef"></ng-container>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-info btn-sm" (click)="modalRef.hide()">
+          Close
+        </button>
       </div>
     </ng-template>
 
@@ -30,11 +27,15 @@
           </button>
         </span>
       </div>
+      <ng-container *ngTemplateOutlet="formItemRef"></ng-container>
+    </div>
+
+    <ng-template #formItemRef>
       <sr-readonly-form
         *ngIf="selectedItem"
         [item]="selectedItem"
       ></sr-readonly-form>
-    </div>
+    </ng-template>
 
     <!-- GRID -->
     <sr-info-grid
