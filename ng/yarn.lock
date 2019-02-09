@@ -298,13 +298,6 @@
   resolved "https://registry.yarnpkg.com/@fortawesome/fontawesome-free/-/fontawesome-free-5.7.1.tgz#e4bdc6fd2a7b5a41d5b599bcb62cf22c78f7f535"
   integrity sha512-gukWJ7Mwf0WXQbkcwcm5zi8+H8aT5MMnphf5hpydOw898H1ibgm2cyejHgk6Km/FTvrPp5ppUHLrlFwt0QxsQw==
 
-"@ng-bootstrap/ng-bootstrap@^4.0.2":
-  version "4.0.2"
-  resolved "https://registry.yarnpkg.com/@ng-bootstrap/ng-bootstrap/-/ng-bootstrap-4.0.2.tgz#333e90190eda76879a00df85d5aa031b78f7d565"
-  integrity sha512-SBsN8ORvj/WXpZGSyR2+CRkg6GCtax5+fsLKt9ImHKUVWwePVqRxiGlnxXqwNPHQ46vOdd7nDN9cwE7dfbGaAQ==
-  dependencies:
-    tslib "^1.9.0"
-
 "@ngtools/webpack@7.3.0":
   version "7.3.0"
   resolved "https://registry.yarnpkg.com/@ngtools/webpack/-/webpack-7.3.0.tgz#ed6bfb0c7c02db2fdfaf0fdecd4c2b1bb80af7a5"
@@ -4729,6 +4722,11 @@ neo-async@^2.5.0:
   version "2.6.0"
   resolved "https://registry.yarnpkg.com/neo-async/-/neo-async-2.6.0.tgz#b9d15e4d71c6762908654b5183ed38b753340835"
   integrity sha512-MFh0d/Wa7vkKO3Y3LlacqAEeHK0mckVqzDieUKTT+KGxi+zIpeVsFxymkIiRpbpDziHc290Xr9A1O4Om7otoRA==
+
+ngx-bootstrap@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/ngx-bootstrap/-/ngx-bootstrap-3.2.0.tgz#ece7c48af0bc260462c3f77de14f22d4b3dde149"
+  integrity sha512-oLSLIWZgRiIfcuxyXLMZUOhX3wZtg6lpuMbdo/0UzMDg2bSOe1XPskcKZ/iuOa3FOlU9rjuYMzswHYYV5f/QCA==
 
 nice-try@^1.0.4:
   version "1.0.5"

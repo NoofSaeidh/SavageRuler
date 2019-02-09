@@ -1,15 +1,20 @@
 <div>
   <div *ngIf="isLoading; else loaded" class="loading">Loading...</div>
   <ng-template #loaded>
-
     <!-- MODAL -->
-    <div [hidden]="showType !== 'MODAL'">
-      <sr-readonly-form
-        *ngIf="selectedItem"
-        [item]="selectedItem"
-      ></sr-readonly-form>
-      <button (click)="showType = 'GRID'">hide</button>
-    </div>
+    <ng-template #modalTemplate>
+        <div class="modal-body">
+          <sr-readonly-form
+            *ngIf="selectedItem"
+            [item]="selectedItem"
+          ></sr-readonly-form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-info btn-sm" (click)="modalRef.hide()">
+            Close
+          </button>
+      </div>
+    </ng-template>
 
     <!-- if place *ngIf here - it will recreate readonly form on each item change -->
     <!-- FORM -->
@@ -30,7 +35,7 @@
         [item]="selectedItem"
       ></sr-readonly-form>
     </div>
-    
+
     <!-- GRID -->
     <sr-info-grid
       *ngIf="items"

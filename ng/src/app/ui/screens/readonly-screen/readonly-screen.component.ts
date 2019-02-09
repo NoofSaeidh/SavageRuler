@@ -5,6 +5,7 @@ import {
   Inject,
   TemplateRef,
   ElementRef,
+  ViewChild,
 } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 
@@ -17,8 +18,7 @@ import {
 import { LoadStateService } from 'src/app/state/load/load-state.service';
 import { first, filter } from 'rxjs/operators';
 import { Location } from '@angular/common';
-import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ModalFormComponent } from './modal-form/modal-form.component';
+import { BsModalService, BsModalRef } from 'ngx-bootstrap';
 
 export const LOAD_LIST_STATE = new InjectionToken<LoadStateService<any>>(
   'List load state for readonly screen',
@@ -36,7 +36,7 @@ type ShowType = 'GRID' | 'FORM' | 'MODAL';
   providers: [
     { provide: LOAD_LIST_STATE, useClass: LoadStateService },
     { provide: LOAD_SINGLE_STATE, useClass: LoadStateService },
-  ]
+  ],
 })
 export class ReadonlyScreenComponent<
   T extends IEntity<TKey>,
@@ -44,20 +44,28 @@ export class ReadonlyScreenComponent<
 > implements OnInit {
   selectedItem: T | null;
   showType: ShowType;
+  @ViewChild('modalTemplate') modalTemplate: TemplateRef<any>;
+  modalRef: BsModalRef;
 
   constructor(
     protected apiService: ApiCrudService<T, TKey>,
-    protected modalService: NgbModal,
+    // protected modalService: NgbModal,
     protected route: ActivatedRoute,
     protected router: Router,
     protected location: Location,
+    private modalService: BsModalService,
     @Inject(LOAD_LIST_STATE) protected loadListState: LoadStateService<T[]>,
     @Inject(LOAD_SINGLE_STATE) protected loadSingleState: LoadStateService<T>,
   ) {}
 
   ngOnInit() {
     this.selectedItem = null;
-    this.openScreen(this.route.snapshot.queryParams);
+    const snapshot = this.route.snapshot;
+    // todo: handle modal
+    const showType =
+      snapshot.url[snapshot.url.length - 1].path === 'FORM' ? 'FORM' : 'GRID';
+    const id = snapshot.queryParams.id;
+    this.openScreen({ showType, id });
   }
 
   get items(): T[] | null {
@@ -70,8 +78,8 @@ export class ReadonlyScreenComponent<
     );
   }
 
-  openScreen(data?: { id?: TKey }) {
-    if (data && data.id) {
+  openScreen(data?: { showType?: ShowType; id?: TKey }) {
+    if (data && data.showType === 'FORM' && data.id) {
       this.showFormItem(data.id);
     } else {
       this.showGrid();
@@ -106,7 +114,9 @@ export class ReadonlyScreenComponent<
   showModalItem(item: T | TKey) {
     const id = this.showItem(item);
     this.showType = 'MODAL';
-    this.modalService.open(ModalFormComponent);
+    this.modalRef = this.modalService.show(this.modalTemplate, {
+      class: 'modal-lg',
+    });
     this.location.replaceState(
       this.router
         .createUrlTree([], {
