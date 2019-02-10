@@ -1,4 +1,4 @@
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserModule, Title } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { ModalModule, CollapseModule } from 'ngx-bootstrap';
@@ -21,7 +21,7 @@ import { ViewsModule } from './views/views.module';
     ViewsModule,
     FormsModule,
   ],
-  providers: [],
+  providers: [Title],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { State } from './types/state';
 
-@Injectable()
 export abstract class BaseStateService<T, S extends State<T> = State<T>> {
   readonly subject: BehaviorSubject<S>;
   protected constructor(initialValue: S) {

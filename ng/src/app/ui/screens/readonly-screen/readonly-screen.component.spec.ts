@@ -7,13 +7,23 @@ import { PowersApiService } from 'src/app/api/entities/powers/powers.api.service
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { AppModule } from 'src/app/app.module';
 import { SrTestBed } from 'src/tests/sr-test-bed';
+import { Injectable, DebugElement } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+import { convertToParamMap, ParamMap, ActivatedRoute } from '@angular/router';
 
 describe('ReadonlyScreenComponent', () => {
   let component: ReadonlyScreenComponent<Power, number>;
   let fixture: ComponentFixture<ReadonlyScreenComponent<Power, number>>;
-
+  let element: HTMLElement;
   beforeEach(async(() => {
-    TestBed.configureTestingModule(SrTestBed.defaultUiComponentsMetadata()).compileComponents();
+    TestBed.configureTestingModule(SrTestBed.defaultUiComponentsMetadata({
+      providers: [
+        {
+          provide: ActivatedRoute,
+          useValue: {snapshot: {url: [{path: 'screen/grid'}], queryParams: {}}}
+        }
+      ]
+    })).compileComponents();
   }));
 
   beforeEach(() => {
@@ -21,6 +31,7 @@ describe('ReadonlyScreenComponent', () => {
       ReadonlyScreenComponent,
     );
     component = fixture.componentInstance;
+    element = fixture.debugElement.nativeElement;
     fixture.detectChanges();
   });
 

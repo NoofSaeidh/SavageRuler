@@ -14,6 +14,7 @@ import {
 import { AppModule } from 'src/app/app.module';
 import { ViewDescriptor } from 'src/app/types/descriptors/view-descriptor';
 import { powerViewDescriptor } from 'src/app/views/powers/descriptors/power-view-descriptor';
+import { CollapseModule, ModalModule } from 'ngx-bootstrap';
 
 export class SrTestBed {
   static defaultApiMetadata(
@@ -33,17 +34,23 @@ export class SrTestBed {
   static defaultUiComponentsMetadata(
     moduleDef?: TestModuleMetadata,
   ): TestModuleMetadata {
-    return this.defaultApiMetadata({
-      imports: [AppModule],
-    });
+    return this.mergeMetadata(
+      this.defaultApiMetadata({
+        imports: [AppModule, CollapseModule, ModalModule],
+      }),
+      moduleDef,
+    );
   }
 
   static defaultViewComponentsMetadata(
     moduleDef?: TestModuleMetadata,
   ): TestModuleMetadata {
-    return this.defaultUiComponentsMetadata({
-      imports: [UiModule],
-    });
+    return this.mergeMetadata(
+      this.defaultUiComponentsMetadata({
+        imports: [UiModule],
+      }),
+      moduleDef,
+    );
   }
 
   private static mergeArrays<T>(left?: T[], right?: T[]): T[] {

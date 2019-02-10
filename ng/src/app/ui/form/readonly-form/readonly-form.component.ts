@@ -1,6 +1,5 @@
 import { ViewDescriptor, ReadFormField } from './../../../types/descriptors/view-descriptor';
 import { Component, OnInit, OnDestroy, Input } from '@angular/core';
-import { Unsubscribable } from 'rxjs';
 import { TypeEntry } from 'src/app/types/global/type-entry';
 
 @Component({
