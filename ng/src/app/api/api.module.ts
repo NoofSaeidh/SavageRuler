@@ -1,16 +1,17 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { POWER_API_DESCRIPTOR, powerApiDescriptor } from './entities/powers/descriptors/power-api-descriptor';
-import { ApiService } from './services/api.service';
-import { ApiCrudService } from './services/api-crud.service';
+import {
+  POWER_API_DESCRIPTOR,
+  powerApiDescriptor,
+} from './entities/powers/descriptors/power-api-descriptor';
+import { ApiLocalizationDescriptor } from './types/api-localization-descriptor';
 
 @NgModule({
   declarations: [],
-  imports: [
-    CommonModule
-  ],
+  imports: [CommonModule],
   providers: [
-    {provide: POWER_API_DESCRIPTOR, useValue: powerApiDescriptor}
-  ]
+    { provide: POWER_API_DESCRIPTOR, useValue: powerApiDescriptor },
+    ApiLocalizationDescriptor,
+  ],
 })
-export class ApiModule { }
+export class ApiModule {}

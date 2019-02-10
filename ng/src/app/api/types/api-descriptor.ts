@@ -1,43 +1,40 @@
-import { environment } from 'src/environments/environment';
+import { ApiController, ApiMethod } from './api-interfaces';
 
-export interface ApiUrls {
-  getAll?: string;
-  get?: string;
-  create?: string;
-  update?: string;
-  delete?: string;
-}
-
-export class ApiDescriptor<T> {
-  public readonly baseUrl: string = environment.appUrl;
-
-  // todo: add checkings - now all urls must start with '/'
-  constructor(private _urls: ApiUrls) {}
-
-  public hasUrl(request: keyof ApiUrls): boolean {
-    return !!this._urls[request];
-  }
-
-  public getUrl(
-    request: keyof ApiUrls,
-    extras?: { query?: {}; shortPath?: boolean },
-  ): string {
-    let url = this._urls[request];
+export class ApiDescriptor<T extends string | number | symbol = string> {
+  protected static normalizeUrl(url: string, addEndSlash?: boolean): string {
     if (!url) {
-      throw new Error(`Current descriptor doesn't have ${request} url.`);
+      return '/';
     }
-    url = extras && extras.shortPath ? url : this.baseUrl + url;
-    if (extras && extras.query) {
-      url += this.buildQuery(extras.query);
+    let resultUrl;
+    if (url.startsWith('/')) {
+      resultUrl = url;
+    } else {
+      resultUrl = '/' + url;
     }
-    return url;
+    if (addEndSlash) {
+      if (resultUrl.endsWith('/')) {
+        return resultUrl;
+      }
+      return resultUrl + '/';
+    }
   }
 
-  public buildQuery(query: {}): string {
-    let result: string = '?';
-    for (const [key, value] of Object.entries(query)) {
-      result += `${key}=${value}`;
+  constructor(protected controller: ApiController<T>) {}
+
+  hasMethod(name: T): boolean {
+    return !!this.controller.methods[name];
+  }
+
+  // will throw if not specified
+  getMethod(name: T): ApiMethod {
+    const result = this.controller.methods[name];
+    if (!result) {
+      throw new Error(`Specified method: ${name} is not defined.`);
     }
     return result;
+  }
+
+  tryGetMethod(name: T): ApiMethod | null {
+    return this.controller.methods[name] || null;
   }
 }
