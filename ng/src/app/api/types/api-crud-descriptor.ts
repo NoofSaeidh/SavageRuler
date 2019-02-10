@@ -3,12 +3,12 @@ import { ApiDescriptor } from '../types/api-descriptor';
 export type ApiCrudRequest = 'getAll' | 'get' | 'create' | 'update' | 'delete';
 
 export class ApiCrudDescriptor extends ApiDescriptor<ApiCrudRequest> {
-  static apiAppUrlPrefix = '/api/services/app/';
+  static readonly apiAppUrlPrefix = '/api/services/app/';
   constructor(typeName: string, prefix?: string) {
     let urlPrefix: string;
     // '' prefix allowed
     if (!prefix && prefix !== '') {
-      urlPrefix = ApiCrudDescriptor.apiAppUrlPrefix;
+      urlPrefix = ApiCrudDescriptor.apiAppUrlPrefix + typeName + '/';
     } else {
       urlPrefix = ApiDescriptor.normalizeUrl(prefix, true);
     }

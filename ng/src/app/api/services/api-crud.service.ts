@@ -13,7 +13,6 @@ import { ApiService } from './api.service';
 import { IEntity, EntityKey } from 'src/app/api/types/ientity';
 import { ApiCrudRequest } from '../types/api-crud-descriptor';
 
-
 export const toServerResult = <T>(source: Observable<ServerResponse<T>>) =>
   source.pipe(map(value => value.result));
 
