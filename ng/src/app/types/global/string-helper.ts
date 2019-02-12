@@ -7,4 +7,8 @@ export class StringHelper {
     }
     return input;
   }
+
+  static capitalize(input: string): string {
+    return input.replace(/^\w/, c => c.toUpperCase());
+  }
 }

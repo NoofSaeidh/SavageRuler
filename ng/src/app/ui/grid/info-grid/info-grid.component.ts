@@ -12,6 +12,7 @@ import {
 import { IEntity, EntityKey } from 'src/app/api/types/ientity';
 import { TypeEntry } from 'src/app/types/global/type-entry';
 import { arraySorter } from 'src/app/types/global/array-sorter';
+import { LocalizeDescriptor } from 'src/app/types/descriptors/localize-descriptor';
 
 interface Header<T> {
   key: keyof T;
@@ -29,15 +30,15 @@ type SortOrder = 'asc' | 'desc';
 export class InfoGridComponent<T extends IEntity<TKey>, TKey extends EntityKey>
   implements OnInit {
   @Input() items: T[];
+  @Input() view: ViewDescriptor<T>;
+  @Input() localize: LocalizeDescriptor<T>;
   @Output() rowClicked = new EventEmitter<{ item: T; index: number; mouse: MouseEvent }>(true);
   headers: Header<T>[];
   fields: TypeEntry<T, InfoGridField>[];
   private sorted?: { key: keyof T; order: SortOrder };
 
-  constructor(protected descriptor: ViewDescriptor<T>) {}
-
   ngOnInit() {
-    this.fields = this.descriptor.infoGridEntries;
+    this.fields = this.view.infoGridEntries;
     this.headers = this.fields.map(value => {
       const class_ = {};
       if (value.value.sortable) {

@@ -47,6 +47,8 @@
       <sr-readonly-form
         *ngIf="selected"
         [item]="selected.item"
+        [localize]="localizeDescriptor"
+        [view]="viewDescriptor"
       ></sr-readonly-form>
     </ng-template>
 
@@ -54,6 +56,8 @@
     <sr-info-grid
       *ngIf="items"
       [items]="items"
+      [localize]="localizeDescriptor"
+      [view]="viewDescriptor"
       [hidden]="showType === 'FORM'"
       (rowClicked)="onGridRowClicked($event)"
     ></sr-info-grid>

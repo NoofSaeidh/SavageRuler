@@ -15,7 +15,6 @@ import { AppModule } from 'src/app/app.module';
 import { ViewDescriptor } from 'src/app/types/descriptors/view-descriptor';
 import { powerViewDescriptor } from 'src/app/views/powers/descriptors/power-view-descriptor';
 import { CollapseModule, ModalModule } from 'ngx-bootstrap';
-import { ApiLocalizationDescriptor } from 'src/app/api/types/api-localization-descriptor';
 
 export class SrTestBed {
   static defaultApiMetadata(
@@ -27,7 +26,6 @@ export class SrTestBed {
         { provide: POWER_API_DESCRIPTOR, useValue: powerApiDescriptor },
         { provide: ApiCrudService, useClass: PowersApiService },
         { provide: ViewDescriptor, useValue: powerViewDescriptor },
-        ApiLocalizationDescriptor,
       ],
     };
     return this.mergeMetadata(metadata, moduleDef);

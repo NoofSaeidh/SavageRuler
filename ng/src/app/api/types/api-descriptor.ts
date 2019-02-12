@@ -1,4 +1,4 @@
-import { ApiController, ApiMethod } from './api-interfaces';
+import { ApiController, ApiMethod } from './api-controller';
 
 export class ApiDescriptor<T extends string | number | symbol = string> {
   protected static normalizeUrl(url: string, addEndSlash?: boolean): string {

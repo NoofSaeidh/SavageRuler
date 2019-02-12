@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { ApiDescriptor } from '../types/api-descriptor';
 import { Observable } from 'rxjs';
 import { ServerResponse } from '../types/responses';
@@ -10,23 +10,29 @@ import { environment } from 'src/environments/environment';
 export abstract class ApiService<TKey extends EntryKey = string> {
   // todo: interceptors here?
   constructor(
-    protected http: HttpClient,
-    protected descriptor: ApiDescriptor<TKey>,
+    protected readonly http: HttpClient,
+    protected readonly descriptor: ApiDescriptor<TKey>,
   ) {}
 
   protected makeRequest<TResult>(
     name: TKey,
     query?: {},
-    body?: any,
+    options?: {
+      body?: any;
+      headers?: HttpHeaders | { [header: string]: string | string[] };
+      observe?: 'body';
+      params?: HttpParams | { [param: string]: string | string[] };
+      responseType?: 'json';
+      reportProgress?: boolean;
+      withCredentials?: boolean;
+    },
   ): Observable<ServerResponse<TResult>> {
     // it will throw error if no specified
     const method = this.descriptor.getMethod(name);
     return this.http.request<ServerResponse<TResult>>(
       method.httpMethod,
       this.buildUrl(method.url, query),
-      {
-        body,
-      },
+      options,
     );
   }
 

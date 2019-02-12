@@ -18,6 +18,9 @@ import {
 import { EntityKey, IEntity } from 'src/app/api/types/ientity';
 import { LoadStateService } from 'src/app/state/load/load-state.service';
 import { ArrayElement } from 'src/app/types/global/array-element';
+import { LocalizeDescriptor } from 'src/app/types/descriptors/localize-descriptor';
+import { ViewDescriptor } from 'src/app/types/descriptors/view-descriptor';
+import { LocalizationService } from 'src/app/localization/localization.service';
 
 export const LOAD_LIST_STATE = new InjectionToken<LoadStateService<any>>(
   'List load state for readonly screen',
@@ -49,13 +52,17 @@ export class ReadonlyScreenComponent<
   showType: ShowType;
   showModalOnInit: boolean = false;
 
+  localizeDescriptor: LocalizeDescriptor<T>;
+
   @ViewChild('modalForm') modalForm: ModalDirective;
 
   constructor(
+    public viewDescriptor: ViewDescriptor<T>,
     protected apiService: ApiCrudService<T, TKey>,
     protected route: ActivatedRoute,
     protected router: Router,
     protected location: Location,
+    protected localizationService: LocalizationService,
     @Inject(LOAD_LIST_STATE) protected loadListState: LoadStateService<T[]>,
     @Inject(LOAD_SINGLE_STATE) protected loadSingleState: LoadStateService<T>,
   ) {}
@@ -72,6 +79,11 @@ export class ReadonlyScreenComponent<
 
   ngOnInit() {
     this.selected = null;
+
+    this.localizationService
+      .localizeEntity(this.viewDescriptor.typeName)
+      .subscribe(result => (this.localizeDescriptor = result));
+
     const snapshot = this.route.snapshot;
     // todo: handle modal
     const showType = snapshot.url[snapshot.url.length - 1].path.toUpperCase();
@@ -156,7 +168,9 @@ export class ReadonlyScreenComponent<
       item: this.items[resultIndex],
       index: resultIndex,
     };
-    this.location.replaceState(this.buildUrl(this.showType, this.selected.item.id));
+    this.location.replaceState(
+      this.buildUrl(this.showType, this.selected.item.id),
+    );
   }
 
   private showItem(item: ArrayElement<T> | TKey): TKey {

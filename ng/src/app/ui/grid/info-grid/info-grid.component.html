@@ -14,7 +14,7 @@
         (click)="clickHead(header, $event)"
       >
         <span [ngClass]="header.class">
-          {{ header.field.label || header.key }}
+          {{ localize[header.key] }}
         </span>
       </th>
     </tr>

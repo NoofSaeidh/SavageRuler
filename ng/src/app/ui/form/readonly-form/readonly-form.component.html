@@ -3,7 +3,7 @@
   <div class="card-body px-3">
     <span *ngFor="let field of fields" class="text-left single-line">
       <p>
-        <b>{{ field.value.label || field.key }}: &ensp; &ensp;</b>
+        <b>{{ localize[field.key] }}: &ensp; &ensp;</b>
         {{ item[field.key] }}
       </p>
     </span>

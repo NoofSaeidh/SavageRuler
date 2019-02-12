@@ -42,8 +42,10 @@ export type FieldDescriptor<
   V extends ViewField = ViewField
 > = TypeDescriptor<T, V>;
 
+// tslint:disable-next-line:no-empty-interface
 export interface ViewField {
-  label?: string;
+  // label?: string; // localized on serve
+  // todo: remove | refactor?
 }
 
 export interface ReadFormField extends ViewField {
