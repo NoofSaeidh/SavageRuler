@@ -134,9 +134,12 @@ namespace SavageRuler.Web.Host.Startup
                     name: "apiController",
                     template: "api/{controller}/{action=Index}/{id?}");
 
-                routes.MapSpaFallbackRoute(
-                    name: "spa-fallback",
-                    defaults: new { controller = "Home", action = "Index" });
+                if (!env.IsDevelopment())
+                {
+                    routes.MapSpaFallbackRoute(
+                        name: "spa-fallback",
+                        defaults: new { controller = "Home", action = "Index" });
+                }
             });
         }
     }

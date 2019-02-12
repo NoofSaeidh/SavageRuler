@@ -42,21 +42,22 @@ namespace SavageRuler.Localization
             return sources.Select(s => new SourceInfo(s.Name, s.GetType().Name)).ToList();
         }
 
-        public IReadOnlyDictionary<string, string> GetLocalizedStrings(string sourceName, CultureInfo culture = null)
+        public IReadOnlyDictionary<string, string> GetLocalizedStrings(string sourceName)
         {
-            return GetAllStrings(sourceName, culture)
+            return GetAllStrings(sourceName)
                 .ToDictionary(s => s.Name, s => s.Value);
         }
 
-        public IReadOnlyDictionary<string, string> GetLocalizedProperties(string typeName, CultureInfo culture = null, bool camelCaseNames = true)
+        public IReadOnlyDictionary<string, string> GetLocalizedProperties(string typeName, bool camelCaseNames = true)
         {
-            var result = GetAllStrings(SavageRulerConsts.Localization.GetTypeSourceName(typeName), culture);
+            var result = GetAllStrings(SavageRulerConsts.Localization.GetTypeSourceName(typeName));
             if (camelCaseNames)
                 return result.ToDictionary(s => s.Name.ToCamelCase(), s => s.Value);
             return result.ToDictionary(s => s.Name, s => s.Value);
         }
 
-        private IReadOnlyList<LocalizedString> GetAllStrings(string sourceName, CultureInfo culture)
+        // culture obtained by aspnetcore mechanism
+        private IReadOnlyList<LocalizedString> GetAllStrings(string sourceName)
         {
             // todo: helper for exceptions
             if (sourceName == null)
@@ -64,7 +65,7 @@ namespace SavageRuler.Localization
 
             return _localizationManager
                 .GetSource(sourceName)
-                .GetAllStrings(culture ?? CultureInfo.CurrentUICulture);
+                .GetAllStrings();
         }
     }
 
