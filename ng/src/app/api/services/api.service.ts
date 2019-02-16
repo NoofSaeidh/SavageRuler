@@ -9,6 +9,9 @@ import { environment } from 'src/environments/environment';
 @Injectable()
 export abstract class ApiService<TKey extends EntryKey = string> {
   // todo: interceptors here?
+
+  protected headers = new HttpHeaders({'X-Requested-With': 'XMLHttpRequest'});
+
   constructor(
     protected readonly http: HttpClient,
     protected readonly descriptor: ApiDescriptor<TKey>,
@@ -16,23 +19,21 @@ export abstract class ApiService<TKey extends EntryKey = string> {
 
   protected makeRequest<TResult>(
     name: TKey,
-    query?: {},
     options?: {
+      query?: {};
       body?: any;
-      headers?: HttpHeaders | { [header: string]: string | string[] };
-      observe?: 'body';
-      params?: HttpParams | { [param: string]: string | string[] };
-      responseType?: 'json';
-      reportProgress?: boolean;
-      withCredentials?: boolean;
     },
   ): Observable<ServerResponse<TResult>> {
     // it will throw error if no specified
     const method = this.descriptor.getMethod(name);
     return this.http.request<ServerResponse<TResult>>(
       method.httpMethod,
-      this.buildUrl(method.url, query),
-      options,
+      this.buildUrl(method.url, options && options.query),
+      {
+        body: options && options.body,
+        headers: this.headers,
+        withCredentials: true,
+      },
     );
   }
 

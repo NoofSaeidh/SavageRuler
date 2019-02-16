@@ -207,7 +207,7 @@ export class ReadonlyScreenComponent<
     if (this.items) {
       return;
     }
-    this.loadListState.load(this.apiService.getAll().pipe(toServerListResult));
+    this.loadListState.load(this.apiService.getAll().pipe(toServerListResult()));
   }
 
   private ensureSelectedItemLoaded(id: TKey) {
@@ -226,7 +226,7 @@ export class ReadonlyScreenComponent<
       this.selected = { item: this.loadListState.value.find(i => i.id === id) };
     }
     if (!this.selected) {
-      this.loadSingleState.load(this.apiService.get(id).pipe(toServerResult));
+      this.loadSingleState.load(this.apiService.get(id).pipe(toServerResult()));
       this.loadSingleState.subject
         .pipe(
           filter(state => state.isLoaded),

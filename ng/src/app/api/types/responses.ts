@@ -1,4 +1,4 @@
-export interface ServerResponse<T = any> {
+export interface ServerResponse<T = null> {
   result: T | null;
   targetUrl: string | null;
   success: boolean;
