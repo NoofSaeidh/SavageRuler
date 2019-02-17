@@ -6,6 +6,7 @@
     class="btn btn-info dropdown-toggle"
     aria-controls="dropdown-basic"
   >
+    <span class="flag-icon {{ currentLanguage.icon }}"></span>
     Language: {{ currentLanguage.displayName }} <span class="caret"></span>
   </button>
   <ul
@@ -15,8 +16,11 @@
     role="menu"
     aria-labelledby="button-basic"
   >
-    <li  *ngFor="let language of languages">
-      <a class="dropdown-item" (click)="changeCulture(language.name)">{{ language.displayName }}</a>
+    <li *ngFor="let language of languages">
+      <span class="dropdown-item" (click)="changeCulture(language.name)">
+          <span class="flag-icon {{ language.icon }}"></span>
+          {{ language.displayName }}
+      </span>
     </li>
   </ul>
 </div>
