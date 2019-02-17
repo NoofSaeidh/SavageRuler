@@ -1,15 +1,14 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { LanguageSelectorComponent } from './language-selector.component';
+import { SrTestBed } from 'src/tests/sr-test-bed';
 
 describe('LanguageSelectorComponent', () => {
   let component: LanguageSelectorComponent;
   let fixture: ComponentFixture<LanguageSelectorComponent>;
 
   beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ LanguageSelectorComponent ]
-    })
+    TestBed.configureTestingModule(SrTestBed.defaultUiComponentsMetadata())
     .compileComponents();
   }));
 

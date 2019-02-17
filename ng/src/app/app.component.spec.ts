@@ -7,11 +7,7 @@ import { CollapseModule } from 'ngx-bootstrap';
 
 describe('AppComponent', () => {
   beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      imports: [RouterTestingModule, CollapseModule],
-      declarations: [AppComponent],
-      providers: [Title],
-    }).compileComponents();
+    TestBed.configureTestingModule(SrTestBed.defaultViewComponentsMetadata()).compileComponents();
   }));
 
   let fixture: ComponentFixture<AppComponent>;
@@ -27,12 +23,6 @@ describe('AppComponent', () => {
 
   it(`should have as title 'Savage Ruler'`, () => {
     expect(app.title).toEqual('Savage Ruler');
-  });
-
-  it(`window should have as title 'Savage Ruler'`, () => {
-    const title = TestBed.get(Title);
-    app.ngOnInit();
-    expect(title.getTitle()).toEqual('Savage Ruler');
   });
 
   it('should render title in a div tag', () => {

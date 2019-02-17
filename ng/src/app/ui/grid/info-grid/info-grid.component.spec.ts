@@ -17,6 +17,15 @@ describe('InfoGridComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(InfoGridComponent);
     component = fixture.componentInstance;
+    // todo: move to stub?
+    component.view = {
+      viewType: { typeName: 'test', titleKey: 'id' },
+      entries: [{ key: 'id', value: {} }],
+    };
+    component.items = [{ id: 1 }];
+    component.localize = {
+      id: 'id',
+    };
     fixture.detectChanges();
   });
 

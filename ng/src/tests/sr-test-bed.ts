@@ -15,13 +15,14 @@ import { AppModule } from 'src/app/app.module';
 import { EntityViewDescriptor } from 'src/app/types/descriptors/view-descriptor';
 import { powerViewDescriptor } from 'src/app/views/powers/descriptors/power-view-descriptor';
 import { CollapseModule, ModalModule } from 'ngx-bootstrap';
+import { LocalStorageService, WebStorageModule } from 'ngx-store';
 
 export class SrTestBed {
   static defaultApiMetadata(
     moduleDef?: TestModuleMetadata,
   ): TestModuleMetadata {
     const metadata: TestModuleMetadata = {
-      imports: [HttpClientTestingModule],
+      imports: [HttpClientTestingModule, WebStorageModule], // todo: stub for local storage
       providers: [
         { provide: POWER_API_DESCRIPTOR, useValue: powerApiDescriptor },
         { provide: ApiCrudService, useClass: PowersApiService },

@@ -1,12 +1,12 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ReadonlyFormComponent } from './readonly-form.component';
-import { Power } from 'src/app/api/entities/powers/descriptors/power';
 import { SrTestBed } from 'src/tests/sr-test-bed';
+import { IEntity } from 'src/app/api/types/ientity';
 
 describe('ReadonlyFormComponent', () => {
-  let component: ReadonlyFormComponent<Power>;
-  let fixture: ComponentFixture<ReadonlyFormComponent<Power>>;
+  let component: ReadonlyFormComponent<IEntity>;
+  let fixture: ComponentFixture<ReadonlyFormComponent<IEntity>>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule(
@@ -15,13 +15,18 @@ describe('ReadonlyFormComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent<ReadonlyFormComponent<Power>>(
+    fixture = TestBed.createComponent<ReadonlyFormComponent<IEntity>>(
       ReadonlyFormComponent,
     );
     component = fixture.componentInstance;
-    component.item = {
-      book: 'book',
-      name: 'name'
+     // todo: move to stub?
+     component.view = {
+      viewType: { typeName: 'test', titleKey: 'id' },
+      entries: [{ key: 'id', value: {} }],
+    };
+    component.item = {id: 1};
+    component.localize = {
+      id: 'id',
     };
     fixture.detectChanges();
   });
