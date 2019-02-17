@@ -1,3 +1,22 @@
-<p>
-  language-selector works!
-</p>
+<div *ngIf="currentLanguage" class="btn-group" dropdown>
+  <button
+    id="button-basic"
+    dropdownToggle
+    type="button"
+    class="btn btn-info dropdown-toggle"
+    aria-controls="dropdown-basic"
+  >
+    Language: {{ currentLanguage.displayName }} <span class="caret"></span>
+  </button>
+  <ul
+    id="dropdown-basic"
+    *dropdownMenu
+    class="dropdown-menu"
+    role="menu"
+    aria-labelledby="button-basic"
+  >
+    <li  *ngFor="let language of languages">
+      <a class="dropdown-item" (click)="changeCulture(language.name)">{{ language.displayName }}</a>
+    </li>
+  </ul>
+</div>

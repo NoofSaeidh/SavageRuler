@@ -1,7 +1,7 @@
 import { BrowserModule, Title } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
-import { ModalModule, CollapseModule } from 'ngx-bootstrap';
+import { ModalModule, CollapseModule, BsDropdownModule } from 'ngx-bootstrap';
 import { FormsModule } from '@angular/forms';
 import { WebStorageModule } from 'ngx-store';
 
@@ -17,6 +17,7 @@ import { ViewsModule } from './views/views.module';
     AppRoutingModule,
     ModalModule.forRoot(),
     CollapseModule.forRoot(),
+    BsDropdownModule.forRoot(),
     HttpClientModule,
     UiModule,
     ViewsModule,

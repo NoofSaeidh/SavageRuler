@@ -1,46 +1,52 @@
-import { Component, OnInit } from '@angular/core';
-import { LocalizationService } from 'src/app/localization/localization.service';
-import { Subscription } from 'rxjs';
-import { first } from 'rxjs/operators';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subscription, concat } from 'rxjs';
+import { first, skipWhile, map } from 'rxjs/operators';
 import { toServerResult } from 'src/app/api/services/api-crud.service';
 import { LanguageInfo } from 'src/app/api/types/localization';
+import { LocalizationService } from 'src/app/localization/localization.service';
 
 @Component({
   selector: 'sr-language-selector',
   templateUrl: './language-selector.component.html',
   styleUrls: ['./language-selector.component.scss'],
 })
-export class LanguageSelectorComponent implements OnInit {
+export class LanguageSelectorComponent implements OnInit, OnDestroy {
   private subscription: Subscription;
 
+  currentCulture: string;
   languages: LanguageInfo[];
+  currentLanguage: LanguageInfo;
 
   constructor(protected localizationService: LocalizationService) {}
 
   ngOnInit() {
-    if (!this.culture) {
-      this.localizationService.api
-        .getCurrentLanguage()
-        .pipe(
-          first(),
-          toServerResult(),
-        )
-        .subscribe(r => (this.culture = r.name));
-    }
-    this.localizationService.api
-      .getAllLanguages()
-      .pipe(
+    // get all languages will be executed first
+    this.subscription = concat(
+      this.localizationService.api.getAllLanguages().pipe(
         first(),
         toServerResult(),
-      )
-      .subscribe(r => (this.languages = r));
+        map(r => r.filter(i => !i.isDisabled)),
+      ),
+      this.localizationService.culture$,
+    ).subscribe(r => {
+      if (Array.isArray(r)) {
+        // languages
+        this.languages = r;
+      } else {
+        // culture
+        this.currentLanguage = this.languages.find(i => i.name === r);
+        if (!this.currentLanguage) {
+          throw new Error(`Server doesn't support specified culture.`);
+        }
+      }
+    });
   }
 
-  get culture(): string {
-    return this.localizationService.culture;
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 
-  set culture(value: string) {
-    this.localizationService.culture = value;
+  changeCulture(culture: string) {
+    this.localizationService.changeCulture(culture);
   }
 }

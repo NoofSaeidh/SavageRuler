@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { LocalStorage, LocalStorageService } from 'ngx-store';
+import { Injectable, OnInit } from '@angular/core';
+import { LocalStorage, LocalStorageService, SessionStorage } from 'ngx-store';
 import { Resource } from 'ngx-store/src/service/resource';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { filter, first, map, switchAll, tap } from 'rxjs/operators';
@@ -7,15 +7,14 @@ import { filter, first, map, switchAll, tap } from 'rxjs/operators';
 import { ApiLocalizationService } from '../api/services/api-localization.service';
 import { LocalizeDescriptor } from '../types/descriptors/localize-descriptor';
 
-const localizationPrefix = 'ngx_sr_.localization.';
-const localizationPrefixEntity = localizationPrefix + 'entity.';
+const localizationPrefix = 'ngx_sr_localization_';
+const localizationPrefixEntity = localizationPrefix + 'entity_';
 
 @Injectable({
   providedIn: 'root',
 })
 export class LocalizationService {
-  @LocalStorage({ key: 'culture', prefix: localizationPrefix })
-  private _cultureStorage = '';
+  private _cultureResource: Resource<string> = this.loadFromStorage('culture');
   private _cultureState$ = new BehaviorSubject({ culture: '', loading: false });
   culture$: Observable<string> = this._cultureState$.pipe(
     filter(r => !r.loading),
@@ -25,18 +24,33 @@ export class LocalizationService {
   constructor(
     public api: ApiLocalizationService,
     protected localStorage: LocalStorageService,
-  ) {}
+  ) {
+    if (this._cultureResource.value) {
+      this._cultureState$.next({
+        loading: false,
+        culture: this._cultureResource.value,
+      });
+    } else {
+      this.resetCulture();
+    }
+  }
 
   changeCulture(culture: string) {
     if (!culture) {
       throw new Error('Culture not specified');
     }
-    const storage = this.loadFromStorage('culture');
-    if (
-      !this._cultureState$.value.loading &&
-      culture === this._cultureState$.value.culture
-    ) {
-      return;
+    if (!this._cultureState$.value.loading) {
+      // culture already in local storage
+      if (culture === this._cultureState$.value.culture) {
+        return;
+      }
+      // culture was in storage from previos session, need just update
+      if (culture === this._cultureResource.value) {
+        this._cultureState$.next({
+          loading: false,
+          culture: culture,
+        });
+      }
     }
     this._cultureState$.next({
       culture: culture,
@@ -47,12 +61,20 @@ export class LocalizationService {
       .pipe(first())
       .subscribe(r => {
         this.clearLocalization();
-        storage.save(culture);
+        this._cultureResource.save(culture);
         this._cultureState$.next({
           culture: culture,
           loading: false,
         });
       });
+  }
+
+  // reset to current culture on SERVER (depends on user and cookies)
+  resetCulture() {
+    this.api
+      .getCurrentLanguage()
+      .pipe(first())
+      .subscribe(r => this.changeCulture(r.result.name));
   }
 
   clearLocalization() {
@@ -83,7 +105,7 @@ export class LocalizationService {
 
     return this.culture$.pipe(
       map(culture => {
-        if (culture === this._cultureStorage && resource.value) {
+        if (culture === this._cultureResource.value && resource.value) {
           return of(resource.value);
         }
         return apiRequest;
