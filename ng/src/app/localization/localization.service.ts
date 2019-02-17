@@ -94,8 +94,7 @@ export class LocalizationService {
       tap(
         r => {
           resource.save(r);
-          console.log('fetch ' + typeName);
-        }, // need force change
+        },
         e => {
           resource.save({});
           console.error('Localization error happened.', e);

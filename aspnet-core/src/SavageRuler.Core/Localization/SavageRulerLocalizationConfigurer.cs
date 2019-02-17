@@ -1,4 +1,5 @@
-﻿using Abp.Configuration.Startup;
+﻿using Abp.Configuration;
+using Abp.Configuration.Startup;
 using Abp.Localization;
 using Abp.Localization.Dictionaries;
 using Abp.Localization.Dictionaries.Xml;
@@ -6,6 +7,7 @@ using Abp.Reflection.Extensions;
 using SavageRuler.Extensions;
 using SavageRuler.Rules.Powers;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace SavageRuler.Localization
 {
@@ -13,10 +15,12 @@ namespace SavageRuler.Localization
     {
         public static void Configure(ILocalizationConfiguration localizationConfiguration)
         {
-            localizationConfiguration.Languages.AddMany(
-                new LanguageInfo("en", "English", "famfamfam-flag-us"),
-                new LanguageInfo("ru", "Russian", "famfamfam-flag-ru", true)
-            );
+            // used another provider - from db
+            //localizationConfiguration.Languages.Clear();
+            //localizationConfiguration.Languages.AddMany(
+            //    new LanguageInfo("en", "English"),
+            //    new LanguageInfo("ru", "Russian", isDefault: true)
+            //);
 
             localizationConfiguration.Sources.Add(
                 GetXmlSource(
@@ -31,6 +35,11 @@ namespace SavageRuler.Localization
                     nameof(Power)
                 )
             );
+        }
+
+        public static async Task SetDefaultLanguage(ISettingManager settingManager)
+        {
+            await settingManager.ChangeSettingForApplicationAsync(LocalizationSettingNames.DefaultLanguage, "ru");
         }
 
         private static DictionaryBasedLocalizationSource GetXmlSource(string name, string rootNamespace)

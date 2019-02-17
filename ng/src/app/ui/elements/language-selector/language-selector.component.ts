@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription, concat } from 'rxjs';
-import { first, skipWhile, map } from 'rxjs/operators';
+import { first, skipWhile, map, filter } from 'rxjs/operators';
 import { toServerResult } from 'src/app/api/services/api-crud.service';
 import { LanguageInfo } from 'src/app/api/types/localization';
 import { LocalizationService } from 'src/app/localization/localization.service';
@@ -13,9 +13,9 @@ import { LocalizationService } from 'src/app/localization/localization.service';
 export class LanguageSelectorComponent implements OnInit, OnDestroy {
   private subscription: Subscription;
 
-  currentCulture: string;
   languages: LanguageInfo[];
   currentLanguage: LanguageInfo;
+  enabled: boolean = false;
 
   constructor(protected localizationService: LocalizationService) {}
 
@@ -27,11 +27,16 @@ export class LanguageSelectorComponent implements OnInit, OnDestroy {
         toServerResult(),
         map(r => r.filter(i => !i.isDisabled)),
       ),
-      this.localizationService.culture$,
+      this.localizationService.culture$.pipe(
+        filter(v => !!v)
+      ),
     ).subscribe(r => {
       if (Array.isArray(r)) {
         // languages
         this.languages = r;
+        if (r.length > 1) {
+          this.enabled = true;
+        }
       } else {
         // culture
         this.currentLanguage = this.languages.find(i => i.name === r);
