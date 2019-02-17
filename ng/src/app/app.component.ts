@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
-import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'sr-root',
@@ -12,7 +11,7 @@ export class AppComponent implements OnInit {
 
   navbarCollapsed = true;
 
-  constructor(private router: Router, private titleService: Title) {
+  constructor(private router: Router) {
   }
 
   ngOnInit() {
@@ -27,6 +26,5 @@ export class AppComponent implements OnInit {
         }
       }
     });
-    this.titleService.setTitle(this.title);
   }
 }
