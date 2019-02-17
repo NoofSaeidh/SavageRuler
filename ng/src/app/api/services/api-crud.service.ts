@@ -35,7 +35,7 @@ export class ApiCrudService<
 
   // todo: move injection into descriptor
   get(id: TKey): Observable<ServerResponse<T>> {
-    return this.makeRequest<T>('get', { query: id });
+    return this.makeRequest<T>('get', { query: {id} });
   }
 
   create(entity: T): Observable<ServerResponse<T>> {
@@ -44,11 +44,11 @@ export class ApiCrudService<
 
   // todo: inject key into url (should be in descriptor)
   update(id: TKey, entity: T): Observable<ServerResponse<T>> {
-    return this.makeRequest<T>('update', { query: id, body: entity });
+    return this.makeRequest<T>('update', { query: {id}, body: entity });
   }
 
   // todo: inject key into url (should be in descriptor)
   delete(id: TKey): Observable<ServerResponse<T>> {
-    return this.makeRequest<T>('delete', { query: id });
+    return this.makeRequest<T>('delete', { query: {id} });
   }
 }

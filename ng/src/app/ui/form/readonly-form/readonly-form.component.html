@@ -2,10 +2,18 @@
   <h4 class="card-header">{{ title }}</h4>
   <div class="card-body px-3">
     <span *ngFor="let field of fields" class="text-left single-line">
-      <p>
-        <b>{{ localize[field.key] }}: &ensp; &ensp;</b>
-        {{ item[field.key] }}
-      </p>
+      <span *ngIf="item[field.key] || field.value.showNullValue">
+        <div *ngIf="field.value.addHorizontalRuler; else withTitle">
+          <hr />
+          {{ item[field.key] }}
+        </div>
+        <ng-template #withTitle>
+          <p>
+            <b>{{ localize[field.key] }}: &ensp; &ensp;</b>
+            {{ item[field.key] }}
+          </p>
+        </ng-template>
+      </span>
     </span>
   </div>
 </div>
