@@ -1,135 +1,103 @@
-import { Injectable, OnInit, OnDestroy, TypeDecorator } from '@angular/core';
-import { ApiLocalizationService } from '../api/services/api-localization.service';
-import {
-  LocalStorageService,
-  LocalStorage,
-  SharedStorage,
-  CookieStorage,
-  CookiesStorageService,
-} from 'ngx-store';
-import { LocalizeDescriptor } from '../types/descriptors/localize-descriptor';
-import {
-  Observable,
-  of,
-  Subscription,
-  BehaviorSubject,
-  concat,
-  merge,
-} from 'rxjs';
-import { Dictionary } from '../types/global/dictionary';
-import { first, map, tap, filter } from 'rxjs/operators';
+import { Injectable } from '@angular/core';
+import { LocalStorage, LocalStorageService } from 'ngx-store';
 import { Resource } from 'ngx-store/src/service/resource';
-import { SubjectSubscriber, Subject } from 'rxjs/internal/Subject';
-import { MergeMapOperator } from 'rxjs/internal/operators/mergeMap';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { filter, first, map, switchAll, tap } from 'rxjs/operators';
+
+import { ApiLocalizationService } from '../api/services/api-localization.service';
+import { LocalizeDescriptor } from '../types/descriptors/localize-descriptor';
 
 const localizationPrefix = 'ngx_sr_.localization.';
+const localizationPrefixEntity = localizationPrefix + 'entity.';
 
 @Injectable({
   providedIn: 'root',
 })
-export class LocalizationService implements OnInit, OnDestroy {
-  private cultureState$ = new BehaviorSubject({ culture: '', loading: false });
-  // private subscription: Subscription;
+export class LocalizationService {
+  @LocalStorage({ key: 'culture', prefix: localizationPrefix })
+  private _cultureStorage = '';
+  private _cultureState$ = new BehaviorSubject({ culture: '', loading: false });
+  culture$: Observable<string> = this._cultureState$.pipe(
+    filter(r => !r.loading),
+    map(r => r.culture),
+  );
 
   constructor(
     public api: ApiLocalizationService,
     protected localStorage: LocalStorageService,
   ) {}
 
-  ngOnInit() {
-    // this.subscription = this.cultureState$
-    //   .pipe(filter(c => !c.loading))
-    //   .subscribe(c => this.loadFromStorage('culture').save(c.culture));
-  }
-
-  ngOnDestroy() {
-    // this.subscription.unsubscribe();
-  }
-
-  get culture(): string | null {
-    return (
-      this.loadFromStorage('culture').value ||
-      this.cultureState$.value.culture ||
-      null
-    );
-  }
-
-  // todo: error handling
-  set culture(value: string) {
-    // don't care of state
-    if (this.cultureState$.value.culture === value) {
+  changeCulture(culture: string) {
+    if (!culture) {
+      throw new Error('Culture not specified');
+    }
+    const storage = this.loadFromStorage('culture');
+    if (
+      !this._cultureState$.value.loading &&
+      culture === this._cultureState$.value.culture
+    ) {
       return;
     }
-    const culture = this.loadFromStorage('culture');
-
-    if (culture.value !== value) {
-      this.cultureState$.next({
-        culture: value,
-        loading: true,
-      });
-      this.api
-        .changeCulture(value)
-        .pipe(first())
-        .subscribe(r => {
-          this.clearLocalization();
-          culture.save(value);
-          this.cultureState$.next({
-            culture: value,
-            loading: false,
-          });
+    this._cultureState$.next({
+      culture: culture,
+      loading: true,
+    });
+    this.api
+      .changeCulture(culture)
+      .pipe(first())
+      .subscribe(r => {
+        this.clearLocalization();
+        storage.save(culture);
+        this._cultureState$.next({
+          culture: culture,
+          loading: false,
         });
-    }
-  }
-
-  // todo: error handling
-  // todo: refactor for return values everytime culture changes
-  localizeEntity<T>(typeName: string): Observable<LocalizeDescriptor<T>> {
-    const entity = this.loadFromStorage<LocalizeDescriptor<T>>(
-      'type__' + typeName,
-    );
-
-    if (!this.cultureState$.value.loading && entity.value) {
-      return of(entity.value);
-    }
-
-    // api request
-    const getSubsc = this.api.getLocalizedProperties<T>(typeName).pipe(
-      map(r => r.result),
-      first(),
-      tap(
-        r => {
-          entity.save(r);
-          console.log('fetch ' + typeName);
-        }, // need force change
-        e => {
-          entity.save({});
-          console.error('Localization error happened.', e);
-        },
-      ),
-    );
-
-    if (this.cultureState$.value.loading) {
-      // execut eapi request after culture (with cookie) updated
-      return concat(
-        this.cultureState$.pipe(
-          filter(c => !c.loading),
-          first(),
-        ),
-        getSubsc,
-      ).pipe(
-        filter(r => !('loading' in r && 'culture' in r)),
-        // map(r => r as LocalizeDescriptor<T>)
-      ) as Observable<LocalizeDescriptor<T>>;
-    }
-
-    return getSubsc;
+      });
   }
 
   clearLocalization() {
     this.localStorage.clear('prefix', localizationPrefix);
   }
 
-  private loadFromStorage<T = string>(key: string): Resource<T> {
-    return this.localStorage.load(key).setPrefix(localizationPrefix);
+  localizeEntity<T>(typeName: string): Observable<LocalizeDescriptor<T>> {
+    const resource = this.loadFromStorage<LocalizeDescriptor<T>>(
+      typeName,
+      'ENTITY',
+    );
+
+    // api request
+    const apiRequest = this.api.getLocalizedProperties<T>(typeName).pipe(
+      map(r => r.result),
+      first(),
+      tap(
+        r => {
+          resource.save(r);
+          console.log('fetch ' + typeName);
+        }, // need force change
+        e => {
+          resource.save({});
+          console.error('Localization error happened.', e);
+        },
+      ),
+    );
+
+    return this.culture$.pipe(
+      map(culture => {
+        if (culture === this._cultureStorage && resource.value) {
+          return of(resource.value);
+        }
+        return apiRequest;
+      }),
+      switchAll(),
+    );
+  }
+
+  private loadFromStorage<T = string>(
+    key: string,
+    type?: 'ENTITY',
+  ): Resource<T> {
+    const prefix =
+      type === 'ENTITY' ? localizationPrefixEntity : localizationPrefix;
+    return this.localStorage.load(key).setPrefix(prefix);
   }
 }
