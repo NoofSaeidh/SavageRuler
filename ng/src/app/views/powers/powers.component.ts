@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiCrudService } from 'src/app/api/services/api-crud.service';
 import { PowersApiService } from 'src/app/api/entities/powers/powers.api.service';
-import { ViewDescriptor } from 'src/app/types/descriptors/view-descriptor';
+import { EntityViewDescriptor } from 'src/app/types/descriptors/view-descriptor';
 import { powerViewDescriptor } from './descriptors/power-view-descriptor';
 
 @Component({
@@ -10,7 +10,7 @@ import { powerViewDescriptor } from './descriptors/power-view-descriptor';
   styleUrls: ['./powers.component.scss'],
   providers: [
     {provide: ApiCrudService, useClass: PowersApiService},
-    {provide: ViewDescriptor, useValue: powerViewDescriptor},
+    {provide: EntityViewDescriptor, useValue: powerViewDescriptor},
   ]
 })
 export class PowersComponent implements OnInit {

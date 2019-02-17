@@ -1,54 +1,17 @@
 import { TypeDescriptor } from './type-descriptor';
-import { LocalizeDescriptor } from './localize-descriptor';
-import { RawTypeEntry, TypeEntry, toTypeEntries } from '../global/type-entry';
+import { TypeEntry, toTypeEntries } from '../global/type-entry';
 
-// todo: refactor constructor or use simple interface
-export class ViewDescriptor<T> {
-  constructor(
-    public readonly typeName: string,
-    public readonly titleKey: keyof T,
-    public readonly readForm?: FieldDescriptor<T, ReadFormField>,
-    public readonly infoGrid?: FieldDescriptor<T, InfoGridField>,
-  ) {
-    this._locale = null;
-  }
-
-  private _locale: string | null;
-  // null means fields not localized
-  get locale(): string | null {
-    return this._locale;
-  }
-  localize(locale: string, localize: LocalizeDescriptor<T>) {
-    // todo: implement
-  }
-
-  get infoGridEntries(): TypeEntry<T, InfoGridField>[] {
-    if (!this.infoGrid) {
-      throw new Error('infoGrid is undefined');
-    }
-    return toTypeEntries(this.infoGrid);
-  }
-
-  get readFromEntries(): TypeEntry<T, ReadFormField>[] {
-    if (!this.readForm) {
-      throw new Error('readForm is undefined');
-    }
-    return toTypeEntries(this.readForm);
-  }
+export interface ViewType<T> {
+  typeName: string;
+  titleKey: keyof T;
 }
 
-export type FieldDescriptor<
-  T,
-  V extends ViewField = ViewField
-> = TypeDescriptor<T, V>;
-
-// tslint:disable-next-line:no-empty-interface
-export interface ViewField {
-  // label?: string; // localized on serve
-  // todo: remove | refactor?
+interface ViewTypeEntries<T, F> {
+  viewType: ViewType<T>;
+  entries: TypeEntry<T, F>[];
 }
 
-export interface ReadFormField extends ViewField {
+export interface ReadFormField {
   showNullValue?: boolean; // if true null will be presented (undefined willl not be presented always)
   preformated?: boolean; // use <pre> instead of <p> for value
   addHorizontalRuler?: boolean;
@@ -56,16 +19,48 @@ export interface ReadFormField extends ViewField {
   encode?: boolean; // replace line breaks and tabs with html tags
 }
 
-export interface InfoGridField extends ViewField {
+export type ReadFormDescriptor<T> = TypeDescriptor<T, ReadFormField>;
+export type ReadFormTypeEntries<T> = ViewTypeEntries<T, ReadFormField>;
+
+export interface InfoGridField {
   sortable?: boolean;
 }
 
-export interface ReadFormFieldValue {
-  label?: string;
-  value: any;
-  labelClass?: string; // css class
-  valueClass?: string; // css class
-  preformated?: boolean; // use <pre> instead of <p> for value
-  encodeValue?: boolean; // replace line breaks and tabs with html tags
-  addHorizontalRuler?: boolean;
+export type InfoGridDescriptor<T> = TypeDescriptor<T, InfoGridField>;
+export type InfoGridTypeEntries<T> = ViewTypeEntries<T, InfoGridField>;
+
+// todo: refactor constructor or use simple interface
+export class EntityViewDescriptor<T> {
+  readonly viewType: ViewType<T>;
+  readonly readForm?: ReadFormDescriptor<T>;
+  readonly infoGrid?: InfoGridDescriptor<T>;
+  constructor(input: {
+    viewType: ViewType<T>;
+    readForm?: ReadFormDescriptor<T>;
+    infoGrid?: InfoGridDescriptor<T>;
+  }) {
+    this.viewType = input.viewType;
+    this.readForm = input.readForm;
+    this.infoGrid = input.infoGrid;
+  }
+
+  get infoGridTypeEntries(): InfoGridTypeEntries<T> {
+    if (!this.infoGrid) {
+      throw new Error('infoGrid is undefined');
+    }
+    return {
+      viewType: this.viewType,
+      entries: toTypeEntries(this.infoGrid)
+    };
+  }
+
+  get readFromTypeEntries(): ReadFormTypeEntries<T> {
+    if (!this.readForm) {
+      throw new Error('readForm is undefined');
+    }
+    return {
+      viewType: this.viewType,
+      entries: toTypeEntries(this.readForm)
+    };
+  }
 }

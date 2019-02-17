@@ -19,7 +19,7 @@ import { EntityKey, IEntity } from 'src/app/api/types/ientity';
 import { LoadStateService } from 'src/app/state/load/load-state.service';
 import { ArrayElement } from 'src/app/types/global/array-element';
 import { LocalizeDescriptor } from 'src/app/types/descriptors/localize-descriptor';
-import { ViewDescriptor } from 'src/app/types/descriptors/view-descriptor';
+import { EntityViewDescriptor } from 'src/app/types/descriptors/view-descriptor';
 import { LocalizationService } from 'src/app/localization/localization.service';
 
 export const LOAD_LIST_STATE = new InjectionToken<LoadStateService<any>>(
@@ -57,7 +57,7 @@ export class ReadonlyScreenComponent<
   @ViewChild('modalForm') modalForm: ModalDirective;
 
   constructor(
-    public viewDescriptor: ViewDescriptor<T>,
+    public viewDescriptor: EntityViewDescriptor<T>,
     protected apiService: ApiCrudService<T, TKey>,
     protected route: ActivatedRoute,
     protected router: Router,
@@ -81,7 +81,7 @@ export class ReadonlyScreenComponent<
     this.selected = null;
 
     this.localizationService
-      .localizeEntity(this.viewDescriptor.typeName)
+      .localizeEntity(this.viewDescriptor.viewType.typeName)
       .subscribe(result => (this.localizeDescriptor = result));
 
     const snapshot = this.route.snapshot;

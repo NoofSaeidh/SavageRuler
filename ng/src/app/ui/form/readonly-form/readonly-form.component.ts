@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { LocalizeDescriptor } from 'src/app/types/descriptors/localize-descriptor';
 import { TypeEntry } from 'src/app/types/global/type-entry';
 
-import { ReadFormField, ViewDescriptor } from './../../../types/descriptors/view-descriptor';
+import { ReadFormField, ReadFormTypeEntries } from './../../../types/descriptors/view-descriptor';
 
 @Component({
   selector: 'sr-readonly-form',
@@ -11,20 +11,20 @@ import { ReadFormField, ViewDescriptor } from './../../../types/descriptors/view
 })
 export class ReadonlyFormComponent<T> implements OnInit {
   @Input() item: T;
-  @Input() view: ViewDescriptor<T>;
+  @Input() view: ReadFormTypeEntries<T>;
   @Input() localize: LocalizeDescriptor<T>;
 
   constructor() {}
 
   ngOnInit() {
-    console.log('form initialized');
+    // console.log('form initialized');
   }
 
   get title(): string {
-    return String(this.item[this.view.titleKey]);
+    return String(this.item[this.view.viewType.titleKey]);
   }
 
   get fields(): TypeEntry<T, ReadFormField>[] {
-    return this.view.readFromEntries;
+    return this.view.entries;
   }
 }

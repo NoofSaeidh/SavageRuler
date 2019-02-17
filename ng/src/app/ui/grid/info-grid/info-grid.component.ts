@@ -6,8 +6,9 @@ import {
   EventEmitter,
 } from '@angular/core';
 import {
-  ViewDescriptor,
+  EntityViewDescriptor,
   InfoGridField,
+  InfoGridTypeEntries,
 } from 'src/app/types/descriptors/view-descriptor';
 import { IEntity, EntityKey } from 'src/app/api/types/ientity';
 import { TypeEntry } from 'src/app/types/global/type-entry';
@@ -30,7 +31,7 @@ type SortOrder = 'asc' | 'desc';
 export class InfoGridComponent<T extends IEntity<TKey>, TKey extends EntityKey>
   implements OnInit {
   @Input() items: T[];
-  @Input() view: ViewDescriptor<T>;
+  @Input() view: InfoGridTypeEntries<T>;
   @Input() localize: LocalizeDescriptor<T>;
   @Output() rowClicked = new EventEmitter<{ item: T; index: number; mouse: MouseEvent }>(true);
   headers: Header<T>[];
@@ -38,7 +39,7 @@ export class InfoGridComponent<T extends IEntity<TKey>, TKey extends EntityKey>
   private sorted?: { key: keyof T; order: SortOrder };
 
   ngOnInit() {
-    this.fields = this.view.infoGridEntries;
+    this.fields = this.view.entries;
     this.headers = this.fields.map(value => {
       const class_ = {};
       if (value.value.sortable) {
