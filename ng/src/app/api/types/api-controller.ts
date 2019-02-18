@@ -29,6 +29,17 @@ export function buildApiMethods<TKey extends string>(
   return result as Dictionary<ApiMethod, TKey>;
 }
 
+export function buildApiMethodsExtra<TKey extends string>(
+  prefix: string,
+  ...args: {name: string; httpMethod: HttpMethod}[]
+): Dictionary<ApiMethod, TKey> {
+  const result = {};
+  for (const {name, httpMethod} of args) {
+    result[name as string] = buildApiMethod(name, {prefix, httpMethod});
+  }
+  return result as Dictionary<ApiMethod, TKey>;
+}
+
 export function buildApiMethod(
   name: string,
   options: {
