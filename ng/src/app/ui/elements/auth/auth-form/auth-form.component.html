@@ -1,3 +1,47 @@
-<p>
-  auth-form works!
-</p>
+<form #authForm="ngForm" class="form">
+  {{ debug }}
+  <div class="form-group">
+    <label for="username">Username</label>
+    <input
+      [(ngModel)]="model.username"
+      type="text"
+      class="form-control form-control-sm"
+      name="username"
+      id="username"
+      placeholder="Username"
+      autocomplete="username"
+      required
+      #username="ngModel"
+    />
+    <div
+      [hidden]="username.valid || username.pristine"
+      class="alert alert-danger"
+    >
+      Username is required
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="password">Password</label>
+    <input
+      [(ngModel)]="model.password"
+      type="password"
+      class="form-control form-control-sm"
+      name="password"
+      id="password"
+      placeholder="Password"
+      autocomplete="current-password"
+      required
+      #password="ngModel"
+    />
+    <div
+      [hidden]="password.valid || password.pristine"
+      class="alert alert-danger"
+    >
+      Password is required
+    </div>
+  </div>
+  <div class="right">
+    <button type="submit" class="btn btn-success">Login</button>
+    <button class="btn btn-danger">Cancel</button>
+  </div>
+</form>

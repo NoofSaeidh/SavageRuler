@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { BsDropdownModule, ModalModule } from 'ngx-bootstrap';
 
 import { AuthFormComponent } from './elements/auth/auth-form/auth-form.component';
@@ -17,15 +18,12 @@ const components = [
   ReadonlyFormComponent,
   LanguageSelectorComponent,
   AuthFormComponent,
-  AuthModalComponent
+  AuthModalComponent,
 ];
 
 @NgModule({
   declarations: components,
-  imports: [CommonModule, ModalModule, BsDropdownModule],
+  imports: [CommonModule, ModalModule, BsDropdownModule, FormsModule],
   exports: components,
-  entryComponents: [
-    AuthFormComponent
-  ]
 })
 export class UiModule {}
