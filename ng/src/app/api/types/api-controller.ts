@@ -4,9 +4,10 @@ import { StringHelper } from 'src/app/types/global/string-helper';
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
 export interface ApiMethod {
-  // relative url
+  // relative url (by default)
   url: string;
   httpMethod: HttpMethod;
+  absoluteUrl?: boolean;
 }
 
 export interface ApiController<TKey extends EntryKey = string> {

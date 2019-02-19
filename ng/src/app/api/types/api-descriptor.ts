@@ -5,7 +5,7 @@ export class ApiDescriptor<T extends string | number | symbol = string> {
     if (!url) {
       return '/';
     }
-    let resultUrl;
+    let resultUrl: string;
     if (url.startsWith('/')) {
       resultUrl = url;
     } else {

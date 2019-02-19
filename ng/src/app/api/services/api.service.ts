@@ -10,7 +10,7 @@ import { environment } from 'src/environments/environment';
 export abstract class ApiService<TKey extends EntryKey = string> {
   // todo: interceptors here?
 
-  protected headers = new HttpHeaders({'X-Requested-With': 'XMLHttpRequest'});
+  protected headers = new HttpHeaders({ 'X-Requested-With': 'XMLHttpRequest' });
 
   constructor(
     protected readonly http: HttpClient,
@@ -28,7 +28,7 @@ export abstract class ApiService<TKey extends EntryKey = string> {
     const method = this.descriptor.getMethod(name);
     return this.http.request<ServerResponse<TResult>>(
       method.httpMethod,
-      this.buildUrl(method.url, options && options.query),
+      this.buildUrl(method.url, options && options.query, method.absoluteUrl),
       {
         body: options && options.body,
         headers: this.headers,
@@ -51,15 +51,25 @@ export abstract class ApiService<TKey extends EntryKey = string> {
     return result;
   }
 
-  protected buildUrl(relativeUrl: string, query?: {} | string): string {
-    let url = environment.appUrl;
-    if (!relativeUrl.startsWith('/')) {
-      url += '/';
+  protected buildUrl(
+    url: string,
+    query?: {} | string,
+    absoluteUrl?: boolean,
+  ): string {
+    let result: string;
+    if (absoluteUrl) {
+      result = url;
+    } else {
+      result = environment.appUrl;
+      if (!url.startsWith('/')) {
+        result += '/';
+      }
+      result += url;
     }
-    url += relativeUrl;
+
     if (query) {
-      url += this.buildQuery(query);
+      result += this.buildQuery(query);
     }
-    return url;
+    return result;
   }
 }
