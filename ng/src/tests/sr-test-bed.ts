@@ -1,7 +1,3 @@
-import {
-  POWER_API_DESCRIPTOR,
-  powerApiDescriptor,
-} from 'src/app/api/entities/powers/descriptors/power-api-descriptor';
 import { ApiCrudService } from 'src/app/api/services/api-crud.service';
 import { PowersApiService } from 'src/app/api/entities/powers/powers.api.service';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
@@ -16,6 +12,7 @@ import { EntityViewDescriptor } from 'src/app/types/descriptors/view-descriptor'
 import { powerViewDescriptor } from 'src/app/views/powers/descriptors/power-view-descriptor';
 import { CollapseModule, ModalModule } from 'ngx-bootstrap';
 import { LocalStorageService, WebStorageModule } from 'ngx-store';
+import { ApiDescriptor } from 'src/app/api/types/api-descriptor';
 
 export class SrTestBed {
   static defaultApiMetadata(
@@ -24,7 +21,13 @@ export class SrTestBed {
     const metadata: TestModuleMetadata = {
       imports: [HttpClientTestingModule, WebStorageModule], // todo: stub for local storage
       providers: [
-        { provide: POWER_API_DESCRIPTOR, useValue: powerApiDescriptor },
+        {
+          provide: ApiDescriptor,
+          useValue: new ApiDescriptor({
+            name: 'test',
+            methods: { test: { httpMethod: 'GET', url: '/test' } },
+          }),
+        },
         { provide: ApiCrudService, useClass: PowersApiService },
         { provide: EntityViewDescriptor, useValue: powerViewDescriptor },
       ],

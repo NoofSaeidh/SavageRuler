@@ -1,6 +1,11 @@
 <div>
-  <button class="btn btn-info" (click)="openModal(template)">Login</button>
-  <ng-template #template>
+   <button  class="btn btn-info" (click)="openModal(modalTemplate)">Login</button>
+    <button class="btn btn-danger" (click)="unauthenticate()">Logout</button>
+  <!-- <button *ngIf="isAuthenticated; else logoutTemplate" class="btn btn-info" (click)="openModal(modalTemplate)">Login</button>
+  <ng-template #logoutTemplate>
+    <button class="btn btn-danger" (click)="unauthenticate()">Logout</button>
+  </ng-template> -->
+  <ng-template #modalTemplate>
       <div class="modal-header">
         <h4 class="modal-title pull-left">Login</h4>
         <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">

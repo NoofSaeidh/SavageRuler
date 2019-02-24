@@ -95,10 +95,15 @@ namespace SavageRuler.Web.Host.Startup
                 app.UseDeveloperExceptionPage();
             }
             else
+            {
                 app.UseExceptionHandler("/Error");
+                // todo: add https
+                //app.UseHsts();
+            }
 
             app.UseStaticFiles();
 
+            //app.UseHttpsRedirection();
             app.UseAuthentication();
 
             app.UseAbpRequestLocalization();

@@ -1,5 +1,5 @@
 import { EntityViewDescriptor } from 'src/app/types/descriptors/view-descriptor';
-import { Power } from 'src/app/api/entities/powers/descriptors/power';
+import { Power } from 'src/app/api/entities/powers/types/power';
 
 export const powerViewDescriptor = new EntityViewDescriptor<Power>({
   viewType: {

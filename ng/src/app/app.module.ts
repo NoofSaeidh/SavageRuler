@@ -4,11 +4,13 @@ import { HttpClientModule } from '@angular/common/http';
 import { ModalModule, CollapseModule, BsDropdownModule } from 'ngx-bootstrap';
 import { FormsModule } from '@angular/forms';
 import { WebStorageModule } from 'ngx-store';
+import { JwtModule } from '@auth0/angular-jwt';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { UiModule } from './ui/ui.module';
 import { ViewsModule } from './views/views.module';
+import { authJwtModuleOptions } from './auth/auth-jwt-module-options';
 
 @NgModule({
   declarations: [AppComponent],
@@ -23,6 +25,7 @@ import { ViewsModule } from './views/views.module';
     ViewsModule,
     FormsModule,
     WebStorageModule,
+    JwtModule.forRoot(authJwtModuleOptions),
   ],
   providers: [Title],
   bootstrap: [AppComponent],
