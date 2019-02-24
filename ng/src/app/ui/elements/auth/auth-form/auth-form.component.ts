@@ -1,9 +1,9 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-
-import { ApiTokenAuthService } from '../../../../api/services/api-token-auth.service';
+import { first } from 'rxjs/operators';
 import { ApiDynamicService } from 'src/app/api/services/api-dynamic.service';
 import { AuthService } from 'src/app/auth/auth.service';
-import { first } from 'rxjs/operators';
+
+export type AuthState = 'NONE' | 'SUCCESS' | 'ERROR';
 
 @Component({
   selector: 'sr-auth-form',
@@ -11,7 +11,8 @@ import { first } from 'rxjs/operators';
   styleUrls: ['./auth-form.component.scss'],
 })
 export class AuthFormComponent implements OnInit {
-  private _debug: any;
+  // todo: parse error
+  error: string;
 
   model: { username: string; password: string; rememberMe: boolean } = {
     username: '',
@@ -35,32 +36,15 @@ export class AuthFormComponent implements OnInit {
       .pipe(first())
       .subscribe(
         r => {
-          console.log(r);
-          this._debug = r;
+          this.close();
         },
         e => {
-          console.log(e);
-          this._debug = e;
-          // window.alert(e);
+          this.error = JSON.stringify(e);
         },
       );
-    // this.close();
   }
 
   close() {
     this.closed.emit();
-  }
-
-  testAuth() {
-    this.apiDynamic
-      .makeRequest('/api/services/app/Role/GetAll')
-      .subscribe(r => (this._debug = r), e => (this._debug = e));
-  }
-
-  // todo: rem
-  get debug() {
-    return this._debug
-      ? 'DEBUG: ' + JSON.stringify(this._debug)
-      : 'MODEL: ' + JSON.stringify(this.model);
   }
 }

@@ -1,5 +1,9 @@
 <form #authForm="ngForm" (ngSubmit)="onSubmit()" class="form">
-  {{ debug }}
+  <!-- TODO: error -->
+  <div *ngIf="error" class="alert alert-danger">
+    <strong>Error</strong>
+    {{ error }}
+  </div>
   <div class="form-group">
     <label for="username">Username</label>
     <input
@@ -57,7 +61,8 @@
     >
       Login
     </button>
-    <button type="button" class="btn btn-danger" (click)="close()">Cancel</button>
-    <button type="button" class="btn btn-info" (click)="testAuth()">Test it</button>
+    <button type="button" class="btn btn-danger" (click)="close()">
+      Cancel
+    </button>
   </div>
 </form>

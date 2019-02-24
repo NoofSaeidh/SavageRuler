@@ -7,9 +7,9 @@ import { LocalStorage, SessionStorage } from 'ngx-store';
 })
 export class JwtTokenService {
   @LocalStorage('jwt-token')
-  private _jwtToken: string = '';
-  @SessionStorage('jwt-token')
-  private _jwtSessionToken: string = '';
+  private _jwtToken: string = null;
+  @SessionStorage('jwt-token-session')
+  private _jwtSessionToken: string = null;
 
   getToken(): string | null {
     return this._jwtSessionToken || this._jwtToken || null;

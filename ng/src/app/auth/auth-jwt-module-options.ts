@@ -1,12 +1,7 @@
-import {
-  JwtModuleOptions,
-  JWT_OPTIONS,
-  JwtHelperService,
-} from '@auth0/angular-jwt';
-import { AuthService } from './auth.service';
-import { environment } from 'src/environments/environment';
 import { Injectable } from '@angular/core';
-import { ApiTokenAuthService } from '../api/services/api-token-auth.service';
+import { JWT_OPTIONS, JwtModuleOptions } from '@auth0/angular-jwt';
+import { environment } from 'src/environments/environment';
+
 import { JwtTokenService } from './jwt-token.service';
 
 export function jwtOptionsFactory(jwt: JwtTokenService) {
