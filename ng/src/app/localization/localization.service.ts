@@ -1,5 +1,5 @@
-import { Injectable, OnInit } from '@angular/core';
-import { LocalStorage, LocalStorageService, SessionStorage } from 'ngx-store';
+import { Injectable } from '@angular/core';
+import { LocalStorageService, WebStorageConfigInterface } from 'ngx-store';
 import { Resource } from 'ngx-store/src/service/resource';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { filter, first, map, switchAll, tap } from 'rxjs/operators';
@@ -7,8 +7,10 @@ import { filter, first, map, switchAll, tap } from 'rxjs/operators';
 import { ApiLocalizationService } from '../api/services/api-localization.service';
 import { LocalizeDescriptor } from '../types/descriptors/localize-descriptor';
 
-const localizationPrefix = 'ngx_sr_localization_';
-const localizationPrefixEntity = localizationPrefix + 'entity_';
+declare var NGXSTORE_CONFIG: WebStorageConfigInterface;
+
+const localizationPrefix = NGXSTORE_CONFIG.prefix + 'localization.';
+const localizationPrefixEntity = localizationPrefix + 'entity.';
 
 @Injectable({
   providedIn: 'root',
