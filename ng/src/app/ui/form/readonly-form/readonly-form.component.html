@@ -5,13 +5,16 @@
       <span *ngIf="item[field.key] || field.value.showNullValue">
         <div *ngIf="field.value.addHorizontalRuler; else withTitle">
           <hr />
-          {{ item[field.key] }}
+          <ng-container *ngTemplateOutlet="itemValue"></ng-container>
         </div>
         <ng-template #withTitle>
           <p>
             <b>{{ localize[field.key] }}: &ensp; &ensp;</b>
-            {{ item[field.key] }}
+            <ng-container *ngTemplateOutlet="itemValue"></ng-container>
           </p>
+        </ng-template>
+        <ng-template #itemValue>
+          <div [outerHTML]="getText(field)"></div>
         </ng-template>
       </span>
     </span>

@@ -13,7 +13,7 @@ interface ViewTypeEntries<T, F> {
 
 export interface ReadFormField {
   showNullValue?: boolean; // if true null will be presented (undefined willl not be presented always)
-  preformated?: boolean; // use <pre> instead of <p> for value
+  // preformated?: boolean; // use <pre> instead of <p> for value
   addHorizontalRuler?: boolean;
   hideLabel?: boolean;
   encode?: boolean; // replace line breaks and tabs with html tags
