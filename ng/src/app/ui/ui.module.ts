@@ -10,6 +10,7 @@ import { ReadonlyFieldComponent } from './elements/readonly-field/readonly-field
 import { ReadonlyFormComponent } from './form/readonly-form/readonly-form.component';
 import { InfoGridComponent } from './grid/info-grid/info-grid.component';
 import { ReadonlyScreenComponent } from './screens/readonly-screen/readonly-screen.component';
+import { SafeHtmlPipe } from './pipes/safe-html.pipe';
 
 const components = [
   InfoGridComponent,
@@ -22,7 +23,7 @@ const components = [
 ];
 
 @NgModule({
-  declarations: components,
+  declarations: [...components, SafeHtmlPipe],
   imports: [CommonModule, ModalModule, BsDropdownModule, FormsModule],
   exports: components,
 })

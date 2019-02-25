@@ -1,7 +1,8 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { first } from 'rxjs/operators';
-import { ApiDynamicService } from 'src/app/api/services/api-dynamic.service';
 import { AuthService } from 'src/app/auth/auth.service';
+import { parseServerError } from 'src/app/api/operators/parse-error';
+import { StringHelper } from 'src/app/types/global/string-helper';
 
 export type AuthState = 'NONE' | 'SUCCESS' | 'ERROR';
 
@@ -22,10 +23,7 @@ export class AuthFormComponent implements OnInit {
 
   @Output() closed = new EventEmitter();
 
-  constructor(
-    protected auth: AuthService,
-    private apiDynamic: ApiDynamicService, // todo: temp
-  ) {}
+  constructor(protected auth: AuthService) {}
 
   ngOnInit() {}
 
@@ -39,7 +37,12 @@ export class AuthFormComponent implements OnInit {
           this.close();
         },
         e => {
-          this.error = JSON.stringify(e);
+          const se = parseServerError(e);
+          if (se) {
+            this.error = StringHelper.toHtmlWhitespaces(se.details || se.message);
+          } else {
+            this.error = JSON.stringify(e);
+          }
         },
       );
   }

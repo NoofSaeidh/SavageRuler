@@ -21,3 +21,5 @@ export interface ServerError {
   details?: string;
   validationErrors?: string;
 }
+
+export const serverResponseMarker = '__abp';

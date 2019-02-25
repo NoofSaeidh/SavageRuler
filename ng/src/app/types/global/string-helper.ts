@@ -11,4 +11,8 @@ export class StringHelper {
   static capitalize(input: string): string {
     return input.replace(/^\w/, c => c.toUpperCase());
   }
+
+  static toHtmlWhitespaces(input: string): string {
+    return input.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;').replace(/\n/g, '<br />');
+  }
 }

@@ -1,26 +1,26 @@
 import { Location } from '@angular/common';
 import {
   Component,
+  HostListener,
   Inject,
   InjectionToken,
   OnInit,
   ViewChild,
-  HostListener,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ModalDirective } from 'ngx-bootstrap';
 import { filter, first } from 'rxjs/operators';
 import {
-  ApiCrudService,
   toServerListResult,
   toServerResult,
-} from 'src/app/api/services/api-crud.service';
+} from 'src/app/api/operators/to-server-result';
+import { ApiCrudService } from 'src/app/api/services/api-crud.service';
 import { EntityKey, IEntity } from 'src/app/api/types/ientity';
+import { LocalizationService } from 'src/app/localization/localization.service';
 import { LoadStateService } from 'src/app/state/load/load-state.service';
-import { ArrayElement } from 'src/app/types/global/array-element';
 import { LocalizeDescriptor } from 'src/app/types/descriptors/localize-descriptor';
 import { EntityViewDescriptor } from 'src/app/types/descriptors/view-descriptor';
-import { LocalizationService } from 'src/app/localization/localization.service';
+import { ArrayElement } from 'src/app/types/global/array-element';
 
 export const LOAD_LIST_STATE = new InjectionToken<LoadStateService<any>>(
   'List load state for readonly screen',
@@ -207,7 +207,9 @@ export class ReadonlyScreenComponent<
     if (this.items) {
       return;
     }
-    this.loadListState.load(this.apiService.getAll().pipe(toServerListResult()));
+    this.loadListState.load(
+      this.apiService.getAll().pipe(toServerListResult()),
+    );
   }
 
   private ensureSelectedItemLoaded(id: TKey) {
