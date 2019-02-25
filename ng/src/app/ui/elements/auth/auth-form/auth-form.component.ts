@@ -12,8 +12,9 @@ export type AuthState = 'NONE' | 'SUCCESS' | 'ERROR';
   styleUrls: ['./auth-form.component.scss'],
 })
 export class AuthFormComponent implements OnInit {
-  // todo: parse error
   error: string;
+
+  loading: boolean = false;
 
   model: { username: string; password: string; rememberMe: boolean } = {
     username: '',
@@ -28,7 +29,7 @@ export class AuthFormComponent implements OnInit {
   ngOnInit() {}
 
   onSubmit() {
-    console.log(this.auth.authenticate);
+    this.loading = true;
     this.auth
       .authenticate(this.model)
       .pipe(first())
@@ -39,10 +40,13 @@ export class AuthFormComponent implements OnInit {
         e => {
           const se = parseServerError(e);
           if (se) {
-            this.error = StringHelper.toHtmlWhitespaces(se.details || se.message);
+            this.error = StringHelper.toHtmlWhitespaces(
+              se.details || se.message,
+            );
           } else {
             this.error = JSON.stringify(e);
           }
+          this.loading = false;
         },
       );
   }
