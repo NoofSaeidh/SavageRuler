@@ -8,20 +8,42 @@ import { ServerResponse } from '../api/types/responses';
 import { AuthResultModel } from '../api/types/auth-model';
 import { JwtTokenService } from './jwt-token.service';
 
+export interface AuthState {
+  isAuthenticated: boolean;
+  username?: string;
+  permissions?: [];
+  claims?: {};
+}
+
+const tokenDataNames = {
+  username: 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name',
+  permissions: 'Abp.Permissions',
+};
+
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private _claims?: {};
+  private _state$: BehaviorSubject<AuthState>;
 
   constructor(
     protected api: ApiTokenAuthService,
     protected jwtHelper: JwtHelperService,
     protected jwtTokenService: JwtTokenService,
-  ) {}
+  ) {
+    this._state$ = new BehaviorSubject<AuthState>({ isAuthenticated: false });
+    const token = jwtTokenService.getToken();
+    if (token) {
+      this._setStateFromToken(jwtTokenService.getToken());
+    }
+  }
 
-  get claims(): {} {
-    return this._claims;
+  get claims(): {} | null {
+    return this._state$.value.claims || null;
+  }
+
+  get permissions(): [] | null {
+    return this._state$.value.permissions || null;
   }
 
   get jwtToken(): string | null {
@@ -29,7 +51,26 @@ export class AuthService {
   }
 
   get isAuthenticated(): boolean {
-    return !!this.jwtToken;
+    return this._state$.value.isAuthenticated;
+  }
+
+  get state$(): Observable<AuthState> {
+    return this._state$.asObservable();
+  }
+
+  private _setStateFromToken(token: string) {
+    const claims = this.jwtHelper.decodeToken(token);
+    this._state$.next({
+      isAuthenticated: true,
+      claims,
+      username: claims[tokenDataNames.username],
+      permissions: JSON.parse(claims[tokenDataNames.permissions]),
+    });
+  }
+
+  // reset state to current token data
+  resetState(): void {
+    this._setStateFromToken(this.jwtTokenService.getToken());
   }
 
   authenticate(input: {
@@ -46,13 +87,13 @@ export class AuthService {
       .pipe(
         tap(r => {
           this.jwtTokenService.setToken(r.result.accessToken, input.rememberMe);
-          this._claims = this.jwtHelper.decodeToken(r.result.accessToken);
+          this._setStateFromToken(r.result.accessToken);
         }),
       );
   }
 
-  unauthenticate() {
+  unauthenticate(): void {
     this.jwtTokenService.clearToken();
-    this._claims = null;
+    this._state$.next({ isAuthenticated: false });
   }
 }
