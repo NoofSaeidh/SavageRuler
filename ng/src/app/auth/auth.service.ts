@@ -12,7 +12,7 @@ export interface AuthState {
   isAuthenticated: boolean;
   username?: string;
   permissions?: [];
-  claims?: {};
+  // claims?: {};
 }
 
 const tokenDataNames = {
@@ -32,15 +32,12 @@ export class AuthService {
     protected jwtTokenService: JwtTokenService,
   ) {
     this._state$ = new BehaviorSubject<AuthState>({ isAuthenticated: false });
-    const token = jwtTokenService.getToken();
-    if (token) {
-      this._setStateFromToken(jwtTokenService.getToken());
-    }
+    this.resetState();
   }
 
-  get claims(): {} | null {
-    return this._state$.value.claims || null;
-  }
+  // get claims(): {} | null {
+  //   return this._state$.value.claims || null;
+  // }
 
   get permissions(): [] | null {
     return this._state$.value.permissions || null;
@@ -58,17 +55,21 @@ export class AuthService {
     return this._state$.asObservable();
   }
 
-  private _setStateFromToken(token: string) {
-    const claims = this.jwtHelper.decodeToken(token);
-    this._state$.next({
-      isAuthenticated: true,
-      claims,
-      username: claims[tokenDataNames.username],
-      permissions: JSON.parse(claims[tokenDataNames.permissions]),
-    });
+  private _setStateFromToken(token?: string) {
+    if (token) {
+      const claims = this.jwtHelper.decodeToken(token);
+      this._state$.next({
+        isAuthenticated: true,
+        // claims,
+        username: claims[tokenDataNames.username],
+        permissions: JSON.parse(claims[tokenDataNames.permissions]),
+      });
+    } else if (this._state$.value.isAuthenticated) {
+      this._state$.next({ isAuthenticated: false });
+    }
   }
 
-  // reset state to current token data
+  // reset state to current token data (if token was set somewhere else)
   resetState(): void {
     this._setStateFromToken(this.jwtTokenService.getToken());
   }
