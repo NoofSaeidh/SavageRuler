@@ -1,4 +1,8 @@
-﻿using FluentAssertions;
+﻿using Abp.Authorization;
+using Abp.Authorization.Users;
+using FluentAssertions;
+using SavageRuler.Authorization;
+using SavageRuler.Authorization.Users;
 using SavageRuler.Rules.Powers;
 using SavageRuler.Rules.Powers.Dto;
 using System;
@@ -10,6 +14,7 @@ using Xunit;
 
 namespace SavageRuler.Tests.Rules.Powers
 {
+    [Trait("Service", nameof(IPowerAppService))]
     public class PowerAppService_Tests : SavageRulerTestBase
     {
         private IPowerAppService _service;
@@ -18,6 +23,22 @@ namespace SavageRuler.Tests.Rules.Powers
         {
             _service = Resolve<IPowerAppService>();
             CreateTestData();
+        }
+
+        [Fact]
+        public void Create_As_Anonymous_Should_Be_Forbidden()
+        {
+            var newPower = new PowerDto
+            {
+                Name = "new name",
+                Book = "BK",
+                Text = "Text"
+            };
+            using (UseLogout())
+                _service
+                    .Invoking(s => s.Create(newPower).Wait())
+                    .Should()
+                    .Throw<AbpAuthorizationException>("update should be restricted for anonumous user");
         }
 
         [Fact]
@@ -32,25 +53,11 @@ namespace SavageRuler.Tests.Rules.Powers
                 Book = "BK",
                 Text = "Text"
             };
-            _service
-                .Invoking(s => s.Update(newPower).Wait())
-                .Should()
-                .Throw<Exception>("update should be restricted for anonumous user");
-        }
-
-        [Fact]
-        public void Create_As_Anonymous_Should_Be_Forbidden()
-        {
-            var newPower = new PowerDto
-            {
-                Name = "new name",
-                Book = "BK",
-                Text = "Text"
-            };
-            _service
-                .Invoking(s => s.Create(newPower).Wait())
-                .Should()
-                .Throw<Exception>("update should be restricted for anonumous user");
+            using (UseLogout())
+                _service
+                    .Invoking(s => s.Update(newPower).Wait())
+                    .Should()
+                    .Throw<AbpAuthorizationException>("update should be restricted for anonumous user");
         }
 
         [Fact]
@@ -58,10 +65,47 @@ namespace SavageRuler.Tests.Rules.Powers
         {
             var items = await _service.GetAll(new PowerListDto());
             var power = items.Items.First();
-            _service
-                .Invoking(s => s.Delete(power).Wait())
-                .Should()
-                .Throw<Exception>("update should be restricted for anonumous user");
+
+            using (UseLogout())
+                _service
+                    .Invoking(s => s.Delete(power).Wait())
+                    .Should()
+                    .Throw<AbpAuthorizationException>("update should be restricted for anonumous user");
+        }
+
+        [Fact]
+        public void Create_As_Manager_Should_Work()
+        {
+            var newPower = new PowerDto
+            {
+                Name = "new name",
+                Book = "BK",
+                Text = "Text"
+            };
+            using (UseLoginAsHost("PowersUser"))
+                _service
+                    .Invoking(s => s.Create(newPower).Wait())
+                    .Should()
+                    .NotThrow();
+        }
+
+        [Fact]
+        public async Task Update_As_Manager_Should_Work()
+        {
+            var items = await _service.GetAll(new PowerListDto());
+            var power = items.Items.First();
+            var newPower = new PowerDto
+            {
+                Id = power.Id,
+                Name = power.Name + " test it",
+                Book = "BK",
+                Text = "Text"
+            };
+            using (UseLoginAsHost("PowersUser"))
+                _service
+                    .Invoking(s => s.Update(newPower).Wait())
+                    .Should()
+                    .NotThrow();
         }
 
         [Fact]
@@ -69,28 +113,48 @@ namespace SavageRuler.Tests.Rules.Powers
         {
             var items = await _service.GetAll(new PowerListDto());
             var power = items.Items.First();
-            LoginAsHostAdmin();
-            _service
-                .Invoking(s => s.Delete(power).Wait())
-                .Should()
-                .NotThrow();
+            using (UseLoginAsHost("PowersUser"))
+                _service
+                    .Invoking(s => s.Delete(power).Wait())
+                    .Should()
+                    .NotThrow();
         }
 
         [Fact]
         public void GetAll_As_Anonymous_Should_Work()
         {
-            _service.Invoking(s => s.GetAll(new PowerListDto()).Wait()).Should().NotThrow();
+            using (UseLogout())
+                _service.Invoking(s => s.GetAll(new PowerListDto()).Wait()).Should().NotThrow();
         }
 
         private void CreateTestData()
         {
-            UsingDbContext(context =>
-            {
-                context.Powers.AddRange(
-                    new Power { Book = "DL", Name = "Power1", Text = "Text 1" },
-                    new Power { Book = "HR", Name = "Power2", Text = "Text 2 Mock" }
-                );
-            });
+            using (UseLoginAsHostAdmin())
+                UsingDbContext(context =>
+                {
+                    context.Users.Add(new User
+                    {
+                        UserName = "PowersUser",
+                        Name = "PowersUser",
+                        Surname = "Surname",
+                        EmailAddress = "powers@user.test",
+                        Password = "123",
+                        TenantId = null,
+                        Permissions = new UserPermissionSetting[]
+                        {
+                        new UserPermissionSetting
+                        {
+                            Name = PermissionNames.Manager_Rules,
+                            IsGranted = true,
+                            TenantId = null,
+                        },
+                        }
+                    });
+                    context.Powers.AddRange(
+                        new Power { Book = "DL", Name = "Power1", Text = "Text 1" },
+                        new Power { Book = "HR", Name = "Power2", Text = "Text 2 Mock" }
+                    );
+                });
         }
     }
 }
