@@ -3,6 +3,7 @@ using Abp.Application.Services;
 using Abp.Application.Services.Dto;
 using Abp.Domain.Repositories;
 using Abp.Localization.Sources;
+using SavageRuler.Authorization;
 using SavageRuler.Localization;
 using SavageRuler.Rules.Powers.Dto;
 using System;
@@ -20,6 +21,9 @@ namespace SavageRuler.Rules.Powers
     {
         public PowerAppService(IRepository<Power, int> repository) : base(repository)
         {
+            CreatePermissionName = 
+            UpdatePermissionName = 
+            DeletePermissionName = PermissionNames.Manager_Rules;
         }
     }
 }

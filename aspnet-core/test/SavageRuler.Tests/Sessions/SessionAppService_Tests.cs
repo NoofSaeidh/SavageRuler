@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Shouldly;
+using FluentAssertions;
 using Xunit;
 using SavageRuler.Sessions;
 
@@ -25,11 +25,11 @@ namespace SavageRuler.Tests.Sessions
 
             // Assert
             var currentUser = await GetCurrentUserAsync();
-            output.User.ShouldNotBe(null);
-            output.User.Name.ShouldBe(currentUser.Name);
-            output.User.Surname.ShouldBe(currentUser.Surname);
+            output.User.Should().NotBeNull();
+            output.User.Name.Should().Be(currentUser.Name);
+            output.User.Surname.Should().Be(currentUser.Surname);
 
-            output.Tenant.ShouldBe(null);
+            output.Tenant.Should().BeNull();
         }
 
         [Fact]
@@ -42,11 +42,11 @@ namespace SavageRuler.Tests.Sessions
             var currentUser = await GetCurrentUserAsync();
             var currentTenant = await GetCurrentTenantAsync();
 
-            output.User.ShouldNotBe(null);
-            output.User.Name.ShouldBe(currentUser.Name);
+            output.User.Should().NotBeNull();
+            output.User.Name.Should().Be(currentUser.Name);
 
-            output.Tenant.ShouldNotBe(null);
-            output.Tenant.Name.ShouldBe(currentTenant.Name);
+            output.Tenant.Should().NotBeNull();
+            output.Tenant.Name.Should().Be(currentTenant.Name);
         }
     }
 }
