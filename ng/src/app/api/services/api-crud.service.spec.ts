@@ -1,10 +1,10 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { Power } from 'src/app/api/entities/powers/descriptors/power';
 
 import { ApiDescriptor } from '../types/api-descriptor';
 import { ApiCrudService } from './api-crud.service';
 import { SrTestBed } from 'src/tests/sr-test-bed';
+import { Power } from '../entities/powers/types/power';
 
 describe('ApiCrudService', () => {
   beforeEach(() =>

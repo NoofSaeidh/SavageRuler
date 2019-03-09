@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { ApiTokenAuthService } from '../api/services/api-token-auth.service';
-import { LocalStorage, SessionStorage } from 'ngx-store';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { ServerResponse } from '../api/types/responses';

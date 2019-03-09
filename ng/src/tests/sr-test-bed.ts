@@ -13,13 +13,19 @@ import { powerViewDescriptor } from 'src/app/views/powers/descriptors/power-view
 import { CollapseModule, ModalModule } from 'ngx-bootstrap';
 import { LocalStorageService, WebStorageModule } from 'ngx-store';
 import { ApiDescriptor } from 'src/app/api/types/api-descriptor';
+import { JwtModule } from '@auth0/angular-jwt';
+import { authJwtModuleOptions } from 'src/app/auth/auth-jwt-module-options';
 
 export class SrTestBed {
   static defaultApiMetadata(
     moduleDef?: TestModuleMetadata,
   ): TestModuleMetadata {
     const metadata: TestModuleMetadata = {
-      imports: [HttpClientTestingModule, WebStorageModule], // todo: stub for local storage
+      imports: [
+        HttpClientTestingModule,
+        WebStorageModule,
+        JwtModule.forRoot(authJwtModuleOptions),
+      ], // todo: stub for local storage
       providers: [
         {
           provide: ApiDescriptor,

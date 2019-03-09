@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 
 import { LoadStateService } from './load-state.service';
-import { Power } from 'src/app/api/entities/powers/descriptors/power';
 import { SrTestBed } from 'src/tests/sr-test-bed';
+import { Power } from 'src/app/api/entities/powers/types/power';
 
 describe('LoadStateService', () => {
   beforeEach(async () =>
