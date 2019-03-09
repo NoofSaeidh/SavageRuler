@@ -3,6 +3,7 @@ import { first } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/auth.service';
 import { parseServerError } from 'src/app/api/operators/parse-error';
 import { StringHelper } from 'src/app/types/global/string-helper';
+import { LocalizationDictionary } from 'src/app/localization/localization-dictionary';
 
 export type AuthState = 'NONE' | 'SUCCESS' | 'ERROR';
 
@@ -24,7 +25,7 @@ export class AuthFormComponent implements OnInit {
 
   @Output() closed = new EventEmitter();
 
-  constructor(protected auth: AuthService) {}
+  constructor(public L: LocalizationDictionary, protected auth: AuthService) {}
 
   ngOnInit() {}
 

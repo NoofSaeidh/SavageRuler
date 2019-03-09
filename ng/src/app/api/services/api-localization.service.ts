@@ -62,8 +62,8 @@ export class ApiLocalizationService extends ApiService<
     return this.makeRequest('getAllLanguages');
   }
 
-  getLocalizedStrings(): Observable<ServerResponse<Dictionary<string>>> {
-    return this.makeRequest('getLocalizedStrings');
+  getLocalizedStrings(sourceName: string): Observable<ServerResponse<Dictionary<string>>> {
+    return this.makeRequest('getLocalizedStrings', {query: {sourceName}});
   }
 
   getCurrentLanguage(): Observable<ServerResponse<LanguageInfo>> {

@@ -2,5 +2,9 @@
 <localizationDictionary culture="ru">
   <texts>
     <text name="HomePage" value="Домашняя страница" />
+    <text name="RememberMe" value="Запомнить меня"/>
+    <text name="UsernameRequired" value="Имя пользователя обязательно"/>
+    <text name="PasswordRequired" value="Пароль обязателен"/>
+    <text name="Login" value="Войти"/>
   </texts>
 </localizationDictionary>

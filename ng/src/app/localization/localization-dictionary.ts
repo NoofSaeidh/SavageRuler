@@ -19,7 +19,8 @@ export class LocalizationDictionary implements Dictionary<string, string> {
           throw new Error('Only string are supported as keys');
         }
         let res = strings[p];
-        if (res === undefined) {
+        // for some reason Angular calls ngOnDestroy for this in initialization
+        if (res === undefined && p !== 'ngOnDestroy') {
           console.warn(`Property ${p} is not localized.`);
           // means that it is not localzied
           res = '[' + p + ']';

@@ -91,5 +91,8 @@
     <text name="StartTyping">Start Typing</text>
     <text name="Skins">Skins</text>
     <text name="Settings">Settings</text>
+    <text name="UsernameRequired" value="Username is required"/>
+    <text name="PasswordRequired" value="Password is required"/>
+    <text name="Login" value="Login"/>
   </texts>
 </localizationDictionary>

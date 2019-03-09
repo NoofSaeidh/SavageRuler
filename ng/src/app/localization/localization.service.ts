@@ -1,10 +1,12 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable, InjectionToken } from '@angular/core';
 import { LocalStorageService, WebStorageConfigInterface } from 'ngx-store';
 import { Resource } from 'ngx-store/src/service/resource';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { BehaviorSubject, concat, Observable, of, zip } from 'rxjs';
 import { filter, first, map, switchAll, tap } from 'rxjs/operators';
 
+import { toServerResult } from '../api/operators/to-server-result';
 import { ApiLocalizationService } from '../api/services/api-localization.service';
+import { ServerResponse } from '../api/types/responses';
 import { LocalizeDescriptor } from '../types/descriptors/localize-descriptor';
 import { Dictionary } from '../types/global/dictionary';
 
@@ -13,28 +15,31 @@ declare var NGXSTORE_CONFIG: WebStorageConfigInterface;
 const localizationPrefix = NGXSTORE_CONFIG.prefix + 'localization.';
 const localizationPrefixEntity = localizationPrefix + 'entity.';
 
+// perhaps should use DI for that
+const localizationSources = ['Abp', 'AbpZero', 'AbpWeb', 'SavageRuler'];
+
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class LocalizationService {
   private _cultureResource: Resource<string> = this.loadFromStorage('culture');
   private _localizedStringsResource: Resource<{}> = this.loadFromStorage(
-    'localized-strings'
+    'localized-strings',
   );
   private _cultureState$ = new BehaviorSubject({ culture: '', loading: false });
   readonly culture$: Observable<string> = this._cultureState$.pipe(
     filter(r => !r.loading),
-    map(r => r.culture)
+    map(r => r.culture),
   );
 
   constructor(
     public api: ApiLocalizationService,
-    protected localStorage: LocalStorageService
+    protected localStorage: LocalStorageService,
   ) {
     if (this._cultureResource.value) {
       this._cultureState$.next({
         loading: false,
-        culture: this._cultureResource.value
+        culture: this._cultureResource.value,
       });
     } else {
       this.resetCulture();
@@ -54,13 +59,13 @@ export class LocalizationService {
       if (culture === this._cultureResource.value) {
         this._cultureState$.next({
           loading: false,
-          culture: culture
+          culture: culture,
         });
       }
     }
     this._cultureState$.next({
       culture: culture,
-      loading: true
+      loading: true,
     });
     this.api
       .changeCulture(culture)
@@ -70,7 +75,7 @@ export class LocalizationService {
         this._cultureResource.save(culture);
         this._cultureState$.next({
           culture: culture,
-          loading: false
+          loading: false,
         });
       });
   }
@@ -90,7 +95,7 @@ export class LocalizationService {
   localizeEntity<T>(typeName: string): Observable<LocalizeDescriptor<T>> {
     const resource = this.loadFromStorage<LocalizeDescriptor<T>>(
       typeName,
-      'ENTITY'
+      'ENTITY',
     );
 
     // api request
@@ -104,8 +109,8 @@ export class LocalizationService {
         e => {
           resource.save({});
           console.error('Localization error happened.', e);
-        }
-      )
+        },
+      ),
     );
 
     return this.culture$.pipe(
@@ -115,14 +120,24 @@ export class LocalizationService {
         }
         return apiRequest;
       }),
-      switchAll()
+      switchAll(),
     );
   }
 
-  localizeStrings(): Observable<Dictionary<string>> {
+  localizeStrings(): Observable<Dictionary<string, string>> {
     // api request
-    const apiRequest = this.api.getLocalizedStrings().pipe(
-      map(r => r.result),
+    const sourcesToObservables: () => Observable<
+      ServerResponse<Dictionary<string, string>>
+    >[] = () => {
+      const res = [];
+      for (const source of localizationSources) {
+        res.push(this.api.getLocalizedStrings(source));
+      }
+      return res;
+    };
+
+    const apiRequest = zip(...sourcesToObservables()).pipe(
+      map(r => Object.assign({}, ...r.map(rr => rr.result)) as Dictionary<string>),
       first(),
       tap(r => this._localizedStringsResource.save(r))
     );
@@ -136,13 +151,13 @@ export class LocalizationService {
         }
         return apiRequest;
       }),
-      switchAll()
+      switchAll(),
     );
   }
 
   private loadFromStorage<T = string>(
     key: string,
-    type?: 'ENTITY'
+    type?: 'ENTITY',
   ): Resource<T> {
     const prefix =
       type === 'ENTITY' ? localizationPrefixEntity : localizationPrefix;
