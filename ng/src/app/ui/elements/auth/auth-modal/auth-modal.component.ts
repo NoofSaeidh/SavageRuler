@@ -2,6 +2,7 @@ import { Component, OnInit, TemplateRef } from '@angular/core';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap';
 import { AuthFormComponent } from '../auth-form/auth-form.component';
 import { AuthService } from 'src/app/auth/auth.service';
+import { LocalizationDictionary } from 'src/app/localization/localization-dictionary';
 
 @Component({
   selector: 'sr-auth-modal',
@@ -11,6 +12,7 @@ import { AuthService } from 'src/app/auth/auth.service';
 export class AuthModalComponent implements OnInit {
   modalRef: BsModalRef;
   constructor(
+    public L: LocalizationDictionary,
     private modalService: BsModalService,
     private auth: AuthService,
   ) {}

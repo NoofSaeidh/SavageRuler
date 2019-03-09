@@ -4,6 +4,7 @@ import { first, skipWhile, map, filter } from 'rxjs/operators';
 import { toServerResult } from 'src/app/api/operators/to-server-result';
 import { LanguageInfo } from 'src/app/api/types/localization';
 import { LocalizationService } from 'src/app/localization/localization.service';
+import { LocalizationDictionary } from 'src/app/localization/localization-dictionary';
 
 @Component({
   selector: 'sr-language-selector',
@@ -17,7 +18,10 @@ export class LanguageSelectorComponent implements OnInit, OnDestroy {
   currentLanguage: LanguageInfo;
   enabled: boolean = false;
 
-  constructor(protected localizationService: LocalizationService) {}
+  constructor(
+    public L: LocalizationDictionary,
+    protected localizationService: LocalizationService,
+  ) {}
 
   ngOnInit() {
     // get all languages will be executed first
@@ -27,9 +31,7 @@ export class LanguageSelectorComponent implements OnInit, OnDestroy {
         toServerResult(),
         map(r => r.filter(i => !i.isDisabled)),
       ),
-      this.localizationService.culture$.pipe(
-        filter(v => !!v)
-      ),
+      this.localizationService.culture$.pipe(filter(v => !!v)),
     ).subscribe(r => {
       if (Array.isArray(r)) {
         // languages

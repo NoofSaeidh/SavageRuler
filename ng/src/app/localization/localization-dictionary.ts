@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { LocalizationService } from './localization.service';
 import { Dictionary } from '../types/global/dictionary';
-import { Unsubscribable, Subscription } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
