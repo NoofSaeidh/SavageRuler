@@ -9,6 +9,7 @@ import { buildApiMethods, buildApiMethod } from '../types/api-controller';
 import { ApiDescriptor } from '../types/api-descriptor';
 import { CookieStorage } from 'ngx-store';
 import { LanguageInfo } from '../types/localization';
+import { Dictionary } from 'src/app/types/global/dictionary';
 
 export const apiLocalizationUrl = {
   controller: environment.appUrl + '/api',
@@ -59,6 +60,10 @@ export class ApiLocalizationService extends ApiService<
 
   getAllLanguages(): Observable<ServerResponse<LanguageInfo[]>> {
     return this.makeRequest('getAllLanguages');
+  }
+
+  getLocalizedStrings(): Observable<ServerResponse<Dictionary<string>>> {
+    return this.makeRequest('getLocalizedStrings');
   }
 
   getCurrentLanguage(): Observable<ServerResponse<LanguageInfo>> {
