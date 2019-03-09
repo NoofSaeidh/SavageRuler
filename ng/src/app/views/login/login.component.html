@@ -1,0 +1,28 @@
+<div class="container">
+  <div class="card">
+    <div class="card border">
+      <div class="card-body">
+        <h2 class="card-title">{{ L['Login'] }}</h2>
+        <div class="card-text">
+          <sr-auth-form
+            *ngIf="!state.isAuthenticated; else logged"
+          ></sr-auth-form>
+          <ng-template #logged>
+            <h4>{{ L['YourAreLogged'] }}</h4>
+            <p>
+              <b>{{ L['Username'] }}</b
+              >: {{ state.username }}
+            </p>
+            <p>
+              <b>{{ L['Permissions'] }}</b
+              >: {{ state.permissions }}
+            </p>
+            <button class="btn btn-danger" (click)="logout()">
+              {{ L['Logout'] }}
+            </button>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
