@@ -15,6 +15,7 @@ import { LocalStorageService, WebStorageModule } from 'ngx-store';
 import { ApiDescriptor } from 'src/app/api/types/api-descriptor';
 import { JwtModule } from '@auth0/angular-jwt';
 import { authJwtModuleOptions } from 'src/app/auth/auth-jwt-module-options';
+import { LocalizationDictionary } from 'src/app/localization/localization-dictionary';
 
 export class SrTestBed {
   static defaultApiMetadata(
@@ -47,6 +48,7 @@ export class SrTestBed {
     return this.mergeMetadata(
       this.defaultApiMetadata({
         imports: [AppModule, CollapseModule, ModalModule],
+        providers: [{ provide: LocalizationDictionary, useValue: {} }],
       }),
       moduleDef,
     );

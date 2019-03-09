@@ -1,13 +1,13 @@
-import { TestBed, async, ComponentFixture } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
-import { AppComponent } from './app.component';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { SrTestBed } from 'src/tests/sr-test-bed';
-import { Title } from '@angular/platform-browser';
-import { CollapseModule } from 'ngx-bootstrap';
+
+import { AppComponent } from './app.component';
 
 describe('AppComponent', () => {
   beforeEach(async(() => {
-    TestBed.configureTestingModule(SrTestBed.defaultViewComponentsMetadata()).compileComponents();
+    TestBed.configureTestingModule(
+      SrTestBed.defaultViewComponentsMetadata(),
+    ).compileComponents();
   }));
 
   let fixture: ComponentFixture<AppComponent>;
@@ -23,10 +23,5 @@ describe('AppComponent', () => {
 
   it(`should have as title 'Savage Ruler'`, () => {
     expect(app.title).toEqual('Savage Ruler');
-  });
-
-  it('should render title in a div tag', () => {
-    const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('div').textContent).toBeTruthy();
   });
 });
