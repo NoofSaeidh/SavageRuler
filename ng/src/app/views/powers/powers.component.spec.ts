@@ -1,13 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ActivatedRoute } from '@angular/router';
+import { SrTestBed } from 'src/tests/sr-test-bed';
 
 import { PowersComponent } from './powers.component';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { ReadonlyScreenComponent } from 'src/app/ui/screens/readonly-screen/readonly-screen.component';
-import { ApiCrudService } from 'src/app/api/services/api-crud.service';
-import { PowersApiService } from 'src/app/api/entities/powers/powers.api.service';
-import { SrTestBed } from 'src/tests/sr-test-bed';
-import { AppModule } from 'src/app/app.module';
-import { ActivatedRoute } from '@angular/router';
 
 describe('PowersComponent', () => {
   let component: PowersComponent;
@@ -16,13 +11,16 @@ describe('PowersComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule(
       SrTestBed.defaultViewComponentsMetadata({
-      providers: [
-        {
-          provide: ActivatedRoute,
-          useValue: {snapshot: {url: [{path: 'screen/grid'}], queryParams: {}}}
-        }
-      ]
-    })).compileComponents();
+        providers: [
+          {
+            provide: ActivatedRoute,
+            useValue: {
+              snapshot: { url: [{ path: 'screen/grid' }], queryParams: {} },
+            },
+          },
+        ],
+      }),
+    ).compileComponents();
   }));
 
   beforeEach(() => {

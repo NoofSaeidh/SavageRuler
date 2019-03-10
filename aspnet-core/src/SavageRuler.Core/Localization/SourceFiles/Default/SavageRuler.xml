@@ -104,5 +104,6 @@
 
     <!-- UI -->
     <text name="BackToGrid" value="Back to Grid"/>
+    <text name="YourAreLogged" value="You are logged"/>
   </texts>
 </localizationDictionary>

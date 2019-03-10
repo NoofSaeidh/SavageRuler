@@ -1,21 +1,18 @@
-import { ApiCrudService } from 'src/app/api/services/api-crud.service';
-import { PowersApiService } from 'src/app/api/entities/powers/powers.api.service';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { UiModule } from 'src/app/ui/ui.module';
-import {
-  TestModuleMetadata,
-  TestBedStatic,
-  TestBed,
-} from '@angular/core/testing';
-import { AppModule } from 'src/app/app.module';
-import { EntityViewDescriptor } from 'src/app/types/descriptors/view-descriptor';
-import { powerViewDescriptor } from 'src/app/views/powers/descriptors/power-view-descriptor';
-import { CollapseModule, ModalModule } from 'ngx-bootstrap';
-import { LocalStorageService, WebStorageModule } from 'ngx-store';
-import { ApiDescriptor } from 'src/app/api/types/api-descriptor';
+import { TestModuleMetadata } from '@angular/core/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 import { JwtModule } from '@auth0/angular-jwt';
+import { CollapseModule, ModalModule } from 'ngx-bootstrap';
+import { WebStorageModule } from 'ngx-store';
+import { PowersApiService } from 'src/app/api/entities/powers/powers.api.service';
+import { ApiCrudService } from 'src/app/api/services/api-crud.service';
+import { ApiDescriptor } from 'src/app/api/types/api-descriptor';
+import { AppModule } from 'src/app/app.module';
 import { authJwtModuleOptions } from 'src/app/auth/auth-jwt-module-options';
 import { LocalizationDictionary } from 'src/app/localization/localization-dictionary';
+import { EntityViewDescriptor } from 'src/app/types/descriptors/view-descriptor';
+import { UiModule } from 'src/app/ui/ui.module';
+import { powerViewDescriptor } from 'src/app/views/powers/descriptors/power-view-descriptor';
 
 export class SrTestBed {
   static defaultApiMetadata(
@@ -25,6 +22,7 @@ export class SrTestBed {
       imports: [
         HttpClientTestingModule,
         WebStorageModule,
+        RouterTestingModule,
         JwtModule.forRoot(authJwtModuleOptions),
       ], // todo: stub for local storage
       providers: [

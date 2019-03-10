@@ -18,5 +18,8 @@
 
     <!-- UI -->
     <text name="BackToGrid" value="Назад к таблице"/>
+    <text name="YourAreLogged" value="Вы аутентифицированны"/>
+    <text name="Permissions" value="Права доступа"/>
+    
   </texts>
 </localizationDictionary>
