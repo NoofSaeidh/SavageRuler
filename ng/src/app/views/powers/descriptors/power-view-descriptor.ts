@@ -1,5 +1,6 @@
 import { EntityViewDescriptor } from 'src/app/types/descriptors/view-descriptor';
 import { Power } from 'src/app/api/entities/powers/types/power';
+import { Validators } from '@angular/forms';
 
 export const powerViewDescriptor = new EntityViewDescriptor<Power>({
   viewType: {
@@ -22,5 +23,15 @@ export const powerViewDescriptor = new EntityViewDescriptor<Power>({
     rank: {},
     trappings: {},
     text: { addHorizontalRuler: true, hideLabel: true, encode: true },
+  },
+  editForm: {
+    name: { validators: Validators.required },
+    book: { validators: Validators.required },
+    points: { validators: Validators.required },
+    duration: { validators: Validators.required },
+    distance: { validators: Validators.required },
+    rank: { validators: Validators.required },
+    trappings: {},
+    text: { addHorizontalRuler: true, hideLabel: true, encode: true, multilines: 24, validators: Validators.required },
   },
 });

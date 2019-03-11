@@ -60,9 +60,6 @@ export class InfoGridComponent<T extends IEntity<TKey>, TKey extends EntityKey>
   }
 
   clickRow(item: T, index: number, event: MouseEvent) {
-    console.log(item);
-    console.log(index);
-
     this.rowClicked.emit({ item, index, mouse: event });
   }
 

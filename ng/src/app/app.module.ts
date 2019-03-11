@@ -2,7 +2,7 @@ import { BrowserModule, Title } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { ModalModule, CollapseModule, BsDropdownModule } from 'ngx-bootstrap';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { WebStorageModule } from 'ngx-store';
 import { JwtModule } from '@auth0/angular-jwt';
 
@@ -25,6 +25,7 @@ import { authJwtModuleOptions } from './auth/auth-jwt-module-options';
     ViewsModule,
     FormsModule,
     WebStorageModule,
+    ReactiveFormsModule,
     JwtModule.forRoot(authJwtModuleOptions),
   ],
   providers: [Title],

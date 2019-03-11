@@ -2,11 +2,11 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
 import { Power } from 'src/app/api/entities/powers/types/power';
 import { SrTestBed } from 'src/tests/sr-test-bed';
-import { ReadonlyScreenComponent } from './readonly-screen.component';
+import { PrimaryScreenComponent } from './primary-screen.component';
 
-describe('ReadonlyScreenComponent', () => {
-  let component: ReadonlyScreenComponent<Power, number>;
-  let fixture: ComponentFixture<ReadonlyScreenComponent<Power, number>>;
+describe('PrimaryScreenComponent', () => {
+  let component: PrimaryScreenComponent<Power, number>;
+  let fixture: ComponentFixture<PrimaryScreenComponent<Power, number>>;
   let element: HTMLElement;
   beforeEach(async(() => {
     TestBed.configureTestingModule(
@@ -24,8 +24,8 @@ describe('ReadonlyScreenComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent<ReadonlyScreenComponent<Power, number>>(
-      ReadonlyScreenComponent,
+    fixture = TestBed.createComponent<PrimaryScreenComponent<Power, number>>(
+      PrimaryScreenComponent,
     );
     component = fixture.componentInstance;
     element = fixture.debugElement.nativeElement;

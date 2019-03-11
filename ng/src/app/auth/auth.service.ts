@@ -10,7 +10,7 @@ import { JwtTokenService } from './jwt-token.service';
 export interface AuthState {
   isAuthenticated: boolean;
   username?: string;
-  permissions?: [];
+  permissions?: string[];
   // claims?: {};
 }
 
@@ -38,7 +38,7 @@ export class AuthService {
   //   return this._state$.value.claims || null;
   // }
 
-  get permissions(): [] | null {
+  get permissions(): string[] | null {
     return this._state$.value.permissions || null;
   }
 
@@ -52,6 +52,13 @@ export class AuthService {
 
   get state$(): Observable<AuthState> {
     return this._state$.asObservable();
+  }
+
+  isGranted(permission: string): boolean {
+    return (
+      this._state$.value.permissions &&
+      this._state$.value.permissions.indexOf(permission) >= 0
+    );
   }
 
   private _setStateFromToken(token?: string) {

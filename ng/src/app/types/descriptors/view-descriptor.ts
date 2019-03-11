@@ -1,5 +1,6 @@
 import { TypeDescriptor } from './type-descriptor';
 import { TypeEntry, toTypeEntries } from '../global/type-entry';
+import { ValidatorFn, AbstractControlOptions } from '@angular/forms';
 
 export interface ViewType<T> {
   typeName: string;
@@ -22,6 +23,19 @@ export interface ReadFormField {
 export type ReadFormDescriptor<T> = TypeDescriptor<T, ReadFormField>;
 export type ReadFormTypeEntries<T> = ViewTypeEntries<T, ReadFormField>;
 
+export interface EditFormField {
+  addHorizontalRuler?: boolean; // rem?
+  hideLabel?: boolean; // rem?
+  encode?: boolean; // rem?
+  multilines?: number;
+  validators?: ValidatorFn | ValidatorFn[];
+}
+
+export type EditFormDescriptor<T> = TypeDescriptor<T, EditFormField>;
+export type EditFormTypeEntries<T> = ViewTypeEntries<T, EditFormField>;
+
+
+
 export interface InfoGridField {
   sortable?: boolean;
 }
@@ -33,14 +47,17 @@ export type InfoGridTypeEntries<T> = ViewTypeEntries<T, InfoGridField>;
 export class EntityViewDescriptor<T> {
   readonly viewType: ViewType<T>;
   readonly readForm?: ReadFormDescriptor<T>;
+  readonly editForm?: EditFormDescriptor<T>;
   readonly infoGrid?: InfoGridDescriptor<T>;
   constructor(input: {
     viewType: ViewType<T>;
     readForm?: ReadFormDescriptor<T>;
+    editForm?: EditFormDescriptor<T>;
     infoGrid?: InfoGridDescriptor<T>;
   }) {
     this.viewType = input.viewType;
     this.readForm = input.readForm;
+    this.editForm = input.editForm;
     this.infoGrid = input.infoGrid;
   }
 
@@ -54,13 +71,23 @@ export class EntityViewDescriptor<T> {
     };
   }
 
-  get readFromTypeEntries(): ReadFormTypeEntries<T> {
+  get readFormTypeEntries(): ReadFormTypeEntries<T> {
     if (!this.readForm) {
       throw new Error('readForm is undefined');
     }
     return {
       viewType: this.viewType,
       entries: toTypeEntries(this.readForm)
+    };
+  }
+
+  get editFormTypeEntries(): EditFormTypeEntries<T> {
+    if (!this.editForm) {
+      throw new Error('readForm is undefined');
+    }
+    return {
+      viewType: this.viewType,
+      entries: toTypeEntries(this.editForm)
     };
   }
 }

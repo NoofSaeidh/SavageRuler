@@ -1,5 +1,4 @@
 import { Route, Routes } from '@angular/router';
-import { ReadonlyScreenComponent } from './readonly-screen.component';
 import { Type } from '@angular/core';
 
 export function readonlyScreenRoute(basePath: string, component: Type<any>): Route {

@@ -31,6 +31,7 @@ $fa-font-path: '../node_modules/@fortawesome/fontawesome-free/webfonts';
 
 .btn {
   margin: 2px;
+  margin-bottom: 4px;
 }
 
 .ng-valid[required], .ng-valid.required  {
@@ -39,4 +40,9 @@ $fa-font-path: '../node_modules/@fortawesome/fontawesome-free/webfonts';
 
 .ng-invalid.ng-dirty:not(form)  {
   border-left: 5px solid #a94442; /* red */
+}
+
+// todo: only for form not for modal?
+.card {
+  margin-bottom: 5px;
 }

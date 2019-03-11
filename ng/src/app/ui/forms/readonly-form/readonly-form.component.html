@@ -1,8 +1,8 @@
 <div class="card border-dark text-dark">
   <h4 class="card-header">{{ title }}</h4>
-  <div class="card-body px-3">
-    <span *ngFor="let field of fields" class="text-left single-line">
-      <span *ngIf="item[field.key] || field.value.showNullValue">
+  <div class="card-body">
+    <div *ngFor="let field of fields" class="text-left single-line">
+      <div *ngIf="item[field.key] || field.value.showNullValue">
         <div *ngIf="field.value.addHorizontalRuler; else withTitle">
           <hr />
           <ng-container *ngTemplateOutlet="itemValue"></ng-container>
@@ -16,7 +16,7 @@
         <ng-template #itemValue>
           <div [outerHTML]="getText(field)"></div>
         </ng-template>
-      </span>
-    </span>
+      </div>
+    </div>
   </div>
 </div>

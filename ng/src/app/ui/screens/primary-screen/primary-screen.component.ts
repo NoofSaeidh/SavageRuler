@@ -6,6 +6,7 @@ import {
   InjectionToken,
   OnInit,
   ViewChild,
+  Input,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ModalDirective } from 'ngx-bootstrap';
@@ -22,6 +23,7 @@ import { LoadStateService } from 'src/app/state/load/load-state.service';
 import { LocalizeDescriptor } from 'src/app/types/descriptors/localize-descriptor';
 import { EntityViewDescriptor } from 'src/app/types/descriptors/view-descriptor';
 import { ArrayElement } from 'src/app/types/global/array-element';
+import { AuthService } from 'src/app/auth/auth.service';
 
 export const LOAD_LIST_STATE = new InjectionToken<LoadStateService<any>>(
   'List load state for readonly screen',
@@ -37,34 +39,38 @@ interface ShowConfig {
 }
 
 @Component({
-  selector: 'sr-readonly-screen',
-  templateUrl: './readonly-screen.component.html',
-  styleUrls: ['./readonly-screen.component.scss'],
+  selector: 'sr-primary-screen',
+  templateUrl: './primary-screen.component.html',
+  styleUrls: ['./primary-screen.component.scss'],
   providers: [
     { provide: LOAD_LIST_STATE, useClass: LoadStateService },
     { provide: LOAD_SINGLE_STATE, useClass: LoadStateService },
   ],
 })
-export class ReadonlyScreenComponent<
+export class PrimaryScreenComponent<
   T extends IEntity<TKey>,
   TKey extends EntityKey
 > implements OnInit {
+  @Input() editPermissionName?: string;
+  @ViewChild('modalForm') modalForm: ModalDirective;
+
   selected: ArrayElement<T> | null;
   showType: ShowType;
   showModalOnInit: boolean = false;
+  editMode: boolean = false;
+  hasPermission: boolean = false;
 
   localizeDescriptor: LocalizeDescriptor<T>;
 
-  @ViewChild('modalForm') modalForm: ModalDirective;
-
   constructor(
-    public viewDescriptor: EntityViewDescriptor<T>,
     public L: LocalizationDictionary,
+    public viewDescriptor: EntityViewDescriptor<T>,
     protected apiService: ApiCrudService<T, TKey>,
     protected route: ActivatedRoute,
     protected router: Router,
     protected location: Location,
     protected localizationService: LocalizationService,
+    protected authService: AuthService,
     @Inject(LOAD_LIST_STATE) protected loadListState: LoadStateService<T[]>,
     @Inject(LOAD_SINGLE_STATE) protected loadSingleState: LoadStateService<T>,
   ) {}
@@ -90,6 +96,13 @@ export class ReadonlyScreenComponent<
     // todo: handle modal
     const showType = snapshot.url[snapshot.url.length - 1].path.toUpperCase();
     const id = snapshot.queryParams.id;
+
+    // check permissions for edit mode
+    this.hasPermission =
+      !this.editPermissionName ||
+      this.authService.isGranted(this.editPermissionName);
+    this.editMode = this.hasPermission && (!!snapshot.queryParams.editMode || false);
+
     // todo: check that id would never be 0
     if (showType === 'FORM' && id !== undefined) {
       this.showFormItem(id);
@@ -200,7 +213,7 @@ export class ReadonlyScreenComponent<
     return this.router
       .createUrlTree(['../' + type], {
         relativeTo: this.route,
-        queryParams: { id, view },
+        queryParams: { id, view, editMode: this.editMode || null },
       })
       .toString();
   }

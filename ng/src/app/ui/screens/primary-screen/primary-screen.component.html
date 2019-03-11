@@ -1,6 +1,25 @@
-<div>
+<div class="primary-screen" [class.edit-mode]="editMode">
   <div *ngIf="isLoading; else loaded" class="loading">Loading...</div>
   <ng-template #loaded>
+    editmode: {{ editMode }}
+    <!-- Edit mode -->
+    <div *ngIf="hasPermission">
+      <button
+        class="btn btn-info float-right"
+        [hidden]="editMode"
+        (click)="editMode = true"
+      >
+        {{ L['EnableEditMode'] }}
+      </button>
+      <button
+        class="btn btn-danger float-right"
+        [hidden]="!editMode"
+        (click)="editMode = false"
+      >
+        {{ L['DisableEditMode'] }}
+      </button>
+    </div>
+
     <!-- MODAL -->
     <div
       [config]="{ show: showModalOnInit }"
@@ -15,7 +34,9 @@
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
           <div class="modal-body">
-            <ng-container *ngTemplateOutlet="formItemRef"></ng-container>
+            <div *ngIf="!editMode; else formEditRef">
+              <ng-container *ngTemplateOutlet="formReadRef"></ng-container>
+            </div>
           </div>
           <div class="modal-footer">
             <button class="btn btn-info btn-sm" (click)="modalForm.hide()">
@@ -28,10 +49,7 @@
 
     <!-- if place *ngIf here - it will recreate readonly form on each item change -->
     <!-- FORM -->
-    <div
-      class="container-fluid"
-      [hidden]="showType !== 'FORM' || !selected"
-    >
+    <div class="container-fluid" [hidden]="showType !== 'FORM' || !selected">
       <div class="row">
         <span class="col">
           <button class="btn btn-secondary" (click)="showGrid()">
@@ -40,16 +58,27 @@
           </button>
         </span>
       </div>
-      <ng-container *ngTemplateOutlet="formItemRef"></ng-container>
+      <div *ngIf="!editMode; else formEditRef">
+        <ng-container *ngTemplateOutlet="formReadRef"></ng-container>
+      </div>
     </div>
 
-    <ng-template #formItemRef>
+    <ng-template #formReadRef>
       <sr-readonly-form
         *ngIf="selected"
         [item]="selected.item"
         [localize]="localizeDescriptor"
-        [view]="viewDescriptor.readFromTypeEntries"
+        [view]="viewDescriptor.readFormTypeEntries"
       ></sr-readonly-form>
+    </ng-template>
+
+    <ng-template #formEditRef>
+      <sr-edit-form
+        *ngIf="selected"
+        [item]="selected.item"
+        [localize]="localizeDescriptor"
+        [view]="viewDescriptor.editFormTypeEntries"
+      ></sr-edit-form>
     </ng-template>
 
     <!-- GRID -->

@@ -1,0 +1,29 @@
+<form (ngSubmit)="onSubmit()" class="form" [formGroup]="form" autocomplete="off">
+  <div class="card border-dark text-dark">
+    <h4 class="card-header">{{ title }}</h4>
+    <div class="card-body">
+      <div *ngFor="let element of elements" class="form-group">
+        <label class="" [for]="element.key">
+          <b>{{ element.title }}:</b>
+        </label>
+        <input
+          *ngIf="!element.field.multilines; else multiline;"
+          type="text"
+          class="form-control"
+          [id]="element.key"
+          [name]="element.key"
+          [formControlName]="element.key"
+        />
+        <ng-template #multiline>
+            <textarea
+            class="form-control"
+            [id]="element.key"
+            [name]="element.key"
+            [rows]="element.field.multilines"
+            [formControlName]="element.key"
+            ></textarea>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</form>
