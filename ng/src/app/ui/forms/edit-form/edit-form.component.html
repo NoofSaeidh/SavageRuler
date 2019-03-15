@@ -1,4 +1,9 @@
-<form (ngSubmit)="onSubmit()" class="form" [formGroup]="form" autocomplete="off">
+<form
+  (ngSubmit)="onSubmit()"
+  class="form"
+  [formGroup]="form"
+  autocomplete="off"
+>
   <div class="card border-dark text-dark">
     <h4 class="card-header">{{ title }}</h4>
     <div class="card-body">
@@ -7,7 +12,7 @@
           <b>{{ element.title }}:</b>
         </label>
         <input
-          *ngIf="!element.field.multilines; else multiline;"
+          *ngIf="!element.field.multilines; else multiline"
           type="text"
           class="form-control"
           [id]="element.key"
@@ -15,15 +20,33 @@
           [formControlName]="element.key"
         />
         <ng-template #multiline>
-            <textarea
+          <textarea
             class="form-control"
             [id]="element.key"
             [name]="element.key"
             [rows]="element.field.multilines"
             [formControlName]="element.key"
-            ></textarea>
+          ></textarea>
         </ng-template>
       </div>
+    </div>
+    <div class="card-footer">
+      <button class="btn btn-primary float-right" type="submit">Save</button>
+      <!-- TODO: add warnings! -->
+      <button
+        class="btn btn-danger float-right"
+        type="button"
+        (click)="cancel.emit()"
+      >
+        Cancel
+      </button>
+      <button
+        class="btn btn-warning float-right"
+        type="button"
+        (click)="resetForm()"
+      >
+        Reset
+      </button>
     </div>
   </div>
 </form>

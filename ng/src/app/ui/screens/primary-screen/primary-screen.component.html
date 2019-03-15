@@ -34,13 +34,13 @@
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
           <div class="modal-body">
-            <div *ngIf="!editMode; else formEditRef">
-              <ng-container *ngTemplateOutlet="formReadRef"></ng-container>
-            </div>
+            <ng-container
+              *ngTemplateOutlet="editMode ? formEditRef : formReadRef"
+            ></ng-container>
           </div>
-          <div class="modal-footer">
+          <div *ngIf="!editMode" class="modal-footer">
             <button class="btn btn-info btn-sm" (click)="modalForm.hide()">
-              Close
+              {{ L['Close'] }}
             </button>
           </div>
         </div>
@@ -78,6 +78,7 @@
         [item]="selected.item"
         [localize]="localizeDescriptor"
         [view]="viewDescriptor.editFormTypeEntries"
+        (save)="saveItem($event)"
       ></sr-edit-form>
     </ng-template>
 

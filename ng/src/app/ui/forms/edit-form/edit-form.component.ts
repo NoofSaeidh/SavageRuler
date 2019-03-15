@@ -1,21 +1,11 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import {
-  EditFormTypeEntries,
-  EditFormField,
-} from 'src/app/types/descriptors/view-descriptor';
-import { LocalizeDescriptor } from 'src/app/types/descriptors/localize-descriptor';
-import { TypeEntry } from 'src/app/types/global/type-entry';
-import { IEntity } from 'src/app/api/types/ientity';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { AbstractControl, FormControl, FormGroup } from '@angular/forms';
 import { LocalizationDictionary } from 'src/app/localization/localization-dictionary';
+import { LocalizeDescriptor } from 'src/app/types/descriptors/localize-descriptor';
 import {
-  FormBuilder,
-  FormGroup,
-  FormControl,
-  RequiredValidator,
-  Validators,
-  ValidatorFn,
-  AbstractControl,
-} from '@angular/forms';
+  EditFormField,
+  EditFormTypeEntries,
+} from 'src/app/types/descriptors/view-descriptor';
 
 @Component({
   selector: 'sr-edit-form',
@@ -24,10 +14,8 @@ import {
 })
 export class EditFormComponent<T> implements OnInit {
   private _localize: LocalizeDescriptor<T>;
-
-  @Input() item?: T;
+  private _item?: T | null;
   @Input() view: EditFormTypeEntries<T>;
-  @Output() saved = new EventEmitter<T>();
   @Input() set localize(value: LocalizeDescriptor<T>) {
     this._localize = value;
     if (this.elements) {
@@ -36,6 +24,14 @@ export class EditFormComponent<T> implements OnInit {
       }
     }
   }
+  @Input() set item(value: T | null) {
+    this._item = value;
+    if (this.form) {
+      this.resetForm();
+    }
+  }
+  @Output() save = new EventEmitter<T>();
+  @Output() cancel = new EventEmitter<void>();
 
   form: FormGroup;
 
@@ -49,11 +45,25 @@ export class EditFormComponent<T> implements OnInit {
   constructor(public L: LocalizationDictionary) {}
 
   ngOnInit() {
+    this.initForm();
+  }
+
+  get title(): string {
+    return this.form.value[this.view.viewType.titleKey];
+  }
+
+  onSubmit() {
+    if (this.form.valid) {
+      this.save.emit({ ...this._item, ...this.form.value });
+    }
+  }
+
+  private initForm() {
     this.form = new FormGroup({});
     this.elements = [];
     for (const field of this.view.entries) {
       const control = new FormControl(
-        (this.item && this.item[field.key]) || '',
+        (this._item && this._item[field.key]) || '',
         field.value.validators,
       );
       // todo: handle keys numbers (symbols?)
@@ -67,24 +77,7 @@ export class EditFormComponent<T> implements OnInit {
     }
   }
 
-  get title(): string {
-    return this.form.value[this.view.viewType.titleKey];
+  resetForm() {
+    this.form.reset(this._item);
   }
-
-  save() {
-    this.saved.emit(this.item);
-  }
-
-  onSubmit() {}
-
-  // getText(entry: TypeEntry<T, EditFormField>): any {
-  //   const val = this.item[entry.key];
-  //   if (typeof val !== 'string') {
-  //     return val;
-  //   }
-  //   if (entry.value.encode) {
-  //     return StringHelper.toHtmlWhitespaces(val);
-  //   }
-  //   return val;
-  // }
 }

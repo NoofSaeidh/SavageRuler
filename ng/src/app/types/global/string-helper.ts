@@ -13,6 +13,9 @@ export class StringHelper {
   }
 
   static toHtmlWhitespaces(input: string): string {
-    return input.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;').replace(/\n/g, '<br />');
+    return input
+      .replace(/ /g, '&nbsp;')
+      .replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;')
+      .replace(/\n/g, '<br />');
   }
 }

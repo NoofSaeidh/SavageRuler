@@ -24,6 +24,8 @@ import { LocalizeDescriptor } from 'src/app/types/descriptors/localize-descripto
 import { EntityViewDescriptor } from 'src/app/types/descriptors/view-descriptor';
 import { ArrayElement } from 'src/app/types/global/array-element';
 import { AuthService } from 'src/app/auth/auth.service';
+import { Observable } from 'rxjs';
+import { ServerResponse } from 'src/app/api/types/responses';
 
 export const LOAD_LIST_STATE = new InjectionToken<LoadStateService<any>>(
   'List load state for readonly screen',
@@ -101,7 +103,8 @@ export class PrimaryScreenComponent<
     this.hasPermission =
       !this.editPermissionName ||
       this.authService.isGranted(this.editPermissionName);
-    this.editMode = this.hasPermission && (!!snapshot.queryParams.editMode || false);
+    this.editMode =
+      this.hasPermission && (!!snapshot.queryParams.editMode || false);
 
     // todo: check that id would never be 0
     if (showType === 'FORM' && id !== undefined) {
@@ -165,6 +168,19 @@ export class PrimaryScreenComponent<
     }
   }
 
+  saveItem(item: T) {
+    if (!item) {
+      throw new Error('Cannot save not initialized item.');
+    }
+    let obs: Observable<ServerResponse<T>>;
+    if (item.id) {
+      obs = this.apiService.update(item.id, item);
+    } else {
+      obs = this.apiService.create(item);
+    }
+    obs.subscribe(r => this.ensureItemsLoaded(true));
+  }
+
   private changeSelected(diff: number) {
     if (!this.selected || !this.items || diff === 0) {
       return;
@@ -218,8 +234,8 @@ export class PrimaryScreenComponent<
       .toString();
   }
 
-  private ensureItemsLoaded() {
-    if (this.items) {
+  private ensureItemsLoaded(forceReload?: boolean) {
+    if (this.items && !forceReload) {
       return;
     }
     this.loadListState.load(
