@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
-import { LocalizationDictionary } from './localization/localization-dictionary';
 
 @Component({
   selector: 'sr-root',
@@ -12,7 +11,7 @@ export class AppComponent implements OnInit {
 
   navbarCollapsed = true;
 
-  constructor(public L: LocalizationDictionary, private router: Router) {}
+  constructor(private router: Router) {}
 
   ngOnInit() {
     this.router.events.subscribe(event => {

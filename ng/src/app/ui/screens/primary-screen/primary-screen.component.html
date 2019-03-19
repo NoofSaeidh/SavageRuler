@@ -9,14 +9,14 @@
         [hidden]="editMode"
         (click)="editMode = true"
       >
-        {{ L['EnableEditMode'] }}
+        {{ "EnableEditMode" | localize }}
       </button>
       <button
         class="btn btn-danger float-right"
         [hidden]="!editMode"
         (click)="editMode = false"
       >
-        {{ L['DisableEditMode'] }}
+        {{ "DisableEditMode" | localize }}
       </button>
     </div>
 
@@ -40,7 +40,7 @@
           </div>
           <div *ngIf="!editMode" class="modal-footer">
             <button class="btn btn-info btn-sm" (click)="modalForm.hide()">
-              {{ L['Close'] }}
+              {{ "Close" | localize }}
             </button>
           </div>
         </div>
@@ -54,7 +54,7 @@
         <span class="col">
           <button class="btn btn-secondary" (click)="showGrid()">
             <i class="fas fa-th"></i>
-            {{ L['BackToGrid'] }}
+            {{ "BackToGrid" | localize }}
           </button>
         </span>
       </div>

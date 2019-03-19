@@ -17,7 +17,6 @@ import {
 } from 'src/app/api/operators/to-server-result';
 import { ApiCrudService } from 'src/app/api/services/api-crud.service';
 import { EntityKey, IEntity } from 'src/app/api/types/ientity';
-import { LocalizationDictionary } from 'src/app/localization/localization-dictionary';
 import { LocalizationService } from 'src/app/localization/localization.service';
 import { LoadStateService } from 'src/app/state/load/load-state.service';
 import { LocalizeDescriptor } from 'src/app/types/descriptors/localize-descriptor';
@@ -65,7 +64,6 @@ export class PrimaryScreenComponent<
   localizeDescriptor: LocalizeDescriptor<T>;
 
   constructor(
-    public L: LocalizationDictionary,
     public viewDescriptor: EntityViewDescriptor<T>,
     protected apiService: ApiCrudService<T, TKey>,
     protected route: ActivatedRoute,
@@ -169,6 +167,7 @@ export class PrimaryScreenComponent<
   }
 
   saveItem(item: T) {
+    console.log(item);
     if (!item) {
       throw new Error('Cannot save not initialized item.');
     }

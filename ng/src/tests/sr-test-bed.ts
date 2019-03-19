@@ -9,7 +9,6 @@ import { ApiCrudService } from 'src/app/api/services/api-crud.service';
 import { ApiDescriptor } from 'src/app/api/types/api-descriptor';
 import { AppModule } from 'src/app/app.module';
 import { authJwtModuleOptions } from 'src/app/auth/auth-jwt-module-options';
-import { LocalizationDictionary } from 'src/app/localization/localization-dictionary';
 import { EntityViewDescriptor } from 'src/app/types/descriptors/view-descriptor';
 import { UiModule } from 'src/app/ui/ui.module';
 import { powerViewDescriptor } from 'src/app/views/powers/descriptors/power-view-descriptor';
@@ -46,7 +45,6 @@ export class SrTestBed {
     return this.mergeMetadata(
       this.defaultApiMetadata({
         imports: [AppModule, CollapseModule, ModalModule],
-        providers: [{ provide: LocalizationDictionary, useValue: {} }],
       }),
       moduleDef,
     );

@@ -1,15 +1,14 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { EditFormComponent } from './edit-form.component';
+import { SrTestBed } from 'src/tests/sr-test-bed';
 
 describe('EditFormComponent', () => {
-  let component: EditFormComponent;
-  let fixture: ComponentFixture<EditFormComponent>;
+  let component: EditFormComponent<any>;
+  let fixture: ComponentFixture<EditFormComponent<any>>;
 
   beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ EditFormComponent ]
-    })
+    TestBed.configureTestingModule(SrTestBed.defaultUiComponentsMetadata())
     .compileComponents();
   }));
 

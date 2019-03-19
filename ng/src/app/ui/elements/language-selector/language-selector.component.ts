@@ -1,10 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription, concat } from 'rxjs';
-import { first, skipWhile, map, filter } from 'rxjs/operators';
+import { first, map, filter } from 'rxjs/operators';
 import { toServerResult } from 'src/app/api/operators/to-server-result';
 import { LanguageInfo } from 'src/app/api/types/localization';
 import { LocalizationService } from 'src/app/localization/localization.service';
-import { LocalizationDictionary } from 'src/app/localization/localization-dictionary';
 
 @Component({
   selector: 'sr-language-selector',
@@ -19,7 +18,6 @@ export class LanguageSelectorComponent implements OnInit, OnDestroy {
   enabled: boolean = false;
 
   constructor(
-    public L: LocalizationDictionary,
     protected localizationService: LocalizationService,
   ) {}
 

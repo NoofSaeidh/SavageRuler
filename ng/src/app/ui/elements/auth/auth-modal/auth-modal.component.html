@@ -1,11 +1,11 @@
 <div>
-  <button *ngIf="!isAuthenticated; else logoutTemplate" class="btn btn-info" (click)="openModal(modalTemplate)">{{L['Login']}}</button>
+  <button *ngIf="!isAuthenticated; else logoutTemplate" class="btn btn-info" (click)="openModal(modalTemplate)">{{'Login' | localize}}</button>
   <ng-template #logoutTemplate>
-    <button class="btn btn-danger" (click)="unauthenticate()">{{L['Logout']}}</button>
+    <button class="btn btn-danger" (click)="unauthenticate()">{{'Logout' | localize}}</button>
   </ng-template>
   <ng-template #modalTemplate>
       <div class="modal-header">
-        <h4 class="modal-title pull-left">{{L['Login']}}</h4>
+        <h4 class="modal-title pull-left">{{'Login' | localize}}</h4>
         <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
           <span aria-hidden="true">&times;</span>
         </button>

@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup } from '@angular/forms';
-import { LocalizationDictionary } from 'src/app/localization/localization-dictionary';
 import { LocalizeDescriptor } from 'src/app/types/descriptors/localize-descriptor';
 import {
   EditFormField,
@@ -42,7 +41,7 @@ export class EditFormComponent<T> implements OnInit {
     control: AbstractControl;
   }>;
 
-  constructor(public L: LocalizationDictionary) {}
+  constructor() {}
 
   ngOnInit() {
     this.initForm();

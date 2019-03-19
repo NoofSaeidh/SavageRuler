@@ -2,23 +2,23 @@
   <div class="card">
     <div class="card border">
       <div class="card-body">
-        <h2 class="card-title">{{ L['Login'] }}</h2>
+        <h2 class="card-title">{{ "Login" | localize }}</h2>
         <div class="card-text">
           <sr-auth-form
             *ngIf="!state.isAuthenticated; else logged"
           ></sr-auth-form>
           <ng-template #logged>
-            <h4>{{ L['YourAreLogged'] }}</h4>
+            <h4>{{ "YourAreLogged" | localize }}</h4>
             <p>
-              <b>{{ L['Username'] }}</b
+              <b>{{ "Username" | localize }}</b
               >: {{ state.username }}
             </p>
             <p>
-              <b>{{ L['Permissions'] }}</b
+              <b>{{ "Permissions" | localize }}</b
               >: {{ state.permissions }}
             </p>
             <button class="btn btn-danger" (click)="logout()">
-              {{ L['Logout'] }}
+              {{ "Logout" | localize }}
             </button>
           </ng-template>
         </div>

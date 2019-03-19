@@ -12,6 +12,7 @@ import { ReadonlyFormComponent } from './forms/readonly-form/readonly-form.compo
 import { InfoGridComponent } from './grid/info-grid/info-grid.component';
 import { SafeHtmlPipe } from './pipes/safe-html.pipe';
 import { PrimaryScreenComponent } from './screens/primary-screen/primary-screen.component';
+import { LocalizePipe } from './pipes/localize.pipe';
 
 const components = [
   InfoGridComponent,
@@ -22,11 +23,19 @@ const components = [
   AuthFormComponent,
   AuthModalComponent,
   EditFormComponent,
+  SafeHtmlPipe,
+  LocalizePipe,
 ];
 
 @NgModule({
-  declarations: [...components, SafeHtmlPipe, EditFormComponent],
-  imports: [CommonModule, ModalModule, BsDropdownModule, FormsModule, ReactiveFormsModule],
+  declarations: components,
+  imports: [
+    CommonModule,
+    ModalModule,
+    BsDropdownModule,
+    FormsModule,
+    ReactiveFormsModule,
+  ],
   exports: components,
 })
 export class UiModule {}

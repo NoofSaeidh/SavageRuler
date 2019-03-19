@@ -1,7 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthService, AuthState } from 'src/app/auth/auth.service';
 import { Subscription } from 'rxjs';
-import { LocalizationDictionary } from 'src/app/localization/localization-dictionary';
 
 @Component({
   selector: 'sr-login',
@@ -11,7 +10,7 @@ import { LocalizationDictionary } from 'src/app/localization/localization-dictio
 export class LoginComponent implements OnInit, OnDestroy {
   state: AuthState;
   private _subscription: Subscription;
-  constructor(public L: LocalizationDictionary, private auth: AuthService) {}
+  constructor(private auth: AuthService) {}
 
   logout() {
     this.auth.unauthenticate();
