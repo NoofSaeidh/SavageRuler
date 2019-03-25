@@ -32,10 +32,9 @@ export class Localizer implements Unsubscribable {
     value: string,
     ...args: any[]
   ): string {
-    console.log(args);
     let res = source[value];
     if (!res) {
-      console.warn(`String ${value} is not defined for localization.`);
+      console.warn(`String ${value} is not defined for the localization.`);
       return '[' + value + ']';
     }
     if (args) {

@@ -54,6 +54,9 @@ export class EditFormComponent<T> implements OnInit {
   onSubmit() {
     if (this.form.valid) {
       this.save.emit({ ...this._item, ...this.form.value });
+    } else {
+      this.form.markAsTouched();
+      this.form.markAsDirty();
     }
   }
 
