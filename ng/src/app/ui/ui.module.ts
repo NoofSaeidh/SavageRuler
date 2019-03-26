@@ -5,14 +5,15 @@ import { BsDropdownModule, ModalModule } from 'ngx-bootstrap';
 
 import { AuthFormComponent } from './elements/auth/auth-form/auth-form.component';
 import { AuthModalComponent } from './elements/auth/auth-modal/auth-modal.component';
+import { ErrorHandlerComponent } from './elements/error-handler/component/error-handler.component';
 import { LanguageSelectorComponent } from './elements/language-selector/language-selector.component';
 import { ReadonlyFieldComponent } from './elements/readonly-field/readonly-field.component';
 import { EditFormComponent } from './forms/edit-form/edit-form.component';
 import { ReadonlyFormComponent } from './forms/readonly-form/readonly-form.component';
 import { InfoGridComponent } from './grid/info-grid/info-grid.component';
+import { LocalizePipe } from './pipes/localize.pipe';
 import { SafeHtmlPipe } from './pipes/safe-html.pipe';
 import { PrimaryScreenComponent } from './screens/primary-screen/primary-screen.component';
-import { LocalizePipe } from './pipes/localize.pipe';
 
 const components = [
   InfoGridComponent,
@@ -23,6 +24,7 @@ const components = [
   AuthFormComponent,
   AuthModalComponent,
   EditFormComponent,
+  ErrorHandlerComponent,
   SafeHtmlPipe,
   LocalizePipe,
 ];
@@ -37,5 +39,6 @@ const components = [
     ReactiveFormsModule,
   ],
   exports: components,
+  entryComponents: [ErrorHandlerComponent],
 })
 export class UiModule {}

@@ -1,6 +1,6 @@
 import { BrowserModule, Title } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ModalModule, CollapseModule, BsDropdownModule } from 'ngx-bootstrap';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { WebStorageModule } from 'ngx-store';
@@ -11,6 +11,7 @@ import { AppComponent } from './app.component';
 import { UiModule } from './ui/ui.module';
 import { ViewsModule } from './views/views.module';
 import { authJwtModuleOptions } from './auth/auth-jwt-module-options';
+import { ErrorHandlerInterceptor } from './ui/elements/error-handler/error-handler.interceptor';
 
 @NgModule({
   declarations: [AppComponent],
@@ -28,7 +29,14 @@ import { authJwtModuleOptions } from './auth/auth-jwt-module-options';
     ReactiveFormsModule,
     JwtModule.forRoot(authJwtModuleOptions),
   ],
-  providers: [Title],
+  providers: [
+    Title,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ErrorHandlerInterceptor,
+      multi: true,
+    },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

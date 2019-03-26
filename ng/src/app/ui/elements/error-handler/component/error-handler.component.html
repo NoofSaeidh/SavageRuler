@@ -1,0 +1,46 @@
+<div *ngIf="serverError; else rawErrorRef">
+  <div class="modal-header alert-danger">
+    <h4 class="modal-title pull-left">{{ 'ServerError' | localize }}</h4>
+    <button
+      type="button"
+      class="close pull-right"
+      aria-label="Close"
+      (click)="bsModalRef.hide()"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>{{ serverError.message }}</p>
+    <div *ngIf="serverError.details">
+      <hr/>
+      <p class="muted">{{ serverError.details }}</p>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" (click)="bsModalRef.hide()">
+      {{ 'Close' | localize }}
+    </button>
+  </div>
+</div>
+<ng-template #rawErrorRef>
+  <div class="modal-header alert-danger">
+    <h4 class="modal-title pull-left">{{ 'Error' | localize }}</h4>
+    <button
+      type="button"
+      class="close pull-right"
+      aria-label="Close"
+      (click)="bsModalRef.hide()"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>{{ rawError }}</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" (click)="bsModalRef.hide()">
+      {{ 'Close' | localize }}
+    </button>
+  </div>
+</ng-template>
