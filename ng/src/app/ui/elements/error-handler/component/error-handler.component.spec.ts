@@ -1,15 +1,14 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ErrorHandlerComponent } from './error-handler.component';
+import { SrTestBed } from 'src/tests/sr-test-bed';
 
 describe('ErrorHandlerComponent', () => {
   let component: ErrorHandlerComponent;
   let fixture: ComponentFixture<ErrorHandlerComponent>;
 
   beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ ErrorHandlerComponent ]
-    })
+    TestBed.configureTestingModule(SrTestBed.defaultUiComponentsMetadata())
     .compileComponents();
   }));
 

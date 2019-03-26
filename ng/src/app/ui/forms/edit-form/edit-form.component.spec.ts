@@ -15,6 +15,15 @@ describe('EditFormComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(EditFormComponent);
     component = fixture.componentInstance;
+    // todo: move to stub?
+    component.view = {
+     viewType: { typeName: 'test', titleKey: 'id' },
+     entries: [{ key: 'id', value: {} }],
+   };
+   component.item = {id: 1};
+   component.localize = {
+     id: 'id',
+   };
     fixture.detectChanges();
   });
 

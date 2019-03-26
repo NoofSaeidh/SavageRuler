@@ -2,7 +2,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestModuleMetadata } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { JwtModule } from '@auth0/angular-jwt';
-import { CollapseModule, ModalModule } from 'ngx-bootstrap';
+import { CollapseModule, ModalModule, BsModalRef, BsModalService } from 'ngx-bootstrap';
 import { WebStorageModule } from 'ngx-store';
 import { PowersApiService } from 'src/app/api/entities/powers/powers.api.service';
 import { ApiCrudService } from 'src/app/api/services/api-crud.service';
@@ -22,9 +22,12 @@ export class SrTestBed {
         HttpClientTestingModule,
         WebStorageModule,
         RouterTestingModule,
+        ModalModule,
         JwtModule.forRoot(authJwtModuleOptions),
       ], // todo: stub for local storage
       providers: [
+        BsModalRef,
+        BsModalService,
         {
           provide: ApiDescriptor,
           useValue: new ApiDescriptor({
