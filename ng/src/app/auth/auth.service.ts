@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { ApiTokenAuthService } from '../api/services/api-token-auth.service';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { tap, map } from 'rxjs/operators';
 import { ServerResponse } from '../api/types/responses';
 import { AuthResultModel } from '../api/types/auth-model';
 import { JwtTokenService } from './jwt-token.service';
@@ -54,11 +54,29 @@ export class AuthService {
     return this._state$.asObservable();
   }
 
-  isGranted(permission: string): boolean {
-    return (
-      this._state$.value.permissions &&
-      this._state$.value.permissions.indexOf(permission) >= 0
+  isGranted(...permissions: string[]): boolean {
+    return this._isGranted(this._state$.value, permissions);
+  }
+
+  isGranted$(...permissions: string[]): Observable<boolean> {
+    return this.state$.pipe(
+      map(value => this._isGranted(value, permissions))
     );
+  }
+
+  private _isGranted(state: AuthState, permissions: string[]): boolean {
+    if (!permissions || permissions.length === 0) {
+      return true;
+    }
+    if (!state.permissions) {
+      return false;
+    }
+    for (const p of permissions) {
+      if (p && state.permissions.indexOf(p) < 0) {
+        return false;
+      }
+    }
+    return true;
   }
 
   private _setStateFromToken(token?: string) {

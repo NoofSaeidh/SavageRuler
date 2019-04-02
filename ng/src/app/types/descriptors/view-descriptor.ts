@@ -5,6 +5,13 @@ import { ValidatorFn, AbstractControlOptions } from '@angular/forms';
 export interface ViewType<T> {
   typeName: string;
   titleKey: keyof T;
+  // anonymous allowed by default
+  permissions?: {
+    read?: string;
+    create?: string;
+    update?: string;
+    delete?: string;
+  };
 }
 
 interface ViewTypeEntries<T, F> {

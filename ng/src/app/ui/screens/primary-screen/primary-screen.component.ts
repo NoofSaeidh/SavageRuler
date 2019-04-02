@@ -52,13 +52,12 @@ export class PrimaryScreenComponent<
   T extends IEntity<TKey>,
   TKey extends EntityKey
 > implements OnInit {
-  @Input() editPermissionName?: string;
   @ViewChild('modalForm') modalForm: ModalDirective;
+  private _editMode: boolean = false;
 
   selected: ArrayElement<T> | null;
   showType: ShowType;
   showModalOnInit: boolean = false;
-  editMode: boolean = false;
   hasPermission: boolean = false;
 
   localizeDescriptor: LocalizeDescriptor<T>;
@@ -74,6 +73,10 @@ export class PrimaryScreenComponent<
     @Inject(LOAD_LIST_STATE) protected loadListState: LoadStateService<T[]>,
     @Inject(LOAD_SINGLE_STATE) protected loadSingleState: LoadStateService<T>,
   ) {}
+
+  get editMode(): boolean {
+    return this._editMode && this.hasPermission;
+  }
 
   get items(): T[] | null {
     return this.loadListState.value;
@@ -98,11 +101,16 @@ export class PrimaryScreenComponent<
     const id = snapshot.queryParams.id;
 
     // check permissions for edit mode
-    this.hasPermission =
-      !this.editPermissionName ||
-      this.authService.isGranted(this.editPermissionName);
-    this.editMode =
-      this.hasPermission && (!!snapshot.queryParams.editMode || false);
+    // todo: rewrite for every action
+    const perms = this.viewDescriptor.viewType.permissions;
+    if (!perms) {
+      this.hasPermission = true;
+    } else {
+      this.authService
+        .isGranted$(perms.update, perms.create, perms.update)
+        .subscribe(r => (this.hasPermission = r));
+    }
+    this._editMode = snapshot.queryParams.editMode || false;
 
     // todo: check that id would never be 0
     if (showType === 'FORM' && id !== undefined) {
@@ -228,7 +236,7 @@ export class PrimaryScreenComponent<
     return this.router
       .createUrlTree(['../' + type], {
         relativeTo: this.route,
-        queryParams: { id, view, editMode: this.editMode || null },
+        queryParams: { id, view, editMode: this._editMode || null },
       })
       .toString();
   }

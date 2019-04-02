@@ -6,6 +6,11 @@ export const powerViewDescriptor = new EntityViewDescriptor<Power>({
   viewType: {
     typeName: 'Power',
     titleKey: 'name',
+    permissions: {
+      create: 'Manager.Rules',
+      update: 'Manager.Rules',
+      delete: 'Manager.Rules',
+    }
   },
   infoGrid: {
     name: { sortable: true },
