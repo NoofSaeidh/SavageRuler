@@ -1,10 +1,21 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChildren,
+  QueryList,
+  AfterViewInit,
+  ElementRef,
+} from '@angular/core';
 import { AbstractControl, FormControl, FormGroup } from '@angular/forms';
 import { LocalizeDescriptor } from 'src/app/types/descriptors/localize-descriptor';
 import {
   EditFormField,
   EditFormTypeEntries,
 } from 'src/app/types/descriptors/view-descriptor';
+import { LogHelper } from 'src/app/types/global/log-helper';
 
 @Component({
   selector: 'sr-edit-form',
@@ -29,19 +40,26 @@ export class EditFormComponent<T> implements OnInit {
       this.resetForm();
     }
   }
+
   @Output() save = new EventEmitter<T>();
   @Output() cancel = new EventEmitter<void>();
 
   form: FormGroup;
 
   elements: Array<{
+    id: string;
     key: string;
     title: string;
     field: EditFormField;
     control: AbstractControl;
   }>;
 
-  constructor() {}
+  private _uniquePrefix: string;
+
+  constructor() {
+    // todo: more unique?
+    this._uniquePrefix = 'edit_form_' + Math.round(Math.random() * 100) + '_';
+  }
 
   ngOnInit() {
     this.initForm();
@@ -60,6 +78,10 @@ export class EditFormComponent<T> implements OnInit {
     }
   }
 
+  resetForm() {
+    this.form.reset(this._item);
+  }
+
   private initForm() {
     this.form = new FormGroup({});
     this.elements = [];
@@ -70,16 +92,14 @@ export class EditFormComponent<T> implements OnInit {
       );
       // todo: handle keys numbers (symbols?)
       this.form.addControl(field.key as string, control);
+      const key = field.key as string;
       this.elements.push({
-        key: field.key as string,
+        id: this._uniquePrefix + key,
+        key: key,
         field: field.value,
         title: this._localize[field.key],
         control: control,
       });
     }
-  }
-
-  resetForm() {
-    this.form.reset(this._item);
   }
 }

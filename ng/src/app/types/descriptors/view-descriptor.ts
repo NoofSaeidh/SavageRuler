@@ -24,10 +24,13 @@ export type ReadFormDescriptor<T> = TypeDescriptor<T, ReadFormField>;
 export type ReadFormTypeEntries<T> = ViewTypeEntries<T, ReadFormField>;
 
 export interface EditFormField {
-  addHorizontalRuler?: boolean; // rem?
-  hideLabel?: boolean; // rem?
-  encode?: boolean; // rem?
-  multilines?: number;
+  // addHorizontalRuler?: boolean; // rem?
+  // hideLabel?: boolean; // rem?
+  // encode?: boolean; // rem?
+  textarea?: {
+    initialRows?: number;
+    // todo: autosize??
+  };
   validators?: ValidatorFn | ValidatorFn[];
 }
 

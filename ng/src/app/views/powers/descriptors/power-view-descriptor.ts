@@ -32,6 +32,9 @@ export const powerViewDescriptor = new EntityViewDescriptor<Power>({
     distance: { validators: Validators.required },
     rank: { validators: Validators.required },
     trappings: {},
-    text: { addHorizontalRuler: true, hideLabel: true, encode: true, multilines: 24, validators: Validators.required },
+    text: {
+      textarea: { initialRows: 12 },
+      validators: Validators.required,
+    },
   },
 });

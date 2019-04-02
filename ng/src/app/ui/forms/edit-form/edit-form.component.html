@@ -8,23 +8,23 @@
     <h4 class="card-header">{{ title }}</h4>
     <div class="card-body">
       <div *ngFor="let element of elements" class="form-group">
-        <label class="" [for]="element.key">
+        <label class="" [for]="element.id">
           <b>{{ element.title }}:</b>
         </label>
         <input
-          *ngIf="!element.field.multilines; else multiline"
+          *ngIf="!element.field.textarea; else textarea"
           type="text"
           class="form-control"
-          [id]="element.key"
+          [id]="element.id"
           [name]="element.key"
           [formControlName]="element.key"
         />
-        <ng-template #multiline>
+        <ng-template #textarea>
           <textarea
             class="form-control"
-            [id]="element.key"
+            [id]="element.id"
             [name]="element.key"
-            [rows]="element.field.multilines"
+            [rows]="element.field.textarea.initialRows"
             [formControlName]="element.key"
           ></textarea>
         </ng-template>

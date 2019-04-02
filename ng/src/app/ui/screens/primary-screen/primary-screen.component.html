@@ -1,23 +1,32 @@
 <div class="primary-screen" [class.edit-mode]="editMode">
   <div *ngIf="isLoading; else loaded" class="loading">Loading...</div>
   <ng-template #loaded>
-    editmode: {{ editMode }}
-    <!-- Edit mode -->
-    <div *ngIf="hasPermission">
-      <button
-        class="btn btn-info float-right"
-        [hidden]="editMode"
-        (click)="editMode = true"
-      >
-        {{ "EnableEditMode" | localize }}
-      </button>
-      <button
-        class="btn btn-danger float-right"
-        [hidden]="!editMode"
-        (click)="editMode = false"
-      >
-        {{ "DisableEditMode" | localize }}
-      </button>
+    <!-- Buttons -->
+    <div class="row">
+      <!-- Back to Grid button -->
+      <div class="col" [hidden]="showType !== 'FORM' || !selected">
+        <button class="btn btn-secondary" (click)="showGrid()">
+          <i class="fas fa-th"></i>
+          {{ 'BackToGrid' | localize }}
+        </button>
+      </div>
+      <!-- Edit mode -->
+      <div *ngIf="hasPermission" class="col">
+        <button
+          class="btn btn-info float-right"
+          [hidden]="editMode"
+          (click)="editMode = true"
+        >
+          {{ 'EnableEditMode' | localize }}
+        </button>
+        <button
+          class="btn btn-danger float-right"
+          [hidden]="!editMode"
+          (click)="editMode = false"
+        >
+          {{ 'DisableEditMode' | localize }}
+        </button>
+      </div>
     </div>
 
     <!-- MODAL -->
@@ -40,7 +49,7 @@
           </div>
           <div *ngIf="!editMode" class="modal-footer">
             <button class="btn btn-info btn-sm" (click)="modalForm.hide()">
-              {{ "Close" | localize }}
+              {{ 'Close' | localize }}
             </button>
           </div>
         </div>
@@ -49,15 +58,7 @@
 
     <!-- if place *ngIf here - it will recreate readonly form on each item change -->
     <!-- FORM -->
-    <div class="container-fluid" [hidden]="showType !== 'FORM' || !selected">
-      <div class="row">
-        <span class="col">
-          <button class="btn btn-secondary" (click)="showGrid()">
-            <i class="fas fa-th"></i>
-            {{ "BackToGrid" | localize }}
-          </button>
-        </span>
-      </div>
+    <div class="" [hidden]="showType !== 'FORM' || !selected">
       <div *ngIf="!editMode; else formEditRef">
         <ng-container *ngTemplateOutlet="formReadRef"></ng-container>
       </div>

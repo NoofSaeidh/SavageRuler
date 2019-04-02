@@ -1,7 +1,7 @@
 import { Route, Routes } from '@angular/router';
 import { Type } from '@angular/core';
 
-export function readonlyScreenRoute(basePath: string, component: Type<any>): Route {
+export function primaryScreenRoute(basePath: string, component: Type<any>): Route {
   return {
     path: basePath + '/screen',
     children: [
@@ -12,9 +12,9 @@ export function readonlyScreenRoute(basePath: string, component: Type<any>): Rou
   };
 }
 
-export function readonlyScreenRouteWithRedirect(baseUrl: string,  component: Type<any>): Routes {
+export function primaryScreenRouteWithRedirect(baseUrl: string,  component: Type<any>): Routes {
   return [
     {path: baseUrl, redirectTo: baseUrl + '/screen'},
-    readonlyScreenRoute(baseUrl, component)
+    primaryScreenRoute(baseUrl, component)
   ];
 }
