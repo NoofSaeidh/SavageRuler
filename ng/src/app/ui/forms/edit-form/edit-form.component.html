@@ -38,14 +38,14 @@
       <button
         class="btn btn-secondary float-right"
         type="button"
-        (click)="resetForm()"
+        (click)="onReset()"
       >
         {{ 'Reset' | localize }}
       </button>
       <button
         class="btn btn-danger float-right"
         type="button"
-        (click)="cancel.emit()"
+        (click)="onCancel()"
       >
         {{ 'Cancel' | localize }}
       </button>

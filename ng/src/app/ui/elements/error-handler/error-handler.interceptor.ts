@@ -24,12 +24,7 @@ export class ErrorHandlerInterceptor implements HttpInterceptor {
       tap({
         error: err => {
           if (err instanceof HttpErrorResponse) {
-            this.eventModal.showModal(ErrorHandlerComponent, {
-              initialState: {
-                rawError: err,
-              },
-            });
-            // do error handling here
+            this.eventModal.templates.errorHandler.showModal(err);
           }
         },
       }),

@@ -16,6 +16,8 @@ import {
   EditFormTypeEntries,
 } from 'src/app/types/descriptors/view-descriptor';
 import { LogHelper } from 'src/app/types/global/log-helper';
+import { EventModalService } from '../../events/modal/event-modal.service';
+import { first } from 'rxjs/operators';
 
 @Component({
   selector: 'sr-edit-form',
@@ -37,7 +39,7 @@ export class EditFormComponent<T> implements OnInit {
   @Input() set item(value: T | null) {
     this._item = value;
     if (this.form) {
-      this.resetForm();
+      this.form.reset(value);
     }
   }
 
@@ -56,7 +58,7 @@ export class EditFormComponent<T> implements OnInit {
 
   private _uniquePrefix: string;
 
-  constructor() {
+  constructor(private _eventService: EventModalService) {
     // todo: more unique?
     this._uniquePrefix = 'edit_form_' + Math.round(Math.random() * 100) + '_';
   }
@@ -78,8 +80,29 @@ export class EditFormComponent<T> implements OnInit {
     }
   }
 
-  resetForm() {
-    this.form.reset(this._item);
+  // todo: move text into component
+  onCancel() {
+    const modal = this._eventService.templates.alert.showModal(
+      'Are you sure? All changes will be lost.',
+    );
+    modal.content.close.pipe(first()).subscribe(r => {
+      modal.hide();
+      if (r) {
+        this.cancel.emit();
+      }
+    });
+  }
+
+  onReset() {
+    const modal = this._eventService.templates.alert.showModal(
+      'Are you sure? All changes will be lost.',
+    );
+    modal.content.close.pipe(first()).subscribe(r => {
+      modal.hide();
+      if (r) {
+        this.form.reset(this._item);
+      }
+    });
   }
 
   private initForm() {

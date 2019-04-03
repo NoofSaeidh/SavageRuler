@@ -14,6 +14,7 @@ import { InfoGridComponent } from './grid/info-grid/info-grid.component';
 import { LocalizePipe } from './pipes/localize.pipe';
 import { SafeHtmlPipe } from './pipes/safe-html.pipe';
 import { PrimaryScreenComponent } from './screens/primary-screen/primary-screen.component';
+import { AlertEventModalComponent } from './events/modal/components/alert-event-modal/alert-event-modal.component';
 
 const components = [
   InfoGridComponent,
@@ -25,6 +26,7 @@ const components = [
   AuthModalComponent,
   EditFormComponent,
   ErrorHandlerComponent,
+  AlertEventModalComponent,
   SafeHtmlPipe,
   LocalizePipe,
 ];
@@ -39,6 +41,6 @@ const components = [
     ReactiveFormsModule,
   ],
   exports: components,
-  entryComponents: [ErrorHandlerComponent],
+  entryComponents: [ErrorHandlerComponent, AlertEventModalComponent],
 })
 export class UiModule {}

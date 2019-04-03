@@ -1,0 +1,9 @@
+<p>
+  {{ message }}
+  <button class="btn btn-primary" (click)="close.emit(false)">
+    {{ 'Cancel' | localize }}
+  </button>
+  <button class="btn btn-danger" (click)="close.emit(true)">
+    {{ 'OK' | localize }}
+  </button>
+</p>
