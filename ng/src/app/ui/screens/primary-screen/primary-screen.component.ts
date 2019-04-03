@@ -78,6 +78,10 @@ export class PrimaryScreenComponent<
     return this._editMode && this.hasPermission;
   }
 
+  set editMode(value: boolean) {
+    this._editMode = value;
+  }
+
   get items(): T[] | null {
     return this.loadListState.value;
   }

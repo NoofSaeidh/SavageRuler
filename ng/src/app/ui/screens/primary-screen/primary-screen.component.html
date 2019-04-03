@@ -48,7 +48,7 @@
             ></ng-container>
           </div>
           <div *ngIf="!editMode" class="modal-footer">
-            <button class="btn btn-info btn-sm" (click)="modalForm.hide()">
+            <button class="btn btn-info" (click)="modalForm.hide()">
               {{ 'Close' | localize }}
             </button>
           </div>
@@ -80,6 +80,7 @@
         [localize]="localizeDescriptor"
         [view]="viewDescriptor.editFormTypeEntries"
         (save)="saveItem($event)"
+        (cancel)="modalForm.hide()"
       ></sr-edit-form>
     </ng-template>
 
