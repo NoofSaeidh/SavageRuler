@@ -6,7 +6,6 @@ import {
   InjectionToken,
   OnInit,
   ViewChild,
-  Input,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ModalDirective } from 'ngx-bootstrap';
@@ -53,10 +52,11 @@ export class PrimaryScreenComponent<
   TKey extends EntityKey
 > implements OnInit {
   @ViewChild('modalForm') modalForm: ModalDirective;
+
   private _editMode: boolean = false;
+  private _showType: ShowType;
 
   selected: ArrayElement<T> | null;
-  showType: ShowType;
   showModalOnInit: boolean = false;
   hasPermission: boolean = false;
 
@@ -90,6 +90,17 @@ export class PrimaryScreenComponent<
     return (
       this.loadListState.state.isLoading && this.loadSingleState.state.isLoading
     );
+  }
+
+  get showType(): ShowType {
+    if (this._showType === 'GRID') {
+      return this._showType;
+    }
+    return (this.selected && this._showType) || 'GRID';
+  }
+
+  set showType(value: ShowType) {
+    this._showType = value;
   }
 
   ngOnInit() {

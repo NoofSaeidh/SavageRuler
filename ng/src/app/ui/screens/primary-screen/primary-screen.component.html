@@ -4,7 +4,7 @@
     <!-- Buttons -->
     <div class="row">
       <!-- Back to Grid button -->
-      <div class="col" [hidden]="showType !== 'FORM' || !selected">
+      <div class="col" [hidden]="showType !== 'FORM'">
         <button class="btn btn-secondary" (click)="showGrid()">
           <i class="fas fa-th"></i>
           {{ 'BackToGrid' | localize }}
@@ -58,7 +58,7 @@
 
     <!-- if place *ngIf here - it will recreate readonly form on each item change -->
     <!-- FORM -->
-    <div class="" [hidden]="showType !== 'FORM' || !selected">
+    <div class="" [hidden]="showType !== 'FORM'">
       <div *ngIf="!editMode; else formEditRef">
         <ng-container *ngTemplateOutlet="formReadRef"></ng-container>
       </div>

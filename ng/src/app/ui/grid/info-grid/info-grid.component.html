@@ -1,6 +1,5 @@
 <table
   class="table
-        b-table
         table-striped
         table-hover
         table-sm"
@@ -20,8 +19,11 @@
     </tr>
   </thead>
   <tbody class="">
-    <tr class="" *ngFor="let item of items; let i = index"
-        (click)="clickRow(item, i, $event)">
+    <tr
+      class=""
+      *ngFor="let item of items; let i = index"
+      (click)="clickRow(item, i, $event)"
+    >
       <!-- TODO: aria-colindex -->
       <td *ngFor="let field of fields" class="">{{ item[field.key] }}</td>
     </tr>
