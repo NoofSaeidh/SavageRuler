@@ -18,4 +18,14 @@ export class StringHelper {
       .replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;')
       .replace(/\n/g, '<br />');
   }
+
+  static tryParseBoolean(input: string): boolean | null {
+    if (input.toLowerCase() === 'true') {
+      return true;
+    }
+    if (input.toLowerCase() === 'false') {
+      return false;
+    }
+    return null;
+  }
 }

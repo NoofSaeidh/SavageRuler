@@ -1,10 +1,4 @@
-import {
-  Component,
-  OnInit,
-  Input,
-  Output,
-  EventEmitter,
-} from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import {
   EntityViewDescriptor,
   InfoGridField,
@@ -12,7 +6,7 @@ import {
 } from 'src/app/types/descriptors/view-descriptor';
 import { IEntity, EntityKey } from 'src/app/api/types/ientity';
 import { TypeEntry } from 'src/app/types/global/type-entry';
-import { arraySorter } from 'src/app/types/global/array-sorter';
+import { arraySorter } from 'src/app/helpers/array-sorter';
 import { LocalizeDescriptor } from 'src/app/types/descriptors/localize-descriptor';
 
 interface Header<T> {
@@ -33,7 +27,11 @@ export class InfoGridComponent<T extends IEntity<TKey>, TKey extends EntityKey>
   @Input() items: T[];
   @Input() view: InfoGridTypeEntries<T>;
   @Input() localize: LocalizeDescriptor<T>;
-  @Output() rowClicked = new EventEmitter<{ item: T; index: number; mouse: MouseEvent }>(true);
+  @Output() rowClicked = new EventEmitter<{
+    item: T;
+    index: number;
+    mouse: MouseEvent;
+  }>(true);
   headers: Header<T>[];
   fields: TypeEntry<T, InfoGridField>[];
   private sorted?: { key: keyof T; order: SortOrder };

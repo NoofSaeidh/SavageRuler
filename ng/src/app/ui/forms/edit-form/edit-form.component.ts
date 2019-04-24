@@ -15,7 +15,7 @@ import {
   EditFormField,
   EditFormTypeEntries,
 } from 'src/app/types/descriptors/view-descriptor';
-import { LogHelper } from 'src/app/types/global/log-helper';
+import { LogHelper } from 'src/app/helpers/log-helper';
 import { EventModalService } from '../../events/modal/event-modal.service';
 import { first } from 'rxjs/operators';
 

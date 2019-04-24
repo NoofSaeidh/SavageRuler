@@ -2,7 +2,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { first } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/auth.service';
 import { parseServerError } from 'src/app/api/operators/parse-error';
-import { StringHelper } from 'src/app/types/global/string-helper';
+import { StringHelper } from 'src/app/helpers/string-helper';
 
 export type AuthState = 'NONE' | 'SUCCESS' | 'ERROR';
 

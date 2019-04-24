@@ -1,5 +1,5 @@
 import { Dictionary, EntryKey } from 'src/app/types/global/dictionary';
-import { StringHelper } from 'src/app/types/global/string-helper';
+import { StringHelper } from 'src/app/helpers/string-helper';
 
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
@@ -32,11 +32,11 @@ export function buildApiMethods<TKey extends string>(
 
 export function buildApiMethodsExtra<TKey extends string>(
   prefix: string,
-  ...args: {name: string; httpMethod: HttpMethod}[]
+  ...args: { name: string; httpMethod: HttpMethod }[]
 ): Dictionary<ApiMethod, TKey> {
   const result = {};
-  for (const {name, httpMethod} of args) {
-    result[name as string] = buildApiMethod(name, {prefix, httpMethod});
+  for (const { name, httpMethod } of args) {
+    result[name as string] = buildApiMethod(name, { prefix, httpMethod });
   }
   return result as Dictionary<ApiMethod, TKey>;
 }

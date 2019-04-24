@@ -6,7 +6,7 @@ import {
   ReadFormField,
   ReadFormTypeEntries,
 } from './../../../types/descriptors/view-descriptor';
-import { StringHelper } from 'src/app/types/global/string-helper';
+import { StringHelper } from 'src/app/helpers/string-helper';
 
 @Component({
   selector: 'sr-readonly-form',

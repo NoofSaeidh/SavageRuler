@@ -6,9 +6,13 @@ import {
   InjectionToken,
   OnInit,
   ViewChild,
+  AfterViewInit,
+  TemplateRef,
+  AfterContentInit,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ModalDirective } from 'ngx-bootstrap';
+import { ModalDirective, BsModalService, BsModalRef } from 'ngx-bootstrap';
 import { filter, first } from 'rxjs/operators';
 import {
   toServerListResult,
@@ -24,6 +28,7 @@ import { ArrayElement } from 'src/app/types/global/array-element';
 import { AuthService } from 'src/app/auth/auth.service';
 import { Observable } from 'rxjs';
 import { ServerResponse } from 'src/app/api/types/responses';
+import { TypeConverter } from 'src/app/types/global/type-converter';
 
 export const LOAD_LIST_STATE = new InjectionToken<LoadStateService<any>>(
   'List load state for readonly screen',
@@ -50,14 +55,15 @@ interface ShowConfig {
 export class PrimaryScreenComponent<
   T extends IEntity<TKey>,
   TKey extends EntityKey
-> implements OnInit {
-  @ViewChild('modalForm') modalForm: ModalDirective;
+> implements OnInit, AfterViewInit {
+  @ViewChild('modalForm') modalForm: TemplateRef<any>;
 
   private _editMode: boolean = false;
   private _showType: ShowType;
+  private _modalRef: BsModalRef;
+  private _showModalOnInitItem?: TKey;
 
   selected: ArrayElement<T> | null;
-  showModalOnInit: boolean = false;
   hasPermission: boolean = false;
 
   localizeDescriptor: LocalizeDescriptor<T>;
@@ -70,6 +76,7 @@ export class PrimaryScreenComponent<
     protected location: Location,
     protected localizationService: LocalizationService,
     protected authService: AuthService,
+    protected modalService: BsModalService,
     @Inject(LOAD_LIST_STATE) protected loadListState: LoadStateService<T[]>,
     @Inject(LOAD_SINGLE_STATE) protected loadSingleState: LoadStateService<T>,
   ) {}
@@ -125,20 +132,29 @@ export class PrimaryScreenComponent<
         .isGranted$(perms.update, perms.create, perms.update)
         .subscribe(r => (this.hasPermission = r));
     }
-    this._editMode = snapshot.queryParams.editMode || false;
+
+    this._editMode = TypeConverter.tryParseBoolean(
+      snapshot.queryParams.editMode,
+      false,
+    );
 
     // todo: check that id would never be 0
     if (showType === 'FORM' && id !== undefined) {
       this.showFormItem(id);
     } else if (id !== undefined) {
       this.showGrid({ dontChangeUrl: true });
-      // simplified showModalItem, because modal not initialized here yet
-      this.showItem(id);
-      this.showModalOnInit = true;
-      this.showType = 'MODAL';
-      this.changeLocation('MODAL', id);
+      this._showModalOnInitItem = id;
     } else {
       this.showGrid();
+    }
+  }
+
+  ngAfterViewInit() {
+    if (this._showModalOnInitItem) {
+      const item = this._showModalOnInitItem;
+      this._showModalOnInitItem = undefined;
+      // setTimeout is required otherwise here would be angular error
+      setTimeout(() => this.showModalItem(item));
     }
   }
 
@@ -153,7 +169,9 @@ export class PrimaryScreenComponent<
   showModalItem(item: ArrayElement<T> | TKey, config?: ShowConfig) {
     const id = this.showItem(item);
     this.showType = 'MODAL';
-    this.modalForm.show();
+    this._modalRef = this.modalService.show(this.modalForm, {
+      class: 'modal-lg',
+    });
     if (!config || !config.dontChangeUrl) {
       this.changeLocation('MODAL', id);
     }
@@ -201,6 +219,12 @@ export class PrimaryScreenComponent<
       obs = this.apiService.create(item);
     }
     obs.subscribe(r => this.ensureItemsLoaded(true));
+  }
+
+  hideModal() {
+    if (this._modalRef) {
+      this._modalRef.hide();
+    }
   }
 
   private changeSelected(diff: number) {

@@ -28,9 +28,10 @@
         </button>
       </div>
     </div>
+    <!-- <button (click)="_openModal(modalTEMP)">open</button> -->
 
     <!-- MODAL -->
-    <div
+    <!-- <div
       [config]="{ show: showModalOnInit }"
       (onHidden)="showGrid()"
       bsModal
@@ -39,22 +40,22 @@
       tabindex="-1"
       role="dialog"
       aria-labelledby="dialog-auto-name"
-    >
-      <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-          <div class="modal-body">
-            <ng-container
-              *ngTemplateOutlet="editMode ? formEditRef : formReadRef"
-            ></ng-container>
-          </div>
-          <div *ngIf="!editMode" class="modal-footer">
-            <button class="btn btn-info" (click)="modalForm.hide()">
-              {{ 'Close' | localize }}
-            </button>
-          </div>
+    > -->
+    <ng-template #modalForm>
+      <div class="modal-content">
+        <div class="modal-body">
+          <ng-container
+            *ngTemplateOutlet="editMode ? formEditRef : formReadRef"
+          ></ng-container>
+        </div>
+        <div *ngIf="!editMode" class="modal-footer">
+          <button class="btn btn-info" (click)="hideModal()">
+            {{ 'Close' | localize }}
+          </button>
         </div>
       </div>
-    </div>
+    </ng-template>
+    <!-- </div> -->
 
     <!-- if place *ngIf here - it will recreate readonly form on each item change -->
     <!-- FORM -->
@@ -80,7 +81,7 @@
         [localize]="localizeDescriptor"
         [view]="viewDescriptor.editFormTypeEntries"
         (save)="saveItem($event)"
-        (cancel)="modalForm.hide()"
+        (cancel)="hideModal()"
       ></sr-edit-form>
     </ng-template>
 

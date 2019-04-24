@@ -4,7 +4,7 @@ import { map, share } from 'rxjs/operators';
 
 import { Dictionary } from '../types/global/dictionary';
 import { LocalizationService } from './localization.service';
-import { StringHelper } from '../types/global/string-helper';
+import { StringHelper } from '../helpers/string-helper';
 
 @Injectable({
   providedIn: 'root',
