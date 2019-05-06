@@ -28,7 +28,7 @@ import { ArrayElement } from 'src/app/types/global/array-element';
 import { AuthService } from 'src/app/auth/auth.service';
 import { Observable } from 'rxjs';
 import { ServerResponse } from 'src/app/api/types/responses';
-import { TypeConverter } from 'src/app/types/global/type-converter';
+import { TypeConverter } from 'src/app/helpers/type-converter';
 
 export const LOAD_LIST_STATE = new InjectionToken<LoadStateService<any>>(
   'List load state for readonly screen',
@@ -272,10 +272,11 @@ export class PrimaryScreenComponent<
     if (showType === 'MODAL') {
       view = 'modal';
     }
+    const editMode = this.editMode || (this.hasPermission ? false : null);
     return this.router
       .createUrlTree(['../' + type], {
         relativeTo: this.route,
-        queryParams: { id, view, editMode: this._editMode || null },
+        queryParams: { id, view, editMode },
       })
       .toString();
   }
