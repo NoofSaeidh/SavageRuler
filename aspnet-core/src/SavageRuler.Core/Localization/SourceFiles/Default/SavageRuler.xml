@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <localizationDictionary culture="en">
   <texts>
+    <!-- Common -->
     <text name="HomePage" value="Home page" />
     <text name="About" value="About" />
     <text name="WelcomeMessage" value="Welcome to SavageRuler!" />
@@ -17,7 +18,7 @@
     <text name="UserNameOrEmail" value="User name or email" />
     <text name="Password" value="Password" />
     <text name="RememberMe" value="Remember me" />
-    <text name="LogIn" value="Log in" />
+    <text name="Login" value="Login" />
     <text name="LoginFailed" value="Login failed!" />
     <text name="NameSurname" value="Name surname" />
     <text name="UserName" value="User name" />
@@ -91,5 +92,18 @@
     <text name="StartTyping">Start Typing</text>
     <text name="Skins">Skins</text>
     <text name="Settings">Settings</text>
+    <text name="UsernameRequired" value="Username is required"/>
+    <text name="PasswordRequired" value="Password is required"/>
+    <text name="Language" value="Language"/>
+
+    <!-- Rules -->
+    <text name="Rules" value="Rules"/>
+    <text name="Rule" value="Rule"/>
+    <text name="Powers" value="Powers"/>
+    <text name="Power" value="Power"/>
+
+    <!-- UI -->
+    <text name="BackToGrid" value="Back to Grid"/>
+    <text name="YourAreLogged" value="You are logged"/>
   </texts>
 </localizationDictionary>

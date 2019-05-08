@@ -1,12 +1,43 @@
-$fa-font-path : '../node_modules/@fortawesome/fontawesome-free/webfonts';
-@import "fontawesome";
-@import "solid";
+$fa-font-path: '../node_modules/@fortawesome/fontawesome-free/webfonts';
+@import 'fontawesome';
+@import 'solid';
 
 .sort-column {
   &::after {
     @extend %fa-icon;
     @extend .fas;
-    // float: right;
+    opacity: 0.5;
     content: fa-content($fa-var-sort);
   }
+}
+
+.sort-column-asc {
+  &::after {
+    @extend %fa-icon;
+    @extend .fas;
+    opacity: 1;
+    content: fa-content($fa-var-sort-up);
+  }
+}
+
+.sort-column-desc {
+  &::after {
+    @extend %fa-icon;
+    @extend .fas;
+    opacity: 1;
+    content: fa-content($fa-var-sort-down);
+  }
+}
+
+.btn {
+  margin: 2px;
+}
+
+.ng-valid[required], .ng-valid.required  {
+  border-left: 5px solid #42A948; /* green */
+}
+
+.form.ng-invalid.ng-dirty .ng-invalid,
+.ng-invalid.ng-dirty:not(form)  {
+  border-left: 5px solid #a94442; /* red */
 }

@@ -1,59 +1,47 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { HttpClient, HttpHeaders, HttpRequest } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 
-import { ServerReponseList, ServerReponse, ServerList } from '../types/responses';
-import { ApiDescriptor, ApiUrls } from '../types/api-descriptor';
+import {
+  ServerResponseList,
+  ServerResponse,
+  ServerList,
+} from '../types/responses';
+import { ApiDescriptor } from '../types/api-descriptor';
 import { ApiService } from './api.service';
-import { IEntity, EntityKey } from 'src/app/types/api/ientity';
+import { IEntity, EntityKey } from 'src/app/api/types/ientity';
+import { ApiCrudRequest } from '../types/api-crud-descriptor';
 
-// todo: perhaps move out and add to descriptor
-type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
-
-
-@Injectable({
-  providedIn: 'root',
-})
-export class ApiCrudService<T extends IEntity<TKey>, TKey extends EntityKey> extends ApiService {
-  constructor(private _http: HttpClient, public descriptor: ApiDescriptor<T>) {
-    super();
+@Injectable()
+export class ApiCrudService<
+  T extends IEntity<TKey>,
+  TKey extends EntityKey
+> extends ApiService<ApiCrudRequest> {
+  constructor(http: HttpClient, descriptor: ApiDescriptor<ApiCrudRequest>) {
+    super(http, descriptor);
   }
 
-  getAll(): Observable<ServerReponseList<T>> {
-    return this.request<ServerList<T>>('GET', 'getAll');
+  getAll(): Observable<ServerResponseList<T>> {
+    return this.makeRequest<ServerList<T>>('getAll');
   }
 
-  // todo: inject key into url (should be in descriptor)
-  get(key: TKey): Observable<ServerReponse<T>> {
-    return this.request<T>('GET', 'get');
+  // todo: move injection into descriptor
+  get(id: TKey): Observable<ServerResponse<T>> {
+    return this.makeRequest<T>('get', { query: {id} });
   }
 
-  create(entity: T): Observable<ServerReponse<T>> {
-    return this.request<T>('POST', 'create', entity);
-  }
-
-  // todo: inject key into url (should be in descriptor)
-  update(key: TKey, entity: T): Observable<ServerReponse<T>> {
-    return this.request<T>('PUT', 'update', entity);
+  create(entity: T): Observable<ServerResponse<T>> {
+    return this.makeRequest<T>('create', { body: entity });
   }
 
   // todo: inject key into url (should be in descriptor)
-  delete(key: TKey): Observable<ServerReponse<T>> {
-    return this.request<T>('DELETE', 'delete');
+  update(id: TKey, entity: T): Observable<ServerResponse<T>> {
+    return this.makeRequest<T>('update', { query: {id}, body: entity });
   }
 
-
-  protected request<TResult>(
-    httpMethod: HttpMethod,
-    apiKey: keyof ApiUrls,
-    body?: any,
-  ): Observable<ServerReponse<TResult>> {
-    // it will throw error if no specified
-    const url = this.descriptor.getUrl(apiKey);
-    return this._http.request<ServerReponse<TResult>>(httpMethod, url, {
-      body,
-    });
+  // todo: inject key into url (should be in descriptor)
+  delete(id: TKey): Observable<ServerResponse<T>> {
+    return this.makeRequest<T>('delete', { query: {id} });
   }
-
 }

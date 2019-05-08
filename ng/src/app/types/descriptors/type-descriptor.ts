@@ -1,3 +1,3 @@
-export type TypeDescriptor<T, D> = {
-  [P in keyof T]?: D;
+export type TypeDescriptor<K, T> = {
+  [P in keyof K]?: T;
 };

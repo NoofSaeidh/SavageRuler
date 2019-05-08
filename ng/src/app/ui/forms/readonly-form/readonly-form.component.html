@@ -1,0 +1,22 @@
+<div class="card border-dark text-dark">
+  <h4 class="card-header">{{ title }}</h4>
+  <div class="card-body">
+    <div *ngFor="let field of fields" class="text-left single-line">
+      <div *ngIf="item[field.key] || field.value.showNullValue">
+        <div *ngIf="field.value.addHorizontalRuler; else withTitle">
+          <hr />
+          <ng-container *ngTemplateOutlet="itemValue"></ng-container>
+        </div>
+        <ng-template #withTitle>
+          <p>
+            <b>{{ localize[field.key] }}: &ensp; &ensp;</b>
+            <ng-container *ngTemplateOutlet="itemValue"></ng-container>
+          </p>
+        </ng-template>
+        <ng-template #itemValue>
+          <div [outerHTML]="getText(field)"></div>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</div>

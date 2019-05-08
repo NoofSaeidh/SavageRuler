@@ -1,3 +1,6 @@
 {
-    "tslint.alwaysShowRuleFailuresAsWarnings": true
+    "tslint.alwaysShowRuleFailuresAsWarnings": true,
+    "tslint.autoFixOnSave": true,
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2
 }

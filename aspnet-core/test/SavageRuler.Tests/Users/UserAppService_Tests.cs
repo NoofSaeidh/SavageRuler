@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Shouldly;
+using FluentAssertions;
 using Xunit;
 using Abp.Application.Services.Dto;
 using SavageRuler.Users;
@@ -24,7 +24,7 @@ namespace SavageRuler.Tests.Users
             var output = await _userAppService.GetAll(new PagedUserResultRequestDto{MaxResultCount=20, SkipCount=0} );
 
             // Assert
-            output.Items.Count.ShouldBeGreaterThan(0);
+            output.Items.Count.Should().BeGreaterThan(0);
         }
 
         [Fact]
@@ -45,7 +45,7 @@ namespace SavageRuler.Tests.Users
             await UsingDbContextAsync(async context =>
             {
                 var johnNashUser = await context.Users.FirstOrDefaultAsync(u => u.UserName == "john.nash");
-                johnNashUser.ShouldNotBeNull();
+                johnNashUser.Should().NotBeNull();
             });
         }
     }

@@ -1,4 +1,5 @@
-﻿using Abp.Modules;
+﻿using Abp.Configuration;
+using Abp.Modules;
 using Abp.Reflection.Extensions;
 using Abp.Timing;
 using Abp.Zero;
@@ -43,6 +44,7 @@ namespace SavageRuler
         public override void PostInitialize()
         {
             IocManager.Resolve<AppTimes>().StartupTime = Clock.Now;
+            SavageRulerLocalizationConfigurer.SetDefaultLanguage(Configuration.IocManager.Resolve<ISettingManager>()).Wait();
         }
     }
 }

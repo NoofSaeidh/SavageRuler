@@ -1,0 +1,27 @@
+<div *ngIf="enabled && currentLanguage" class="btn-group" dropdown>
+  <button
+    id="button-basic"
+    dropdownToggle
+    type="button"
+    class="btn btn-info dropdown-toggle"
+    aria-controls="dropdown-basic"
+  >
+    <span class="flag-icon {{ currentLanguage.icon }}"></span>
+    {{ "Language" | localize }}: {{ currentLanguage.displayName }}
+    <span class="caret"></span>
+  </button>
+  <ul
+    id="dropdown-basic"
+    *dropdownMenu
+    class="dropdown-menu"
+    role="menu"
+    aria-labelledby="button-basic"
+  >
+    <li *ngFor="let language of languages">
+      <span class="dropdown-item" (click)="changeCulture(language.name)">
+        <span class="flag-icon {{ language.icon }}"></span>
+        {{ language.displayName }}
+      </span>
+    </li>
+  </ul>
+</div>

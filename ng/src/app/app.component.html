@@ -1,27 +1,45 @@
-<!--The content below is only a placeholder and can be replaced.-->
-<!--Navbar-->
-<mdb-navbar SideClass="navbar navbar-expand-sm navbar-dark bg-dark">
-  <!-- Navbar brand -->
-  <mdb-navbar-brand
-    ><span class="navbar-brand">Savage Ruler</span></mdb-navbar-brand
+<header class="navbar navbar-dark bg-dark fixed-top navbar-expand-sm">
+  <a
+    class="navbar-brand"
+    [routerLink]="['/']"
+    (click)="navbarCollapsed = true"
+    >{{ title }}</a
   >
 
-  <!-- Collapsible content -->
-  <links>
-    <div class="navbar-nav">
-      <a class="nav-item nav-link text-light" routerLink="/" mdbWavesEffect>
-        Home
-      </a>
-      <a
-        class="nav-item nav-link text-light"
-        routerLink="/powers"
-        mdbWavesEffect
-      >
-        Powers
-      </a>
-    </div>
-  </links>
-  <!-- Collapsible content -->
-</mdb-navbar>
-<!--/.Navbar-->
-<router-outlet></router-outlet>
+  <button
+    class="navbar-toggler navbar-toggler-right"
+    type="button"
+    (click)="navbarCollapsed = !navbarCollapsed"
+    [attr.aria-expanded]="!navbarCollapsed"
+    aria-controls="navbarContent"
+    aria-expanded="false"
+    aria-label="Toggle navigation"
+  >
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="navbar-collapse" [collapse]="navbarCollapsed" id="navbarContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item" [routerLinkActive]="['active']">
+        <a
+          class="nav-link"
+          [routerLink]="['/powers']"
+          (click)="navbarCollapsed = true"
+          >{{ 'Powers' | localize }}</a
+        >
+      </li>
+    </ul>
+    <sr-auth-modal></sr-auth-modal>
+    <sr-language-selector></sr-language-selector>
+  </div>
+</header>
+
+<main>
+  <router-outlet></router-outlet>
+</main>
+
+<footer class="bd-footer text-muted">
+  <div class="container">
+    <!-- TODO: write something-->
+  </div>
+</footer>

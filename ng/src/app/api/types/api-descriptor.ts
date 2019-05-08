@@ -1,28 +1,40 @@
-import { environment } from 'src/environments/environment';
+import { ApiController, ApiMethod } from './api-controller';
 
-export interface ApiUrls {
-  getAll?: string;
-  get?: string;
-  create?: string;
-  update?: string;
-  delete?: string;
-}
-
-export class ApiDescriptor<T> {
-  public readonly baseUrl: string = environment.appUrl;
-
-  // todo: add checkings - now all urls must start with '/'
-  constructor(private _urls: ApiUrls) {}
-
-  public hasUrl(request: keyof ApiUrls): boolean {
-    return !!this._urls[request];
+export class ApiDescriptor<T extends string | number | symbol = string> {
+  protected static normalizeUrl(url: string, addEndSlash?: boolean): string {
+    if (!url) {
+      return '/';
+    }
+    let resultUrl: string;
+    if (url.startsWith('/')) {
+      resultUrl = url;
+    } else {
+      resultUrl = '/' + url;
+    }
+    if (addEndSlash) {
+      if (resultUrl.endsWith('/')) {
+        return resultUrl;
+      }
+      return resultUrl + '/';
+    }
   }
 
-  public getUrl(request: keyof ApiUrls, fullPath: boolean = true): string {
-    const url = this._urls[request];
-    if (!url) {
-      throw new Error(`Current descriptor doesn't have ${request} url.`);
+  constructor(protected controller: ApiController<T>) {}
+
+  hasMethod(name: T): boolean {
+    return !!this.controller.methods[name];
+  }
+
+  // will throw if not specified
+  getMethod(name: T): ApiMethod {
+    const result = this.controller.methods[name];
+    if (!result) {
+      throw new Error(`Specified method: ${name} is not defined.`);
     }
-    return fullPath ? this.baseUrl + url : url;
+    return result;
+  }
+
+  tryGetMethod(name: T): ApiMethod | null {
+    return this.controller.methods[name] || null;
   }
 }

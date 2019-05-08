@@ -1,6 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <localizationDictionary culture="ru">
   <texts>
+    <!-- Common -->
     <text name="HomePage" value="Домашняя страница" />
+    <text name="RememberMe" value="Запомнить меня"/>
+    <text name="UsernameRequired" value="Имя пользователя обязательно"/>
+    <text name="PasswordRequired" value="Пароль обязателен"/>
+    <text name="Login" value="Войти"/>
+    <text name="Logout" value="Выйти"/>
+    <text name="Language" value="Язык"/>
+
+    <!-- Rules -->
+    <text name="Rules" value="Правила"/>
+    <text name="Rule" value="Правило"/>
+    <text name="Powers" value="Силы"/>
+    <text name="Power" value="Сила"/>
+
+    <!-- UI -->
+    <text name="BackToGrid" value="Назад к таблице"/>
+    <text name="YourAreLogged" value="Вы аутентифицированны"/>
+    <text name="Permissions" value="Права доступа"/>
+    
   </texts>
 </localizationDictionary>

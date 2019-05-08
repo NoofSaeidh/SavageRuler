@@ -1,32 +1,27 @@
-import { TestBed, async } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { SrTestBed } from 'src/tests/sr-test-bed';
+
 import { AppComponent } from './app.component';
-import { MDBBootstrapModule } from 'angular-bootstrap-md';
 
 describe('AppComponent', () => {
   beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      imports: [RouterTestingModule, MDBBootstrapModule.forRoot()],
-      declarations: [AppComponent],
-    }).compileComponents();
+    TestBed.configureTestingModule(
+      SrTestBed.defaultViewComponentsMetadata(),
+    ).compileComponents();
   }));
 
+  let fixture: ComponentFixture<AppComponent>;
+  let app: AppComponent;
+  beforeEach(() => {
+    fixture = TestBed.createComponent(AppComponent);
+    app = fixture.debugElement.componentInstance;
+  });
+
   it('should create the app', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.debugElement.componentInstance;
     expect(app).toBeTruthy();
   });
 
-  it(`should have as title 'SavageRuler'`, () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.debugElement.componentInstance;
-    expect(app.title).toEqual('SavageRuler');
-  });
-
-  it('should render title in a div tag', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    fixture.detectChanges();
-    const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('div').textContent).toBeTruthy();
+  it(`should have as title 'Savage Ruler'`, () => {
+    expect(app.title).toEqual('Savage Ruler');
   });
 });

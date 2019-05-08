@@ -1,22 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Abp.Authorization;
+﻿using Abp.Authorization;
 using Abp.Authorization.Users;
 using Abp.MultiTenancy;
 using Abp.Runtime.Security;
 using Abp.UI;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using SavageRuler.Authentication.External;
 using SavageRuler.Authentication.JwtBearer;
 using SavageRuler.Authorization;
 using SavageRuler.Authorization.Users;
 using SavageRuler.Models.TokenAuth;
 using SavageRuler.MultiTenancy;
+using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace SavageRuler.Controllers
 {
@@ -30,6 +31,7 @@ namespace SavageRuler.Controllers
         private readonly IExternalAuthConfiguration _externalAuthConfiguration;
         private readonly IExternalAuthManager _externalAuthManager;
         private readonly UserRegistrationManager _userRegistrationManager;
+        private readonly UserManager _userManager;
 
         public TokenAuthController(
             LogInManager logInManager,
@@ -38,7 +40,8 @@ namespace SavageRuler.Controllers
             TokenAuthConfiguration configuration,
             IExternalAuthConfiguration externalAuthConfiguration,
             IExternalAuthManager externalAuthManager,
-            UserRegistrationManager userRegistrationManager)
+            UserRegistrationManager userRegistrationManager,
+            UserManager userManager)
         {
             _logInManager = logInManager;
             _tenantCache = tenantCache;
@@ -47,6 +50,7 @@ namespace SavageRuler.Controllers
             _externalAuthConfiguration = externalAuthConfiguration;
             _externalAuthManager = externalAuthManager;
             _userRegistrationManager = userRegistrationManager;
+            _userManager = userManager;
         }
 
         [HttpPost]
@@ -58,7 +62,7 @@ namespace SavageRuler.Controllers
                 GetTenancyNameOrNull()
             );
 
-            var accessToken = CreateAccessToken(CreateJwtClaims(loginResult.Identity));
+            var accessToken = await CreateAccessTokenAsync(loginResult);
 
             return new AuthenticateResultModel
             {
@@ -85,44 +89,29 @@ namespace SavageRuler.Controllers
             switch (loginResult.Result)
             {
                 case AbpLoginResultType.Success:
+                {
+                    var accessToken = await CreateAccessTokenAsync(loginResult);
+                    return new ExternalAuthenticateResultModel
                     {
-                        var accessToken = CreateAccessToken(CreateJwtClaims(loginResult.Identity));
-                        return new ExternalAuthenticateResultModel
-                        {
-                            AccessToken = accessToken,
-                            EncryptedAccessToken = GetEncrpyedAccessToken(accessToken),
-                            ExpireInSeconds = (int)_configuration.Expiration.TotalSeconds
-                        };
-                    }
+                        AccessToken = accessToken,
+                        EncryptedAccessToken = GetEncrpyedAccessToken(accessToken),
+                        ExpireInSeconds = (int)_configuration.Expiration.TotalSeconds
+                    };
+                }
                 case AbpLoginResultType.UnknownExternalLogin:
+                {
+                    var newUser = await RegisterExternalUserAsync(externalUser);
+                    if (!newUser.IsActive)
                     {
-                        var newUser = await RegisterExternalUserAsync(externalUser);
-                        if (!newUser.IsActive)
-                        {
-                            return new ExternalAuthenticateResultModel
-                            {
-                                WaitingForActivation = true
-                            };
-                        }
-
-                        // Try to login again with newly registered user!
-                        loginResult = await _logInManager.LoginAsync(new UserLoginInfo(model.AuthProvider, model.ProviderKey, model.AuthProvider), GetTenancyNameOrNull());
-                        if (loginResult.Result != AbpLoginResultType.Success)
-                        {
-                            throw _abpLoginResultTypeHelper.CreateExceptionForFailedLoginAttempt(
-                                loginResult.Result,
-                                model.ProviderKey,
-                                GetTenancyNameOrNull()
-                            );
-                        }
-
                         return new ExternalAuthenticateResultModel
                         {
-                            AccessToken = CreateAccessToken(CreateJwtClaims(loginResult.Identity)),
-                            ExpireInSeconds = (int)_configuration.Expiration.TotalSeconds
+                            WaitingForActivation = true
                         };
                     }
-                default:
+
+                    // Try to login again with newly registered user!
+                    loginResult = await _logInManager.LoginAsync(new UserLoginInfo(model.AuthProvider, model.ProviderKey, model.AuthProvider), GetTenancyNameOrNull());
+                    if (loginResult.Result != AbpLoginResultType.Success)
                     {
                         throw _abpLoginResultTypeHelper.CreateExceptionForFailedLoginAttempt(
                             loginResult.Result,
@@ -130,6 +119,21 @@ namespace SavageRuler.Controllers
                             GetTenancyNameOrNull()
                         );
                     }
+
+                    return new ExternalAuthenticateResultModel
+                    {
+                        AccessToken = await CreateAccessTokenAsync(loginResult),
+                        ExpireInSeconds = (int)_configuration.Expiration.TotalSeconds
+                    };
+                }
+                default:
+                {
+                    throw _abpLoginResultTypeHelper.CreateExceptionForFailedLoginAttempt(
+                        loginResult.Result,
+                        model.ProviderKey,
+                        GetTenancyNameOrNull()
+                    );
+                }
             }
         }
 
@@ -209,6 +213,13 @@ namespace SavageRuler.Controllers
             return new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
         }
 
+        private async Task<string> CreateAccessTokenAsync(AbpLoginResult<Tenant, User> loginResult)
+        {
+            var claims = CreateJwtClaims(loginResult.Identity);
+            await AddPermissionClaimAsync(loginResult.User, claims);
+            return CreateAccessToken(claims);
+        }
+
         private static List<Claim> CreateJwtClaims(ClaimsIdentity identity)
         {
             var claims = identity.Claims.ToList();
@@ -223,6 +234,12 @@ namespace SavageRuler.Controllers
             });
 
             return claims;
+        }
+
+        private async Task AddPermissionClaimAsync(User user, List<Claim> claims)
+        {
+            var permissions = await _userManager.GetGrantedPermissionsAsync(user);
+            claims.Add(new Claim("Abp.Permissions", JsonConvert.SerializeObject(permissions.Select(p => p.Name))));
         }
 
         private string GetEncrpyedAccessToken(string accessToken)

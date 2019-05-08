@@ -1,0 +1,54 @@
+<form
+  (ngSubmit)="onSubmit()"
+  class="form"
+  [formGroup]="form"
+  autocomplete="off"
+>
+  <div class="card border-dark text-dark">
+    <h4 class="card-header">{{ title }}</h4>
+    <div class="card-body">
+      <div *ngFor="let element of elements" class="form-group">
+        <label class="" [for]="element.id">
+          <b>{{ element.title }}:</b>
+        </label>
+        <input
+          *ngIf="!element.field.textarea; else textarea"
+          type="text"
+          class="form-control"
+          [id]="element.id"
+          [name]="element.key"
+          [formControlName]="element.key"
+        />
+        <ng-template #textarea>
+          <textarea
+            class="form-control"
+            [id]="element.id"
+            [name]="element.key"
+            [rows]="element.field.textarea.initialRows"
+            [formControlName]="element.key"
+          ></textarea>
+        </ng-template>
+      </div>
+    </div>
+    <div class="card-footer">
+      <button class="btn btn-primary float-right" type="submit">
+        {{ 'Save' | localize }}
+      </button>
+      <!-- TODO: add warnings! -->
+      <button
+        class="btn btn-secondary float-right"
+        type="button"
+        (click)="onReset()"
+      >
+        {{ 'Reset' | localize }}
+      </button>
+      <button
+        class="btn btn-danger float-right"
+        type="button"
+        (click)="onCancel()"
+      >
+        {{ 'Cancel' | localize }}
+      </button>
+    </div>
+  </div>
+</form>

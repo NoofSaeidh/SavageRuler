@@ -137,6 +137,8 @@ namespace SavageRuler.Tests
 
         #region Login
 
+        protected static readonly int? HostTenantId = SavageRulerConsts.MultiTenancyEnabled ? (int?)null : 1;
+
         protected void LoginAsHostAdmin()
         {
             LoginAsHost(AbpUserBase.AdminUserName);
@@ -149,7 +151,7 @@ namespace SavageRuler.Tests
 
         protected void LoginAsHost(string userName)
         {
-            AbpSession.TenantId = null;
+            AbpSession.TenantId = HostTenantId;
 
             var user =
                 UsingDbContext(
@@ -183,6 +185,66 @@ namespace SavageRuler.Tests
             }
 
             AbpSession.UserId = user.Id;
+        }
+
+        protected void Logout()
+        {
+            AbpSession.UserId = null;
+        }
+
+        protected IDisposable UseLoginAsHost(string userName)
+        {
+            var user =
+                UsingDbContext(
+                    context =>
+                        context.Users.FirstOrDefault(u => u.TenantId == HostTenantId && u.UserName == userName));
+            if (user == null)
+            {
+                throw new Exception("There is no user: " + userName + " for host.");
+            }
+
+
+            return AbpSession.Use(null, user.Id);
+        }
+
+        protected IDisposable UseLoginAsTenant(string tenancyName, string userName)
+        {
+            var tenant = UsingDbContext(context => context.Tenants.FirstOrDefault(t => t.TenancyName == tenancyName));
+            if (tenant == null)
+            {
+                throw new Exception("There is no tenant: " + tenancyName);
+            }
+
+            var user =
+                UsingDbContext(
+                    context =>
+                        context.Users.FirstOrDefault(u => u.TenantId == tenant.Id && u.UserName == userName));
+            if (user == null)
+            {
+                throw new Exception("There is no user: " + userName + " for tenant: " + tenancyName);
+            }
+
+            if (user == null)
+            {
+                throw new Exception("There is no user: " + userName + " for host.");
+            }
+
+            return AbpSession.Use(tenant.Id, user.Id);
+        }
+
+        protected IDisposable UseLoginAsHostAdmin()
+        {
+            return UseLoginAsHost(AbpUserBase.AdminUserName);
+        }
+
+        protected IDisposable UseLoginAsDefaultTenantAdmin()
+        {
+            return UseLoginAsTenant(AbpTenantBase.DefaultTenantName, AbpUserBase.AdminUserName);
+        }
+
+        protected IDisposable UseLogout()
+        {
+            return AbpSession.Use(null, null);
         }
 
         #endregion

@@ -95,10 +95,15 @@ namespace SavageRuler.Web.Host.Startup
                 app.UseDeveloperExceptionPage();
             }
             else
+            {
                 app.UseExceptionHandler("/Error");
+                // todo: add https
+                //app.UseHsts();
+            }
 
             app.UseStaticFiles();
 
+            //app.UseHttpsRedirection();
             app.UseAuthentication();
 
             app.UseAbpRequestLocalization();
@@ -134,9 +139,16 @@ namespace SavageRuler.Web.Host.Startup
                     name: "apiController",
                     template: "api/{controller}/{action=Index}/{id?}");
 
-                routes.MapSpaFallbackRoute(
-                    name: "spa-fallback",
-                    defaults: new { controller = "Home", action = "Index" });
+                routes.MapRoute(
+                    name: "controller",
+                    template: "{controller}/{action=Index}/{id?}");
+
+                if (!env.IsDevelopment())
+                {
+                    routes.MapSpaFallbackRoute(
+                        name: "spa-fallback",
+                        defaults: new { controller = "Home", action = "Index" });
+                }
             });
         }
     }
