@@ -1,18 +1,16 @@
-import { Location } from '@angular/common';
 import {
+  AfterViewInit,
   Component,
   HostListener,
   Inject,
   InjectionToken,
   OnInit,
-  ViewChild,
-  AfterViewInit,
   TemplateRef,
-  AfterContentInit,
-  ChangeDetectorRef,
+  ViewChild,
 } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { ModalDirective, BsModalService, BsModalRef } from 'ngx-bootstrap';
+import { UrlTree, NavigationExtras } from '@angular/router';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap';
+import { Observable } from 'rxjs';
 import { filter, first } from 'rxjs/operators';
 import {
   toServerListResult,
@@ -20,15 +18,15 @@ import {
 } from 'src/app/api/operators/to-server-result';
 import { ApiCrudService } from 'src/app/api/services/api-crud.service';
 import { EntityKey, IEntity } from 'src/app/api/types/ientity';
+import { ServerResponse } from 'src/app/api/types/responses';
+import { AuthService } from 'src/app/auth/auth.service';
+import { SrRouter, SrNavigationExtras } from 'src/app/helpers/sr-router';
+import { TypeConverter } from 'src/app/helpers/type-converter';
 import { LocalizationService } from 'src/app/localization/localization.service';
 import { LoadStateService } from 'src/app/state/load/load-state.service';
 import { LocalizeDescriptor } from 'src/app/types/descriptors/localize-descriptor';
 import { EntityViewDescriptor } from 'src/app/types/descriptors/view-descriptor';
 import { ArrayElement } from 'src/app/types/global/array-element';
-import { AuthService } from 'src/app/auth/auth.service';
-import { Observable } from 'rxjs';
-import { ServerResponse } from 'src/app/api/types/responses';
-import { TypeConverter } from 'src/app/helpers/type-converter';
 
 export const LOAD_LIST_STATE = new InjectionToken<LoadStateService<any>>(
   'List load state for readonly screen',
@@ -71,9 +69,7 @@ export class PrimaryScreenComponent<
   constructor(
     public viewDescriptor: EntityViewDescriptor<T>,
     protected apiService: ApiCrudService<T, TKey>,
-    protected route: ActivatedRoute,
-    protected router: Router,
-    protected location: Location,
+    protected router: SrRouter,
     protected localizationService: LocalizationService,
     protected authService: AuthService,
     protected modalService: BsModalService,
@@ -87,6 +83,7 @@ export class PrimaryScreenComponent<
 
   set editMode(value: boolean) {
     this._editMode = value;
+    this.navigate({ editMode: value });
   }
 
   get items(): T[] | null {
@@ -117,7 +114,7 @@ export class PrimaryScreenComponent<
       .localizeEntity(this.viewDescriptor.viewType.typeName)
       .subscribe(result => (this.localizeDescriptor = result));
 
-    const snapshot = this.route.snapshot;
+    const snapshot = this.router.activatedRoute.snapshot;
     // todo: handle modal
     const showType = snapshot.url[snapshot.url.length - 1].path.toUpperCase();
     const id = snapshot.queryParams.id;
@@ -162,7 +159,7 @@ export class PrimaryScreenComponent<
     const id = this.showItem(item);
     this.showType = 'FORM';
     if (!config || !config.dontChangeUrl) {
-      this.changeLocation('FORM', id);
+      this.navigate({ showType: 'FORM', id });
     }
   }
 
@@ -173,7 +170,7 @@ export class PrimaryScreenComponent<
       class: 'modal-lg',
     });
     if (!config || !config.dontChangeUrl) {
-      this.changeLocation('MODAL', id);
+      this.navigate({ showType: 'MODAL', id });
     }
   }
 
@@ -181,7 +178,7 @@ export class PrimaryScreenComponent<
     this.showType = 'GRID';
     this.ensureItemsLoaded();
     if (!config || !config.dontChangeUrl) {
-      this.changeLocation('GRID');
+      this.navigate({ showType: 'GRID' });
     }
   }
 
@@ -189,7 +186,13 @@ export class PrimaryScreenComponent<
     if (event.mouse.altKey) {
       this.showFormItem(event);
     } else if (event.mouse.ctrlKey) {
-      window.open(this.buildUrl('FORM', event.item.id));
+      this.navigate({
+        showType: 'FORM',
+        id: event.item.id,
+        extras: {
+          newWindow: true,
+        },
+      });
     } else {
       this.showModalItem(event);
     }
@@ -245,9 +248,12 @@ export class PrimaryScreenComponent<
       item: this.items[resultIndex],
       index: resultIndex,
     };
-    this.location.replaceState(
-      this.buildUrl(this.showType, this.selected.item.id),
-    );
+    this.navigate({
+      showType: this.showType,
+      id: this.selected.item.id,
+      editMode: this.editMode,
+      extras: { replace: true },
+    });
   }
 
   private showItem(item: ArrayElement<T> | TKey): TKey {
@@ -262,23 +268,46 @@ export class PrimaryScreenComponent<
     return id;
   }
 
-  private changeLocation(showType: ShowType, id?: TKey) {
-    this.location.go(this.buildUrl(showType, id));
-  }
+  private navigate({
+    showType,
+    id,
+    editMode,
+    extras,
+  }: {
+    // undefined means don't change, null means set to null
+    showType?: ShowType;
+    id?: TKey | null;
+    editMode?: boolean | null;
+    extras?: {
+      newWindow?: boolean;
+      replace?: boolean;
+      preserveParams?: boolean;
+    };
+  }) {
+    const { type, view } =
+      showType === 'MODAL'
+        ? { type: 'grid', view: 'modal' }
+        : { type: showType.toLowerCase(), view: null };
 
-  private buildUrl(showType: ShowType, id?: TKey) {
-    const type = showType === 'MODAL' ? 'grid' : showType.toLowerCase();
-    let view;
-    if (showType === 'MODAL') {
-      view = 'modal';
+    const navExtras: SrNavigationExtras = {
+      queryParamsHandling: 'merge',
+      queryParams: { id, view, editMode },
+    };
+    if (extras) {
+      if (extras.replace) {
+        navExtras.skipLocationChange = true;
+      }
+      if (extras.preserveParams) {
+        navExtras.queryParamsHandling = 'preserve';
+      }
+      if (extras.newWindow) {
+        window.open(
+          this.router.createUrlTree(['../' + type], navExtras).toString(),
+        );
+        return;
+      }
     }
-    const editMode = this.editMode || (this.hasPermission ? false : null);
-    return this.router
-      .createUrlTree(['../' + type], {
-        relativeTo: this.route,
-        queryParams: { id, view, editMode },
-      })
-      .toString();
+    this.router.navigate(['../' + type], navExtras);
   }
 
   private ensureItemsLoaded(forceReload?: boolean) {
