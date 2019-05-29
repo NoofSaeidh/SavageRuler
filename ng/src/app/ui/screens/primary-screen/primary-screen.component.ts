@@ -8,7 +8,12 @@ import {
   TemplateRef,
   ViewChild,
 } from '@angular/core';
-import { UrlTree, NavigationExtras } from '@angular/router';
+import {
+  UrlTree,
+  NavigationExtras,
+  Router,
+  ActivatedRoute,
+} from '@angular/router';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap';
 import { Observable } from 'rxjs';
 import { filter, first } from 'rxjs/operators';
@@ -20,13 +25,13 @@ import { ApiCrudService } from 'src/app/api/services/api-crud.service';
 import { EntityKey, IEntity } from 'src/app/api/types/ientity';
 import { ServerResponse } from 'src/app/api/types/responses';
 import { AuthService } from 'src/app/auth/auth.service';
-import { SrRouter, SrNavigationExtras } from 'src/app/helpers/sr-router';
 import { TypeConverter } from 'src/app/helpers/type-converter';
 import { LocalizationService } from 'src/app/localization/localization.service';
 import { LoadStateService } from 'src/app/state/load/load-state.service';
 import { LocalizeDescriptor } from 'src/app/types/descriptors/localize-descriptor';
 import { EntityViewDescriptor } from 'src/app/types/descriptors/view-descriptor';
 import { ArrayElement } from 'src/app/types/global/array-element';
+import { Dictionary } from 'src/app/types/global/dictionary';
 
 export const LOAD_LIST_STATE = new InjectionToken<LoadStateService<any>>(
   'List load state for readonly screen',
@@ -69,7 +74,8 @@ export class PrimaryScreenComponent<
   constructor(
     public viewDescriptor: EntityViewDescriptor<T>,
     protected apiService: ApiCrudService<T, TKey>,
-    protected router: SrRouter,
+    protected router: Router,
+    protected route: ActivatedRoute,
     protected localizationService: LocalizationService,
     protected authService: AuthService,
     protected modalService: BsModalService,
@@ -77,13 +83,17 @@ export class PrimaryScreenComponent<
     @Inject(LOAD_SINGLE_STATE) protected loadSingleState: LoadStateService<T>,
   ) {}
 
-  get editMode(): boolean {
-    return this._editMode && this.hasPermission;
+  get editMode(): boolean | null {
+    return this._editMode === null
+      ? null
+      : this._editMode && this.hasPermission;
   }
 
-  set editMode(value: boolean) {
-    this._editMode = value;
-    this.navigate({ editMode: value });
+  set editMode(value: boolean | null) {
+    if (this._editMode !== value) {
+      this._editMode = value;
+      this.navigate({ editMode: value, extras: { replace: true } });
+    }
   }
 
   get items(): T[] | null {
@@ -114,7 +124,7 @@ export class PrimaryScreenComponent<
       .localizeEntity(this.viewDescriptor.viewType.typeName)
       .subscribe(result => (this.localizeDescriptor = result));
 
-    const snapshot = this.router.activatedRoute.snapshot;
+    const snapshot = this.route.snapshot;
     // todo: handle modal
     const showType = snapshot.url[snapshot.url.length - 1].path.toUpperCase();
     const id = snapshot.queryParams.id;
@@ -168,6 +178,7 @@ export class PrimaryScreenComponent<
     this.showType = 'MODAL';
     this._modalRef = this.modalService.show(this.modalForm, {
       class: 'modal-lg',
+      keyboard: false,
     });
     if (!config || !config.dontChangeUrl) {
       this.navigate({ showType: 'MODAL', id });
@@ -203,10 +214,16 @@ export class PrimaryScreenComponent<
     if (this.showType === 'GRID') {
       return;
     }
-    if (event.key === 'ArrowLeft') {
-      this.changeSelected(-1);
-    } else if (event.key === 'ArrowRight') {
-      this.changeSelected(+1);
+    switch (event.key) {
+      case 'ArrowLeft':
+        this.changeSelected(-1);
+        break;
+      case 'ArrowRight':
+        this.changeSelected(1);
+        break;
+      case 'Escape':
+        this.hideModal();
+        break;
     }
   }
 
@@ -227,6 +244,8 @@ export class PrimaryScreenComponent<
   hideModal() {
     if (this._modalRef) {
       this._modalRef.hide();
+      this.showType = 'GRID';
+      this.navigate({});
     }
   }
 
@@ -251,7 +270,6 @@ export class PrimaryScreenComponent<
     this.navigate({
       showType: this.showType,
       id: this.selected.item.id,
-      editMode: this.editMode,
       extras: { replace: true },
     });
   }
@@ -287,27 +305,36 @@ export class PrimaryScreenComponent<
     const { type, view } =
       showType === 'MODAL'
         ? { type: 'grid', view: 'modal' }
-        : { type: showType.toLowerCase(), view: null };
+        : { type: (showType && showType.toLowerCase()) || null, view: null };
+    const path = showType ? ['../' + type] : ['./'];
 
-    const navExtras: SrNavigationExtras = {
+    const params: Dictionary<any> = {};
+    if (id !== undefined) {
+      params.id = id;
+    }
+    if (editMode !== undefined) {
+      params.editMode = editMode;
+    }
+    params.view = view;
+
+    const navExtras: NavigationExtras = {
       queryParamsHandling: 'merge',
-      queryParams: { id, view, editMode },
+      queryParams: params,
+      relativeTo: this.route,
     };
     if (extras) {
       if (extras.replace) {
-        navExtras.skipLocationChange = true;
+        navExtras.replaceUrl = true;
       }
       if (extras.preserveParams) {
         navExtras.queryParamsHandling = 'preserve';
       }
       if (extras.newWindow) {
-        window.open(
-          this.router.createUrlTree(['../' + type], navExtras).toString(),
-        );
+        window.open(this.router.createUrlTree(path, navExtras).toString());
         return;
       }
     }
-    this.router.navigate(['../' + type], navExtras);
+    this.router.navigate(path, navExtras);
   }
 
   private ensureItemsLoaded(forceReload?: boolean) {
