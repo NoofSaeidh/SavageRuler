@@ -8,15 +8,10 @@ import {
   TemplateRef,
   ViewChild,
 } from '@angular/core';
-import {
-  UrlTree,
-  NavigationExtras,
-  Router,
-  ActivatedRoute,
-} from '@angular/router';
+import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap';
-import { Observable } from 'rxjs';
-import { filter, first } from 'rxjs/operators';
+import { Observable, Subject, Subscription } from 'rxjs';
+import { filter, first, throttleTime } from 'rxjs/operators';
 import {
   toServerListResult,
   toServerResult,
@@ -65,6 +60,8 @@ export class PrimaryScreenComponent<
   private _showType: ShowType;
   private _modalRef: BsModalRef;
   private _showModalOnInitItem?: TKey;
+  private _modalSubscription: Subscription;
+  private _modalSubject: Subject<number> = new Subject<number>();
 
   selected: ArrayElement<T> | null;
   hasPermission: boolean = false;
@@ -180,6 +177,9 @@ export class PrimaryScreenComponent<
       class: 'modal-lg',
       keyboard: false,
     });
+    this._modalSubscription = this._modalSubject
+      .pipe(throttleTime(100))
+      .subscribe(e => this.changeSelected(e));
     if (!config || !config.dontChangeUrl) {
       this.navigate({ showType: 'MODAL', id });
     }
@@ -216,10 +216,10 @@ export class PrimaryScreenComponent<
     }
     switch (event.key) {
       case 'ArrowLeft':
-        this.changeSelected(-1);
+        this._modalSubject.next(-1);
         break;
       case 'ArrowRight':
-        this.changeSelected(1);
+        this._modalSubject.next(+1);
         break;
       case 'Escape':
         this.hideModal();
@@ -228,7 +228,6 @@ export class PrimaryScreenComponent<
   }
 
   saveItem(item: T) {
-    console.log(item);
     if (!item) {
       throw new Error('Cannot save not initialized item.');
     }
@@ -244,6 +243,7 @@ export class PrimaryScreenComponent<
   hideModal() {
     if (this._modalRef) {
       this._modalRef.hide();
+      this._modalSubscription.unsubscribe();
       this.showType = 'GRID';
       this.navigate({});
     }
@@ -302,11 +302,10 @@ export class PrimaryScreenComponent<
       preserveParams?: boolean;
     };
   }) {
-    const { type, view } =
+    const [path, view] =
       showType === 'MODAL'
-        ? { type: 'grid', view: 'modal' }
-        : { type: (showType && showType.toLowerCase()) || null, view: null };
-    const path = showType ? ['../' + type] : ['./'];
+        ? [['../grid'], 'modal']
+        : [showType ? ['../' + showType.toLowerCase()] : ['./'], null];
 
     const params: Dictionary<any> = {};
     if (id !== undefined) {
