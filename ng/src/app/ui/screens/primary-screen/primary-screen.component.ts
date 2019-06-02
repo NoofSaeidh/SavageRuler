@@ -7,6 +7,7 @@ import {
   OnInit,
   TemplateRef,
   ViewChild,
+  OnDestroy,
 } from '@angular/core';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap';
@@ -53,14 +54,14 @@ interface ShowConfig {
 export class PrimaryScreenComponent<
   T extends IEntity<TKey>,
   TKey extends EntityKey
-> implements OnInit, AfterViewInit {
+> implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('modalForm') modalForm: TemplateRef<any>;
 
   private _editMode: boolean = false;
   private _showType: ShowType;
   private _modalRef: BsModalRef;
   private _showModalOnInitItem?: TKey;
-  private _swipeSubscription: Subscription;
+  private _subscription: Subscription;
   private _swipeSubject: Subject<number>;
 
   selected: ArrayElement<T> | null;
@@ -126,15 +127,24 @@ export class PrimaryScreenComponent<
     const showType = snapshot.url[snapshot.url.length - 1].path.toUpperCase();
     const id = snapshot.queryParams.id;
 
+    this._subscription = new Subscription();
+
     // check permissions for edit mode
     // todo: rewrite for every action
     const perms = this.viewDescriptor.viewType.permissions;
     if (!perms) {
       this.hasPermission = true;
     } else {
-      this.authService
-        .isGranted$(perms.update, perms.create, perms.update)
-        .subscribe(r => (this.hasPermission = r));
+      this._subscription.add(
+        this.authService
+          .isGranted$(perms.update, perms.create, perms.update)
+          .subscribe(r => {
+            this.hasPermission = r;
+            if (!r) {
+              this.editMode = null;
+            }
+          }),
+      );
     }
 
     this._editMode = TypeConverter.tryParseBoolean(
@@ -143,9 +153,11 @@ export class PrimaryScreenComponent<
     );
 
     this._swipeSubject = new Subject<number>();
-    this._swipeSubscription = this._swipeSubject
-      .pipe(throttleTime(100))
-      .subscribe(e => this.swipeItem(e));
+    this._subscription.add(
+      this._swipeSubject
+        .pipe(throttleTime(100))
+        .subscribe(e => this.swipeItem(e)),
+    );
 
     // todo: check that id would never be 0
     if (showType === 'FORM' && id !== undefined) {
@@ -156,6 +168,10 @@ export class PrimaryScreenComponent<
     } else {
       this.showGrid();
     }
+  }
+
+  ngOnDestroy() {
+    this._subscription.unsubscribe();
   }
 
   ngAfterViewInit() {
@@ -246,17 +262,13 @@ export class PrimaryScreenComponent<
     if (this._modalRef) {
       this._modalRef.hide();
       this.showType = 'GRID';
-      this.navigate({});
+      this.navigate({ id: null });
     }
   }
 
   private swipeItem(diff: number) {
-    if (
-      this.showType === 'GRID' ||
-      !this.selected ||
-      !this.items ||
-      diff === 0
-    ) {
+    console.log([this.selected, this.items]);
+    if (!this.selected || !this.items || diff === 0) {
       return;
     }
     if (!this.selected.index) {
