@@ -60,8 +60,8 @@ export class PrimaryScreenComponent<
   private _showType: ShowType;
   private _modalRef: BsModalRef;
   private _showModalOnInitItem?: TKey;
-  private _modalSubscription: Subscription;
-  private _modalSubject: Subject<number> = new Subject<number>();
+  private _swipeSubscription: Subscription;
+  private _swipeSubject: Subject<number>;
 
   selected: ArrayElement<T> | null;
   hasPermission: boolean = false;
@@ -142,6 +142,11 @@ export class PrimaryScreenComponent<
       false,
     );
 
+    this._swipeSubject = new Subject<number>();
+    this._swipeSubscription = this._swipeSubject
+      .pipe(throttleTime(100))
+      .subscribe(e => this.swipeItem(e));
+
     // todo: check that id would never be 0
     if (showType === 'FORM' && id !== undefined) {
       this.showFormItem(id);
@@ -177,9 +182,6 @@ export class PrimaryScreenComponent<
       class: 'modal-lg',
       keyboard: false,
     });
-    this._modalSubscription = this._modalSubject
-      .pipe(throttleTime(100))
-      .subscribe(e => this.changeSelected(e));
     if (!config || !config.dontChangeUrl) {
       this.navigate({ showType: 'MODAL', id });
     }
@@ -216,10 +218,10 @@ export class PrimaryScreenComponent<
     }
     switch (event.key) {
       case 'ArrowLeft':
-        this._modalSubject.next(-1);
+        this._swipeSubject.next(-1);
         break;
       case 'ArrowRight':
-        this._modalSubject.next(+1);
+        this._swipeSubject.next(+1);
         break;
       case 'Escape':
         this.hideModal();
@@ -243,14 +245,18 @@ export class PrimaryScreenComponent<
   hideModal() {
     if (this._modalRef) {
       this._modalRef.hide();
-      this._modalSubscription.unsubscribe();
       this.showType = 'GRID';
       this.navigate({});
     }
   }
 
-  private changeSelected(diff: number) {
-    if (!this.selected || !this.items || diff === 0) {
+  private swipeItem(diff: number) {
+    if (
+      this.showType === 'GRID' ||
+      !this.selected ||
+      !this.items ||
+      diff === 0
+    ) {
       return;
     }
     if (!this.selected.index) {
