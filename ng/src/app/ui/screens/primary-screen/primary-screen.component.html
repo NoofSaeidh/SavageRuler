@@ -11,7 +11,7 @@
         </button>
       </div>
       <!-- Edit mode -->
-      <div *ngIf="hasPermission" class="col">
+      <div *ngIf="permissions" class="col">
         <button
           class="btn btn-info float-right"
           [hidden]="editMode"
@@ -68,7 +68,7 @@
     <ng-template #formReadRef>
       <sr-readonly-form
         *ngIf="selected"
-        [item]="selected.item"
+        [item]="selected"
         [localize]="localizeDescriptor"
         [view]="viewDescriptor.readFormTypeEntries"
       ></sr-readonly-form>
@@ -77,7 +77,7 @@
     <ng-template #formEditRef>
       <sr-edit-form
         *ngIf="selected"
-        [item]="selected.item"
+        [item]="selected"
         [localize]="localizeDescriptor"
         [view]="viewDescriptor.editFormTypeEntries"
         (save)="saveItem($event)"

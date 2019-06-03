@@ -8,15 +8,13 @@ import {
   TemplateRef,
   ViewChild,
   OnDestroy,
+  Injector,
 } from '@angular/core';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap';
 import { Observable, Subject, Subscription } from 'rxjs';
 import { filter, first, throttleTime } from 'rxjs/operators';
-import {
-  toServerListResult,
-  toServerResult,
-} from 'src/app/api/operators/to-server-result';
+import { toServerListResult, toServerResult } from 'src/app/api/operators/to-server-result';
 import { ApiCrudService } from 'src/app/api/services/api-crud.service';
 import { EntityKey, IEntity } from 'src/app/api/types/ientity';
 import { ServerResponse } from 'src/app/api/types/responses';
@@ -28,6 +26,8 @@ import { LocalizeDescriptor } from 'src/app/types/descriptors/localize-descripto
 import { EntityViewDescriptor } from 'src/app/types/descriptors/view-descriptor';
 import { ArrayElement } from 'src/app/types/global/array-element';
 import { Dictionary } from 'src/app/types/global/dictionary';
+import { Location } from '@angular/common';
+import { PrimaryScreenStateService } from './primary-screen-state.service';
 
 export const LOAD_LIST_STATE = new InjectionToken<LoadStateService<any>>(
   'List load state for readonly screen',
@@ -36,7 +36,7 @@ export const LOAD_SINGLE_STATE = new InjectionToken<LoadStateService<any[]>>(
   'Single item load state for readonly screen',
 );
 
-type ShowType = 'GRID' | 'FORM' | 'MODAL';
+export type ShowType = 'GRID' | 'FORM' | 'MODAL';
 
 interface ShowConfig {
   dontChangeUrl?: boolean;
@@ -51,23 +51,29 @@ interface ShowConfig {
     { provide: LOAD_SINGLE_STATE, useClass: LoadStateService },
   ],
 })
-export class PrimaryScreenComponent<
-  T extends IEntity<TKey>,
-  TKey extends EntityKey
-> implements OnInit, AfterViewInit, OnDestroy {
+export class PrimaryScreenComponent<T extends IEntity<TKey>, TKey extends EntityKey>
+  implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('modalForm') modalForm: TemplateRef<any>;
 
-  private _editMode: boolean = false;
-  private _showType: ShowType;
+  // private _editMode: boolean = false;
+  // private _showType: ShowType;
+  // private _showModalOnInitItem?: TKey;
+  // private _swipeSubject: Subject<number>;
+
+  // selected: ArrayElement<T> | null;
+  // hasPermission: boolean = false;
+
   private _modalRef: BsModalRef;
-  private _showModalOnInitItem?: TKey;
   private _subscription: Subscription;
-  private _swipeSubject: Subject<number>;
 
-  selected: ArrayElement<T> | null;
-  hasPermission: boolean = false;
+  private _items: T[] | null;
+  private _selected: ArrayElement<T> | null;
+  private _showType: ShowType;
+  private _editMode: boolean | null;
+  private _isLoading: boolean;
+  private _permissions: boolean; // todo: permission types
 
-  localizeDescriptor: LocalizeDescriptor<T>;
+  private _localizeDescriptor: LocalizeDescriptor<T>;
 
   constructor(
     public viewDescriptor: EntityViewDescriptor<T>,
@@ -77,97 +83,92 @@ export class PrimaryScreenComponent<
     protected localizationService: LocalizationService,
     protected authService: AuthService,
     protected modalService: BsModalService,
-    @Inject(LOAD_LIST_STATE) protected loadListState: LoadStateService<T[]>,
-    @Inject(LOAD_SINGLE_STATE) protected loadSingleState: LoadStateService<T>,
+    protected stateService: PrimaryScreenStateService<T, TKey>,
   ) {}
 
-  get editMode(): boolean | null {
-    return this._editMode === null
-      ? null
-      : this._editMode && this.hasPermission;
-  }
-
-  set editMode(value: boolean | null) {
-    if (this._editMode !== value) {
-      this._editMode = value;
-      this.navigate({ editMode: value, extras: { replace: true } });
-    }
-  }
-
   get items(): T[] | null {
-    return this.loadListState.value;
+    return this._items;
   }
 
-  get isLoading(): boolean {
-    return (
-      this.loadListState.state.isLoading && this.loadSingleState.state.isLoading
-    );
+  get selected(): T | null {
+    return (this._selected && this._selected.item) || null;
   }
 
   get showType(): ShowType {
-    if (this._showType === 'GRID') {
-      return this._showType;
-    }
-    return (this.selected && this._showType) || 'GRID';
+    return this._showType;
   }
 
-  set showType(value: ShowType) {
-    this._showType = value;
+  get editMode(): boolean | null {
+    return (this._editMode && this._permissions) || null;
+  }
+
+  set editMode(value: boolean | null) {
+    this.stateService.editMode$.next(value);
+  }
+
+  get isLoading(): boolean {
+    return this._isLoading;
+  }
+
+  get permissions(): boolean {
+    return this._permissions;
+  }
+
+  get localizeDescriptor(): LocalizeDescriptor<T> {
+    return this._localizeDescriptor;
   }
 
   ngOnInit() {
-    this.selected = null;
+    console.log(this);
 
+    this._subscription = this._subscribeState();
+
+    if (!this.stateService.initialized) {
+      this._initializeState();
+    }
+  }
+
+  private _subscribeState(): Subscription {
+    return new Subscription()
+      .add(this.stateService.showType$.subscribe(v => (this._showType = v)))
+      .add(this.stateService.selected$.subscribe(v => this._setSelected(v)))
+      .add(this.stateService.items$.subscribe(v => (this._items = v)))
+      .add(this.stateService.isLoading$.subscribe(v => (this._isLoading = v)))
+      .add(this.stateService.permissions$.subscribe(v => (this._permissions = v)))
+      .add(this.stateService.editMode$.subscribe(v => (this._editMode = v)))
+      .add(this.stateService.localizeDescriptor$.subscribe(v => (this._localizeDescriptor = v)))
+      .add(this.stateService.swipeItem$.pipe(throttleTime(100)).subscribe(v => this.swipeItem(v)));
+  }
+
+  private _initializeState() {
+    const state = this.stateService;
+    state.isLoading$.next(true);
+    state.showType$.next('GRID');
+    state.selected$.next(null);
+    state.editMode$.next(null);
     this.localizationService
       .localizeEntity(this.viewDescriptor.viewType.typeName)
-      .subscribe(result => (this.localizeDescriptor = result));
+      .subscribe(state.localizeDescriptor$);
 
-    const snapshot = this.route.snapshot;
-    // todo: handle modal
-    const showType = snapshot.url[snapshot.url.length - 1].path.toUpperCase();
-    const id = snapshot.queryParams.id;
-
-    this._subscription = new Subscription();
-
-    // check permissions for edit mode
-    // todo: rewrite for every action
     const perms = this.viewDescriptor.viewType.permissions;
     if (!perms) {
-      this.hasPermission = true;
+      state.permissions$.next(true);
     } else {
-      this._subscription.add(
-        this.authService
-          .isGranted$(perms.update, perms.create, perms.update)
-          .subscribe(r => {
-            this.hasPermission = r;
-            if (!r) {
-              this.editMode = null;
-            }
-          }),
-      );
+      this.authService
+        .isGranted$(perms.update, perms.create, perms.update)
+        .subscribe(state.permissions$);
     }
 
-    this._editMode = TypeConverter.tryParseBoolean(
-      snapshot.queryParams.editMode,
-      false,
-    );
+    // todo: lazy?
+    this.apiService
+      .getAll()
+      .pipe(toServerListResult())
+      .subscribe(v => {
+        state.isLoading$.next(false);
+        state.items$.next(v);
+      });
 
-    this._swipeSubject = new Subject<number>();
-    this._subscription.add(
-      this._swipeSubject
-        .pipe(throttleTime(100))
-        .subscribe(e => this.swipeItem(e)),
-    );
-
-    // todo: check that id would never be 0
-    if (showType === 'FORM' && id !== undefined) {
-      this.showFormItem(id);
-    } else if (id !== undefined) {
-      this.showGrid({ dontChangeUrl: true });
-      this._showModalOnInitItem = id;
-    } else {
-      this.showGrid();
-    }
+    this.stateService.markInitialized();
   }
 
   ngOnDestroy() {
@@ -175,53 +176,65 @@ export class PrimaryScreenComponent<
   }
 
   ngAfterViewInit() {
-    if (this._showModalOnInitItem) {
-      const item = this._showModalOnInitItem;
-      this._showModalOnInitItem = undefined;
-      // setTimeout is required otherwise here would be angular error
-      setTimeout(() => this.showModalItem(item));
+    // if (this._showModalOnInitItem) {
+    //   const item = this._showModalOnInitItem;
+    //   this._showModalOnInitItem = undefined;
+    //   // setTimeout is required otherwise here would be angular error
+    //   setTimeout(() => this.showModalItem(item));
+    // }
+  }
+
+  private _setSelected(item: ArrayElement<T> | TKey) {
+    if (typeof item === 'object' /* is T */) {
+      this._selected = item;
+    } /* is TKey */ else {
+      this.apiService
+        .get(item)
+        .pipe(toServerResult())
+        .subscribe(v => (this._selected = { item: v }));
     }
   }
 
   showFormItem(item: ArrayElement<T> | TKey, config?: ShowConfig) {
-    const id = this.showItem(item);
-    this.showType = 'FORM';
-    if (!config || !config.dontChangeUrl) {
-      this.navigate({ showType: 'FORM', id });
-    }
+    this.stateService.selected$.next(item);
+    this.stateService.showType$.next('FORM');
+    // if (!config || !config.dontChangeUrl) {
+    //   this._navigate({ showType: 'FORM', id });
+    // }
   }
 
   showModalItem(item: ArrayElement<T> | TKey, config?: ShowConfig) {
-    const id = this.showItem(item);
-    this.showType = 'MODAL';
+    this.stateService.selected$.next(item);
+    this.stateService.showType$.next('MODAL');
     this._modalRef = this.modalService.show(this.modalForm, {
       class: 'modal-lg',
       keyboard: false,
     });
-    if (!config || !config.dontChangeUrl) {
-      this.navigate({ showType: 'MODAL', id });
-    }
+    // if (!config || !config.dontChangeUrl) {
+    //   this._navigate({ showType: 'MODAL', id });
+    // }
   }
 
   showGrid(config?: ShowConfig) {
-    this.showType = 'GRID';
-    this.ensureItemsLoaded();
-    if (!config || !config.dontChangeUrl) {
-      this.navigate({ showType: 'GRID' });
-    }
+    this.stateService.showType$.next('GRID');
+    // this.showType = 'GRID';
+    // this.ensureItemsLoaded();
+    // if (!config || !config.dontChangeUrl) {
+    //   this._navigate({ showType: 'GRID' });
+    // }
   }
 
   onGridRowClicked(event: { item: T; index: number; mouse: MouseEvent }) {
     if (event.mouse.altKey) {
       this.showFormItem(event);
     } else if (event.mouse.ctrlKey) {
-      this.navigate({
-        showType: 'FORM',
-        id: event.item.id,
-        extras: {
-          newWindow: true,
-        },
-      });
+      // this._navigate({
+      //   showType: 'FORM',
+      //   id: event.item.id,
+      //   extras: {
+      //     newWindow: true,
+      //   },
+      // });
     } else {
       this.showModalItem(event);
     }
@@ -234,10 +247,10 @@ export class PrimaryScreenComponent<
     }
     switch (event.key) {
       case 'ArrowLeft':
-        this._swipeSubject.next(-1);
+        this.stateService.swipeItem$.next(-1);
         break;
       case 'ArrowRight':
-        this._swipeSubject.next(+1);
+        this.stateService.swipeItem$.next(+1);
         break;
       case 'Escape':
         this.hideModal();
@@ -255,139 +268,94 @@ export class PrimaryScreenComponent<
     } else {
       obs = this.apiService.create(item);
     }
-    obs.subscribe(r => this.ensureItemsLoaded(true));
+    // todo:
+    // obs.subscribe(r => this.ensureItemsLoaded(true));
   }
 
   hideModal() {
     if (this._modalRef) {
       this._modalRef.hide();
-      this.showType = 'GRID';
-      this.navigate({ id: null });
+      this.stateService.showType$.next('GRID');
+      // this._navigate({ id: null });
     }
   }
 
   private swipeItem(diff: number) {
     console.log([this.selected, this.items]);
     if (!this.selected || !this.items || diff === 0) {
+      // todo: fetch items
       return;
     }
-    if (!this.selected.index) {
+    if (!this._selected.index) {
       // cannot use indexOf - because element could be not referencly equal
-      this.selected.index = this.items.findIndex(
-        item => item.id === this.selected.item.id,
-      );
+      this._selected.index = this.items.findIndex(item => item.id === this._selected.item.id);
     }
-    const resultIndex = this.selected.index + diff;
+    const resultIndex = this._selected.index + diff;
     if (resultIndex < 0 || resultIndex >= this.items.length) {
       return;
     }
-    this.selected = {
+    this.stateService.selected$.next({
       item: this.items[resultIndex],
       index: resultIndex,
-    };
-    this.navigate({
-      showType: this.showType,
-      id: this.selected.item.id,
-      extras: { replace: true },
     });
+    // this._navigate({
+    //   showType: this.showType,
+    //   id: this.selected.item.id,
+    //   extras: { replace: true },
+    // });
   }
 
-  private showItem(item: ArrayElement<T> | TKey): TKey {
-    let id: TKey;
-    if (typeof item === 'object' /* is T */) {
-      id = item.item.id;
-      this.selected = item;
-    } /* is TKey */ else {
-      id = item;
-      this.ensureSelectedItemLoaded(id);
-    }
-    return id;
-  }
+  // private _navigate({
+  //   showType,
+  //   id,
+  //   editMode,
+  //   extras,
+  // }: {
+  //   // undefined means don't change, null means set to null
+  //   showType?: ShowType;
+  //   id?: TKey | null;
+  //   editMode?: boolean | null;
+  //   extras?: {
+  //     newWindow?: boolean;
+  //     replace?: boolean;
+  //     preserveParams?: boolean;
+  //     useRooter?: boolean; // router recreates component, so default is using location
+  //   };
+  // }) {
+  //   const [path, view] =
+  //     showType === 'MODAL'
+  //       ? [['../grid'], 'modal']
+  //       : [showType ? ['../' + showType.toLowerCase()] : ['./'], null];
 
-  private navigate({
-    showType,
-    id,
-    editMode,
-    extras,
-  }: {
-    // undefined means don't change, null means set to null
-    showType?: ShowType;
-    id?: TKey | null;
-    editMode?: boolean | null;
-    extras?: {
-      newWindow?: boolean;
-      replace?: boolean;
-      preserveParams?: boolean;
-    };
-  }) {
-    const [path, view] =
-      showType === 'MODAL'
-        ? [['../grid'], 'modal']
-        : [showType ? ['../' + showType.toLowerCase()] : ['./'], null];
+  //   const params: Dictionary<any> = {};
+  //   if (id !== undefined) {
+  //     params.id = id;
+  //   }
+  //   if (editMode !== undefined) {
+  //     params.editMode = editMode;
+  //   }
+  //   params.view = view;
 
-    const params: Dictionary<any> = {};
-    if (id !== undefined) {
-      params.id = id;
-    }
-    if (editMode !== undefined) {
-      params.editMode = editMode;
-    }
-    params.view = view;
-
-    const navExtras: NavigationExtras = {
-      queryParamsHandling: 'merge',
-      queryParams: params,
-      relativeTo: this.route,
-    };
-    if (extras) {
-      if (extras.replace) {
-        navExtras.replaceUrl = true;
-      }
-      if (extras.preserveParams) {
-        navExtras.queryParamsHandling = 'preserve';
-      }
-      if (extras.newWindow) {
-        window.open(this.router.createUrlTree(path, navExtras).toString());
-        return;
-      }
-    }
-    this.router.navigate(path, navExtras);
-  }
-
-  private ensureItemsLoaded(forceReload?: boolean) {
-    if (this.items && !forceReload) {
-      return;
-    }
-    this.loadListState.load(
-      this.apiService.getAll().pipe(toServerListResult()),
-    );
-  }
-
-  private ensureSelectedItemLoaded(id: TKey) {
-    if (this.selected && this.selected.item.id === id) {
-      return;
-    }
-    if (
-      this.loadSingleState.state.isLoaded &&
-      this.loadSingleState.value.id === id
-    ) {
-      this.selected = { item: this.loadSingleState.value };
-      return;
-    }
-    if (this.loadListState.state.isLoaded) {
-      // todo: refetch if not?
-      this.selected = { item: this.loadListState.value.find(i => i.id === id) };
-    }
-    if (!this.selected) {
-      this.loadSingleState.load(this.apiService.get(id).pipe(toServerResult()));
-      this.loadSingleState.subject
-        .pipe(
-          filter(state => state.isLoaded),
-          first(),
-        )
-        .subscribe(state => {
-          this.selected = { item: state.value };
-        });
-    }
-  }
+  //   const navExtras: NavigationExtras = {
+  //     queryParamsHandling: 'merge',
+  //     queryParams: params,
+  //     relativeTo: this.route,
+  //   };
+  //   if (extras) {
+  //     if (extras.replace) {
+  //       navExtras.replaceUrl = true;
+  //     }
+  //     if (extras.preserveParams) {
+  //       navExtras.queryParamsHandling = 'preserve';
+  //     }
+  //     if (extras.newWindow) {
+  //       window.open(this.router.createUrlTree(path, navExtras).toString());
+  //       return;
+  //     }
+  //     if (extras.useRooter) {
+  //       this.router.navigate(path, navExtras);
+  //     }
+  //   }
+  //   this.router.navigate(path, navExtras);
+  // }
 }

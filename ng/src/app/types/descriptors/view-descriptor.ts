@@ -20,7 +20,8 @@ interface ViewTypeEntries<T, F> {
 }
 
 export interface ReadFormField {
-  showNullValue?: boolean; // if true null will be presented (undefined willl not be presented always)
+  // if true null will be presented (undefined willl not be presented always)
+  showNullValue?: boolean;
   // preformated?: boolean; // use <pre> instead of <p> for value
   addHorizontalRuler?: boolean;
   hideLabel?: boolean;
@@ -43,8 +44,6 @@ export interface EditFormField {
 
 export type EditFormDescriptor<T> = TypeDescriptor<T, EditFormField>;
 export type EditFormTypeEntries<T> = ViewTypeEntries<T, EditFormField>;
-
-
 
 export interface InfoGridField {
   sortable?: boolean;
@@ -77,7 +76,7 @@ export class EntityViewDescriptor<T> {
     }
     return {
       viewType: this.viewType,
-      entries: toTypeEntries(this.infoGrid)
+      entries: toTypeEntries(this.infoGrid),
     };
   }
 
@@ -87,7 +86,7 @@ export class EntityViewDescriptor<T> {
     }
     return {
       viewType: this.viewType,
-      entries: toTypeEntries(this.readForm)
+      entries: toTypeEntries(this.readForm),
     };
   }
 
@@ -97,7 +96,7 @@ export class EntityViewDescriptor<T> {
     }
     return {
       viewType: this.viewType,
-      entries: toTypeEntries(this.editForm)
+      entries: toTypeEntries(this.editForm),
     };
   }
 }

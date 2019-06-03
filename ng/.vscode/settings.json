@@ -3,5 +3,6 @@
     "tslint.autoFixOnSave": true,
     "editor.insertSpaces": true,
     "editor.tabSize": 2,
-    "FSharp.fsacRuntime": "netcore"
+    "FSharp.fsacRuntime": "netcore",
+    "prettier.printWidth": 100,
 }
