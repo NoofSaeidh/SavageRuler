@@ -19,7 +19,10 @@ export class StringHelper {
       .replace(/\n/g, '<br />');
   }
 
-  static tryParseBoolean(input: string): boolean | null {
+  static tryParseBoolean(input?: string): boolean | null {
+    if (input === undefined || input === null) {
+      return null;
+    }
     if (input.toLowerCase() === 'true') {
       return true;
     }
