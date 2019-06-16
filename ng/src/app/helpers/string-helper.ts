@@ -31,4 +31,14 @@ export class StringHelper {
     }
     return null;
   }
+
+  static tryParseValues<T>(input: string, ...values: T[]): T | null;
+  static tryParseValues(input: string, ...values: string[]): string | null {
+    for (const val of values) {
+      if (val.toLowerCase() === input.toLowerCase()) {
+        return val;
+      }
+    }
+    return null;
+  }
 }

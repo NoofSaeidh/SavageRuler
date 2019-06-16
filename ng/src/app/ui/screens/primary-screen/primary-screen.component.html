@@ -1,29 +1,40 @@
 <div class="primary-screen" [class.edit-mode]="editMode">
-  <div *ngIf="isLoading; else loaded" class="loading">Loading...</div>
-  <ng-template #loaded>
+  <div
+    *ngIf="{
+      items: items$ | async,
+      view: view$ | async,
+      selected: selected$ | async
+    } as data"
+  >
+    <!-- MODAL -->
+    <ng-template #modalForm>
+      <div class="modal-content">
+        <div class="modal-body">
+          <ng-container *ngTemplateOutlet="editMode ? formEditRef : formReadRef"></ng-container>
+        </div>
+        <div *ngIf="!editMode" class="modal-footer">
+          <button class="btn btn-info" (click)="hideModal()">
+            {{ 'Close' | localize }}
+          </button>
+        </div>
+      </div>
+    </ng-template>
+
     <!-- Buttons -->
     <div class="row">
       <!-- Back to Grid button -->
-      <div class="col" [hidden]="showType !== 'FORM'">
-        <button class="btn btn-secondary" (click)="showGrid()">
+      <!-- <div class="col" [hidden]="showType !== 'FORM'"> -->
+      <!-- <button class="btn btn-secondary" (click)="showGrid()">
           <i class="fas fa-th"></i>
           {{ 'BackToGrid' | localize }}
-        </button>
-      </div>
+        </button> -->
+      <!-- </div> -->
       <!-- Edit mode -->
       <div *ngIf="permissions" class="col">
-        <button
-          class="btn btn-info float-right"
-          [hidden]="editMode"
-          (click)="editMode = true"
-        >
+        <button class="btn btn-info float-right" [hidden]="editMode" (click)="editMode = true">
           {{ 'EnableEditMode' | localize }}
         </button>
-        <button
-          class="btn btn-danger float-right"
-          [hidden]="!editMode"
-          (click)="editMode = false"
-        >
+        <button class="btn btn-danger float-right" [hidden]="!editMode" (click)="editMode = false">
           {{ 'DisableEditMode' | localize }}
         </button>
       </div>
@@ -41,58 +52,48 @@
       role="dialog"
       aria-labelledby="dialog-auto-name"
     > -->
-    <ng-template #modalForm>
-      <div class="modal-content">
-        <div class="modal-body">
-          <ng-container
-            *ngTemplateOutlet="editMode ? formEditRef : formReadRef"
-          ></ng-container>
-        </div>
-        <div *ngIf="!editMode" class="modal-footer">
-          <button class="btn btn-info" (click)="hideModal()">
-            {{ 'Close' | localize }}
-          </button>
+    <div *ngIf="data.selected as selected">
+      <!-- </div> -->
+      <!-- if place *ngIf here - it will recreate readonly form on each item change -->
+      <!-- FORM -->
+      <div class="" [hidden]="!data.view.form">
+        <div *ngIf="!editMode; else formEditRef">
+          <ng-container *ngTemplateOutlet="formReadRef"></ng-container>
         </div>
       </div>
-    </ng-template>
-    <!-- </div> -->
 
-    <!-- if place *ngIf here - it will recreate readonly form on each item change -->
-    <!-- FORM -->
-    <div class="" [hidden]="showType !== 'FORM'">
-      <div *ngIf="!editMode; else formEditRef">
-        <ng-container *ngTemplateOutlet="formReadRef"></ng-container>
-      </div>
+      <ng-template #formReadRef>
+        <sr-readonly-form
+          *ngIf="selected"
+          [item]="selected"
+          [localize]="localizeDescriptor"
+          [view]="viewDescriptor.readFormTypeEntries"
+        ></sr-readonly-form>
+      </ng-template>
+
+      <ng-template #formEditRef>
+        <sr-edit-form
+          *ngIf="selected"
+          [item]="selected"
+          [localize]="localizeDescriptor"
+          [view]="viewDescriptor.editFormTypeEntries"
+          (cancel)="hideModal()"
+        ></sr-edit-form>
+      </ng-template>
     </div>
-
-    <ng-template #formReadRef>
-      <sr-readonly-form
-        *ngIf="selected"
-        [item]="selected"
-        [localize]="localizeDescriptor"
-        [view]="viewDescriptor.readFormTypeEntries"
-      ></sr-readonly-form>
-    </ng-template>
-
-    <ng-template #formEditRef>
-      <sr-edit-form
-        *ngIf="selected"
-        [item]="selected"
-        [localize]="localizeDescriptor"
-        [view]="viewDescriptor.editFormTypeEntries"
-        (save)="saveItem($event)"
-        (cancel)="hideModal()"
-      ></sr-edit-form>
-    </ng-template>
 
     <!-- GRID -->
     <sr-info-grid
-      *ngIf="items"
-      [items]="items"
+      *ngIf="data.items; else loading"
+      [items]="data.items"
       [localize]="localizeDescriptor"
       [view]="viewDescriptor.infoGridTypeEntries"
-      [hidden]="showType === 'FORM'"
+      [hidden]="!data.view.grid"
       (rowClicked)="onGridRowClicked($event)"
     ></sr-info-grid>
-  </ng-template>
+
+    <ng-template #loading>
+      <div class="loading">Loading</div>
+    </ng-template>
+  </div>
 </div>
