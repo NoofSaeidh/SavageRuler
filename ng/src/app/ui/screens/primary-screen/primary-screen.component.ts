@@ -8,7 +8,16 @@ import {
   HostListener,
 } from '@angular/core';
 import { IEntity, EntityKey } from 'src/app/api/types/ientity';
-import { BehaviorSubject, Subject, Subscription, Observable, of, zip, merge } from 'rxjs';
+import {
+  BehaviorSubject,
+  Subject,
+  Subscription,
+  Observable,
+  of,
+  zip,
+  merge,
+  combineLatest,
+} from 'rxjs';
 import { ViewState } from '@angular/core/src/view';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap';
 import { ArrayElement } from 'src/app/types/global/array-element';
@@ -28,6 +37,9 @@ import {
   filter,
   startWith,
   tap,
+  throttleTime,
+  switchAll,
+  mergeAll,
 } from 'rxjs/operators';
 import { StringHelper } from 'src/app/helpers/string-helper';
 
@@ -49,7 +61,7 @@ class View {
     this.form = this.type.indexOf('Form') >= 0;
     this.modal = this.type.indexOf('Modal') >= 0;
     this.edit = this.type.indexOf('Edit') >= 0;
-    this.grid = !this.form && !this.modal;
+    this.grid = !this.form;
   }
   static parse(type?: string): View {
     if (!type) {
@@ -80,10 +92,13 @@ class View {
 })
 export class PrimaryScreenComponent<T extends IEntity<TKey>, TKey extends EntityKey>
   implements OnInit, OnDestroy {
-  @ViewChild('modalForm') modalForm: TemplateRef<any>;
+  @ViewChild('modalForm') public modalForm: TemplateRef<any>;
+
+  private _modalRef: BsModalRef;
 
   private _subscription: Subscription;
-  private _selected$ = new Subject<{ item?: T; id: TKey } | null>();
+  private _selected$ = new Subject<{ item?: T; id: TKey; index?: number } | null>();
+  private _swipe$ = new Subject<number>();
 
   public localizeDescriptor: LocalizeDescriptor<T>;
   public items$: Observable<T[]>;
@@ -108,22 +123,67 @@ export class PrimaryScreenComponent<T extends IEntity<TKey>, TKey extends Entity
   ngOnInit() {
     console.log(this);
     this.items$ = this.apiService.getAll().pipe(toServerListResult());
-    this.selected$ = this._selected$.pipe(
-      distinctUntilKeyChanged('id'),
-      switchMap(i => {
-        if (!i) {
-          return of(null);
+    this.selected$ = combineLatest(this.items$, merge(this._selected$, this._swipe$)).pipe(
+      map(([items, target]) => {
+        let item: T;
+        if (typeof target === 'number') {
+          // todo: swipe
+        } else {
+          if (target.item) {
+            item = target.item;
+          } else if (target.index) {
+            item = items[target.index];
+          }
+          if (!item && target.id) {
+            item = items.find(i => i.id === target.id);
+          }
+          if (!item) {
+            return null;
+          }
         }
+        return { item, id: item.id };
+      }),
+      filter(i => !!i),
+      switchMap(i => {
         if (i.item) {
           return of(i.item);
         }
         return this.apiService.get(i.id).pipe(toServerResult());
       }),
     );
+
+    //   this._selected$.pipe<any, T | null>(
+    //     distinctUntilKeyChanged('id'),
+    //     switchMap(i => {
+    //       if (!i) {
+    //         return of(null);
+    //       }
+    //       if (i.item) {
+    //         return of(i.item);
+    //       }
+    //       return this.apiService.get(i.id).pipe(toServerResult());
+    //     }),
+    //   ),
+    //   this._swipe$.pipe(
+
+    //   )
+    // ) ;
     this.view$ = this.route.queryParamMap.pipe(
       map(q => q.get(query.view)),
       distinctUntilChanged(),
       map(v => View.parse(v)),
+      tap(v => {
+        if (!v.modal && this._modalRef) {
+          this._modalRef.hide();
+          this._modalRef = null;
+        } else if (v.modal && !this._modalRef) {
+          // console.log(this.modalForm);
+          this._modalRef = this.modalService.show(this.modalForm, {
+            class: 'modal-lg',
+            keyboard: false,
+          });
+        }
+      }),
     );
 
     this._subscription = new Subscription()
@@ -140,6 +200,41 @@ export class PrimaryScreenComponent<T extends IEntity<TKey>, TKey extends Entity
             this._selected$.next({ id: id as TKey });
           }
         }),
+      )
+      .add(
+        this._swipe$
+          .pipe(
+            // throttleTime(100),
+            switchMap(diff => {
+              return combineLatest(
+                this._selected$, // .pipe(tap(r => console.log(r)), filter(s => !!s)),
+                this.items$, // .pipe(tap(r => console.log(r)), filter(i => !!i)),
+              ).pipe(
+                tap(r => console.log(r)),
+                map(([selected, items]) => {
+                  console.log([selected, items]);
+                  let index: number = null;
+                  if (selected.index) {
+                    index = selected.index + diff;
+                  } else {
+                    const _index = items.findIndex(i => i.id === selected.id);
+                    if (_index >= 0) {
+                      index = _index + diff;
+                    }
+                  }
+                  if (index != null && index >= 0 && index < items.length) {
+                    const item = items[index];
+                    return { item, id: item.id, index };
+                  }
+                  return null;
+                }),
+                filter(i => !!i),
+              );
+            }),
+          )
+          .subscribe(s => {
+            this._selected$.next(s);
+          }),
       );
   }
 
@@ -150,10 +245,10 @@ export class PrimaryScreenComponent<T extends IEntity<TKey>, TKey extends Entity
   hideModal() {}
 
   onGridRowClicked(event: { item: T; index: number; mouse: MouseEvent }) {
-    this._selected$.next({ item: event.item, id: event.item.id });
+    this._selected$.next({ item: event.item, id: event.item.id, index: event.index });
     this.router.navigate([], {
       queryParams: {
-        view: 'Form',
+        view: event.mouse.altKey ? 'Form' : 'Modal',
         id: event.item.id,
       },
       queryParamsHandling: 'merge',
@@ -180,10 +275,10 @@ export class PrimaryScreenComponent<T extends IEntity<TKey>, TKey extends Entity
     // }
     switch (event.key) {
       case 'ArrowLeft':
-        // this.stateService.swipeItem$.next(-1);
+        this._swipe$.next(-1);
         break;
       case 'ArrowRight':
-        // this.stateService.swipeItem$.next(+1);
+        this._swipe$.next(+1);
         break;
       case 'Escape':
         this.router.navigate([], {
