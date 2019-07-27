@@ -88,69 +88,6 @@ class View {
   }
 }
 
-// .add(
-//   this._swipe$
-//     .pipe(
-//       // throttleTime(100),
-//       switchMap(diff => {
-//         return combineLatest(
-//           this._selected$, // .pipe(tap(r => console.log(r)), filter(s => !!s)),
-//           this.items$, // .pipe(tap(r => console.log(r)), filter(i => !!i)),
-//         ).pipe(
-//           tap(r => console.log(r)),
-//           map(([selected, items]) => {
-//             console.log([selected, items]);
-//             let index: number = null;
-//             if (selected.index) {
-//               index = selected.index + diff;
-//             } else {
-//               const _index = items.findIndex(i => i.id === selected.id);
-//               if (_index >= 0) {
-//                 index = _index + diff;
-//               }
-//             }
-//             if (index != null && index >= 0 && index < items.length) {
-//               const item = items[index];
-//               return { item, id: item.id, index };
-//             }
-//             return null;
-//           }),
-//           filter(i => !!i),
-//         );
-//       }),
-//     )
-//     .subscribe(s => {
-//       this._selected$.next(s);
-//     }),
-// );
-
-// this.selected$ = combineLatest(
-//   this.items$,
-//   this._selected$.pipe(
-//     filter(s => !!s),
-//     switchMap(s => {
-//       return this._swipe$.pipe(
-//         map(diff => {
-//           let index: number = null;
-//           if (s.index) {
-//             index = s.index + diff;
-//           }
-//           //  else {
-//           //   const _index = items.findIndex(i => i.id === selected.id);
-//           //   if (_index >= 0) {
-//           //     index = _index + diff;
-//           //   }
-//           // }
-//           // if (index != null && index >= 0 && index < items.length) {
-//           //   const item = items[index];
-//           //   return { item, id: item.id, index };
-//           // }
-//           return null;
-//         }),
-//       );
-//     }),
-//   ),
-
 @Component({
   selector: 'sr-primary-screen',
   templateUrl: './primary-screen.component.html',
@@ -228,7 +165,7 @@ export class PrimaryScreenComponent<T extends IEntity<TKey>, TKey extends Entity
 
     this.selected$ = selected.pipe(
       switchMap(target => {
-        if (!target.index) {
+        if (typeof target.index !== 'number') {
           console.warn('target without index', target);
           return of(target.item);
         }
@@ -236,8 +173,10 @@ export class PrimaryScreenComponent<T extends IEntity<TKey>, TKey extends Entity
         this._swipe$.next(0);
         return this._swipe$.pipe(
           startWith(0),
+          throttleTime(50),
           scan((ac, diff) => ac + diff),
           map(diff => target.index + diff),
+          distinctUntilChanged(),
           filter(diff => {
             // hack: adjustments on side values
             if (diff < 0) {
@@ -251,6 +190,14 @@ export class PrimaryScreenComponent<T extends IEntity<TKey>, TKey extends Entity
           }),
           map(index => target.items[index]),
         );
+      }),
+      tap(i => {
+        this.router.navigate([], {
+          queryParams: {
+            id: i.id,
+          },
+          queryParamsHandling: 'merge',
+        });
       }),
     );
 
@@ -308,7 +255,6 @@ export class PrimaryScreenComponent<T extends IEntity<TKey>, TKey extends Entity
 
   @HostListener('window:keydown', ['$event'])
   onKeyDown(event: KeyboardEvent) {
-    console.log(event);
     switch (event.key) {
       case 'ArrowLeft':
         this._swipe$.next(-1);
