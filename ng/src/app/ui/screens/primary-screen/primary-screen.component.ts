@@ -100,12 +100,12 @@ export class PrimaryScreenComponent<T extends IEntity<TKey>, TKey extends Entity
   private _modalRef: BsModalRef;
 
   private _subscription: Subscription;
-  private _selected$ = new Subject<{ item?: T; id: TKey; index?: number } | null>();
+  private _selected$ = new Subject<{ item?: T; id: TKey; index?: number }>();
   private _swipe$ = new Subject<number>();
 
   public localizeDescriptor: LocalizeDescriptor<T>;
   public items$: Observable<T[]>;
-  public selected$: Observable<T | null>;
+  public selected$: Observable<T>;
   public view$: Observable<View>;
 
   // todo:
