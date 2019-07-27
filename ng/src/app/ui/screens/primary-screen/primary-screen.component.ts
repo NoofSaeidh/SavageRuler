@@ -193,10 +193,8 @@ export class PrimaryScreenComponent<T extends IEntity<TKey>, TKey extends Entity
       this._selected$.pipe(
         tap(s => (s.id = parseInt(s.id as string, 10) as TKey)), // todo: support other types
         distinctUntilKeyChanged('id'),
-        tap(item => console.log(item)),
       ),
     ).pipe(
-      tap(item => console.log(item)),
       switchMap(([items, target]) => {
         if (!target.item) {
           if (target.index) {
@@ -226,12 +224,10 @@ export class PrimaryScreenComponent<T extends IEntity<TKey>, TKey extends Entity
         return of({ items, ...target });
       }),
       filter(i => !!i.item),
-      tap(item => console.log(item)),
     );
 
     this.selected$ = selected.pipe(
       switchMap(target => {
-        console.log(target);
         if (!target.index) {
           console.warn('target without index', target);
           return of(target.item);
@@ -239,26 +235,7 @@ export class PrimaryScreenComponent<T extends IEntity<TKey>, TKey extends Entity
         // clear swipe, because we already switched
         this._swipe$.next(0);
         return this._swipe$.pipe(
-          tap(d => console.log(d)),
           startWith(0),
-          // map(v => ({adj: 0, value: v})), // adj for compensation when clicking at borders
-          // scan((ac, v) => {
-          //   console.log({ac, v});
-          //   const index = ac.value + v.value + ac.adj;
-          //   if (index < 0 || index >= target.items.length) {
-          //     return {
-          //       adj: ac.adj + v.value,
-          //       value : ac.value,
-          //     };
-          //   }
-          //   return {
-          //     adj: ac.adj,
-          //     value: ac.value + v.value
-          //   };
-          // }),
-          // filter(diff => !!diff.adj),
-          // map(diff => diff.value + target.index),
-
           scan((ac, diff) => ac + diff),
           map(diff => target.index + diff),
           filter(diff => {
@@ -272,31 +249,10 @@ export class PrimaryScreenComponent<T extends IEntity<TKey>, TKey extends Entity
             }
             return false;
           }),
-          // distinctUntilChanged(),
-          tap(_ => console.log(_)),
           map(index => target.items[index]),
-          // tap(_ => console.log(_))
         );
       }),
-      // forkJoin(this._swipe$.pipe(startWith(0))),
-      // map(i => i.item),
     );
-    //  combineLatest(this._swipe$.pipe(startWith(0)), selected).pipe(
-    //   distinctUntilKeyChanged('0'),
-    //   tap(_ => console.log(_)),
-    //   tap(_ => this._swipe$.next(0)), // to prevent using diff for each value
-    //   map(([diff, target]) => {
-    //     if (!diff || typeof target.index !== 'number') {
-    //       return target.item;
-    //     }
-    //     const index = target.index + diff;
-    //     let item: T;
-    //     if (index > 0 || index < target.items.length) {
-    //       item = target.items[index];
-    //     }
-    //     return item || target.item;
-    //   }),
-    // );
 
     this.view$ = this.route.queryParamMap.pipe(
       map(q => q.get(query.view)),
