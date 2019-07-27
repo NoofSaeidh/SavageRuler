@@ -191,11 +191,7 @@ export class PrimaryScreenComponent<T extends IEntity<TKey>, TKey extends Entity
     const selected = combineLatest(
       this.items$,
       this._selected$.pipe(
-        map(s => {
-          // todo: only for number
-          s.id = (s.id as number + 0) as TKey;
-          return s;
-        }),
+        tap(s => (s.id = parseInt(s.id as string, 10) as TKey)), // todo: support other types
         distinctUntilKeyChanged('id'),
         tap(item => console.log(item)),
       ),
@@ -237,15 +233,45 @@ export class PrimaryScreenComponent<T extends IEntity<TKey>, TKey extends Entity
       switchMap(target => {
         console.log(target);
         if (!target.index) {
+          console.warn('target without index', target);
           return of(target.item);
         }
         // clear swipe, because we already switched
         this._swipe$.next(0);
         return this._swipe$.pipe(
+          tap(d => console.log(d)),
           startWith(0),
-          scan((ac, v) => ac + v),
-          map(diff => diff + target.index),
-          filter(diff => diff >= 0 && diff < target.items.length),
+          // map(v => ({adj: 0, value: v})), // adj for compensation when clicking at borders
+          // scan((ac, v) => {
+          //   console.log({ac, v});
+          //   const index = ac.value + v.value + ac.adj;
+          //   if (index < 0 || index >= target.items.length) {
+          //     return {
+          //       adj: ac.adj + v.value,
+          //       value : ac.value,
+          //     };
+          //   }
+          //   return {
+          //     adj: ac.adj,
+          //     value: ac.value + v.value
+          //   };
+          // }),
+          // filter(diff => !!diff.adj),
+          // map(diff => diff.value + target.index),
+
+          scan((ac, diff) => ac + diff),
+          map(diff => target.index + diff),
+          filter(diff => {
+            // hack: adjustments on side values
+            if (diff < 0) {
+              this._swipe$.next(+1);
+            } else if (diff >= target.items.length) {
+              this._swipe$.next(-1);
+            } else {
+              return true;
+            }
+            return false;
+          }),
           // distinctUntilChanged(),
           tap(_ => console.log(_)),
           map(index => target.items[index]),
@@ -326,6 +352,7 @@ export class PrimaryScreenComponent<T extends IEntity<TKey>, TKey extends Entity
 
   @HostListener('window:keydown', ['$event'])
   onKeyDown(event: KeyboardEvent) {
+    console.log(event);
     switch (event.key) {
       case 'ArrowLeft':
         this._swipe$.next(-1);
