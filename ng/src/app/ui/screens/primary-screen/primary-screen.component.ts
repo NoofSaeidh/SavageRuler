@@ -165,18 +165,24 @@ export class PrimaryScreenComponent<T extends IEntity<TKey>, TKey extends Entity
 
     this.selected$ = selected.pipe(
       switchMap(target => {
-        if (typeof target.index !== 'number') {
+          if (typeof target.index !== 'number') {
           console.warn('target without index', target);
-          return of(target.item);
         }
         // clear swipe, because we already switched
         this._swipe$.next(0);
+
+        const innerSwipe = new Subject<number>();
+        // todo: unsubscribe
+        const sb_ = this._swipe$.subscribe(s => innerSwipe.next(s));
+
+
         return this._swipe$.pipe(
+          tap(i => console.log(i)),
           startWith(0),
           throttleTime(50),
           scan((ac, diff) => ac + diff),
+          tap(i => console.log(i)),
           map(diff => target.index + diff),
-          distinctUntilChanged(),
           filter(diff => {
             // hack: adjustments on side values
             if (diff < 0) {
@@ -188,9 +194,14 @@ export class PrimaryScreenComponent<T extends IEntity<TKey>, TKey extends Entity
             }
             return false;
           }),
+          // distinctUntilChanged(),
+          tap(i => console.log(i)),
           map(index => target.items[index]),
+          tap(i => console.log(i)),
         );
       }),
+      map(i => i as T),
+      // distinctUntilKeyChanged('id'),
       tap(i => {
         this.router.navigate([], {
           queryParams: {
@@ -200,6 +211,48 @@ export class PrimaryScreenComponent<T extends IEntity<TKey>, TKey extends Entity
         });
       }),
     );
+
+    // const initId = parseInt(this.route.snapshot.queryParams[query.id], 10);
+    // if (!isNaN(initId)) {
+      // // this is needed to properly open modal by url
+      // const view = this.route.snapshot.queryParams[query.view] || 'Grid';
+      // this._selected$.next({ id: initId as TKey });
+      // this.router.navigate([], {
+      //   queryParams: {
+      //     view: 'Grid',
+      //     id: null,
+      //   },
+      //   queryParamsHandling: 'merge',
+      // });
+      // setTimeout(() => {
+      //   console.log();
+      //   this.router.navigate([], {
+      //     queryParams: {
+      //       view: view,
+      //       id: initId,
+      //     },
+      //     queryParamsHandling: 'merge',
+      //   });
+      // }, 100);
+    // }
+
+
+    this._subscription = new Subscription()
+      .add(
+        this.localizationService
+          .localizeEntity(this.viewDescriptor.viewType.typeName)
+          .subscribe(r => (this.localizeDescriptor = r)),
+      )
+      .add(
+        this.route.queryParamMap.subscribe(q => {
+          console.log(q);
+          const id = q.get(query.id);
+          if (id) {
+            // todo: parse type
+            this._selected$.next({ id: id as TKey });
+          }
+        }),
+      );
 
     this.view$ = this.route.queryParamMap.pipe(
       map(q => q.get(query.view)),
@@ -218,22 +271,6 @@ export class PrimaryScreenComponent<T extends IEntity<TKey>, TKey extends Entity
         }
       }),
     );
-
-    this._subscription = new Subscription()
-      .add(
-        this.localizationService
-          .localizeEntity(this.viewDescriptor.viewType.typeName)
-          .subscribe(r => (this.localizeDescriptor = r)),
-      )
-      .add(
-        this.route.queryParamMap.subscribe(q => {
-          const id = q.get(query.id);
-          if (id) {
-            // todo: parse type
-            this._selected$.next({ id: id as TKey });
-          }
-        }),
-      );
   }
 
   ngOnDestroy() {
