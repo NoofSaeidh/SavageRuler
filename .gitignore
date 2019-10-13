@@ -13,3 +13,5 @@ aspnet-core/src/SavageRuler.Migrator/Logs/Logs.txt
 /aspnet-core/src/SavageRuler.Web.Client/wwwroot/dist/
 /aspnet-core/src/SavageRuler.Web.Client/App_Data/Logs/Logs.txt
 /.deploy/*
+/aspnet-core/items/savage-ruler.db-journal
+/lib/
