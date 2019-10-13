@@ -163,6 +163,7 @@ export class PrimaryScreenComponent<T extends IEntity<TKey>, TKey extends Entity
       filter(i => !!i.item),
     );
 
+    // bug: swipe agregated on first and final page
     this.selected$ = selected.pipe(
       switchMap(target => {
           if (typeof target.index !== 'number') {
